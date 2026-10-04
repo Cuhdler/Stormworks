@@ -9,10 +9,10 @@ Claude-Sitzung (auf dem PC oder in der Cloud) den aktuellen Stand kennt.
 | Datei / Ordner | Was | Status |
 |---|---|---|
 | `SCHIFF_UEBERSICHT.md` | Gesamtübersicht (Stand 04.10.2026, 22:56) | da |
-| `CHECKLISTE.md`, `WAFFEN_PLAN.md`, `KONZEPT.md` | Details Antrieb, Waffen, Konzept | noch auf dem PC |
-| `lua/` | alle Chip-Skripte | noch auf dem PC |
-| `tools/` | Bau-, Einbau-, Prüfstand- und Logger-Programme | noch auf dem PC |
-| `fahrzeug/Figet Marena.xml` | Kopie der Fahrzeugdatei, nur zum Lesen | noch auf dem PC |
+| `CHECKLISTE.md`, `WAFFEN_PLAN.md`, `KONZEPT.md` | Details Antrieb, Waffen, Konzept | da |
+| `lua/` | alle Chip-Skripte | da |
+| `tools/` | Bau-, Einbau-, Prüfstand- und Logger-Programme | da |
+| `fahrzeug/Figet Marena.xml` | Kopie der Fahrzeugdatei (Stand 04.10. 22:56), nur zum Lesen; ohne Steam-Autorangaben | da |
 
 `logs/`, `build/` und `backup/` werden nicht hochgeladen (groß bzw. erzeugt, siehe `.gitignore`). Einzelne Logs,
 die Claude auswerten soll, mit `git add -f logs/...` dazunehmen.
