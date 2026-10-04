@@ -1,0 +1,10 @@
+# Erzeugt bzw. groß – bleibt auf dem PC
+logs/
+build/
+backup/
+
+# Python
+__pycache__/
+*.pyc
+venv/
+.venv/
