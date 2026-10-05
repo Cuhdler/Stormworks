@@ -6,5 +6,4 @@
 - Mitschriften (Übersicht, Checklisten, Pläne) nach jeder Arbeitssitzung aktualisieren und pushen.
 - Antworten auf Deutsch, einfache Worte. Andre spielt allein, alles muss von einem Sitz aus bedienbar sein.
 - Lua im Spiel: höchstens 8192 Zeichen je Skript, kein `select`, kein `table.unpack`, Eingänge nicht in `onDraw` lesen.
-- Raketensystem (Erfassen, Zielwahl, Start, Lenkung): baut Andre mit einer anderen KI. Nicht bauen, prüfen oder
-  ändern; Raketen-Chip, seine Kabel und Teile bei eigenen Änderungen unverändert lassen.
+- Raketensystem ist fertig (Andre): Raketen-Chip, seine Kabel und Teile bei eigenen Änderungen unverändert lassen.

@@ -5,7 +5,7 @@
 (0,17,−10) aus bedienbar sein.
 **Positionen** in Blöcken, Bug bei +z.
 
-Diese Datei beschreibt nur Andres Plan und die gebaute Hardware. Logik für das Raketensystem gibt es noch nicht.
+Diese Datei beschreibt Andres ursprünglichen Plan und die Hardware. Seit 05.10.2026 ist das System fertig gebaut.
 
 ---
 
@@ -81,9 +81,4 @@ Diese Datei beschreibt nur Andres Plan und die gebaute Hardware. Logik für das 
 
 ## 8. Stand am Schiff
 
-- **Nicht umgesetzt.** Am Schiff wurde für die Raketen nichts verdrahtet:
-  - Radar 6 hängt weiter am Chip „Lage“. Platz 5 der Lagezentrale wird nie vergeben, Radar 6 sucht bis dahin mit
-    (38° hoch).
-  - Die 24 Microcontroller in den Raketen haben nur ein Beispiel-Skript.
-  - Monitor 3×3 und Startknopf haben keine Kabel.
-- **Hilfe von außen:** fertige Microcontroller im Steam Workshop, Tutorials, Stormworks-Discord, r/Stormworks.
+- **Fertig gebaut (Andre, 05.10.2026).**

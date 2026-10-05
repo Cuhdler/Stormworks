@@ -25,7 +25,7 @@ Weiterführende Dateien im Projekt:
 | Teile im Rumpf | ca. 53 000 |
 | Antrieb | 4 Diesel (je 18 Zylinder 3×3), 2 Schrauben, 8 Gänge |
 | Höchsttempo | ca. 65–67 kn in Gang 7 (ruhiges Wasser, gemessen 02.10.), Gang 6 ca. 63 kn |
-| Bewaffnung | Battle-Cannon-Turm (2 Rohre), Heavy-Autocannon-Turm vorn, 2 Flak-Türme (je 2 Heavy AC), 24 Raketen-Plätze (ohne Logik) |
+| Bewaffnung | Battle-Cannon-Turm (2 Rohre), Heavy-Autocannon-Turm vorn, 2 Flak-Türme (je 2 Heavy AC), 24 Raketen |
 | Schutz | 2 × 60 Chaff-Werfer mit Auto-Chaff, Radarwarner, Lenzpumpen |
 
 **Abweichungen vom Konzept (26.09.):** statt Jets jetzt 4 Diesel; statt Bertha jetzt 2 Battle Cannons; die
@@ -42,8 +42,8 @@ selbst (Halbautomatik mit Master Arm).
 | | Monitor 9×5 (Hauptbildschirm) | (0,22,−6) |
 | | Monitor 2×3 (Waffenwahl, auf Gelenk, liegt flach) | (4,18,−8) |
 | | Instrumentenblock (4 Schalter/Knöpfe) | (−2,19,−8) |
-| | Monitor 3×3 (für Raketen vorgesehen, ohne Funktion) | (−3,20,−10) |
-| | Lockable Button (Raketen-Start vorgesehen, ohne Funktion) | (−1,19,−8) |
+| | Monitor 3×3 (Raketen) | (−3,20,−10) |
+| | Lockable Button (Raketen-Start) | (−1,19,−8) |
 | Bruecken-Dach | Dachkamera (Camera Stabilized mit Laser) | (0,33,−15) |
 | | Radar Detector (Radarwarner) | (0,32,−13) |
 | Chip-Raum | alle Waffen-Chips; Wände x ±6, z −59…−48, y 2…13 | um (0,8,−55) |
@@ -154,7 +154,7 @@ Skript `lua/flossen.lua`, Bau `tools/build_flossen.py`, Kabel `tools/kabel_floss
 | Figet Marena Kamera | v2.2 | 4×5 | (5,10,−53) | Dachkamera, Zoom, Blick-Korrektur | kamera |
 | Figet Marena Schutz | v1.0 | 2×3 | (−5,13,−51) | Auto-Chaff, Lenzpumpen | schutz |
 | Quarter Panel NO (3×) | – | 1×2 | Maschinenräume | Andres Anzeigen (alt) | – |
-| „Microcontroller“ (24×) | – | 3×3 | je Rakete | Platzhalter mit Beispiel-Skript, ohne Funktion | – |
+| „Microcontroller“ (24×) | – | 3×3 | je Rakete | Raketen (Andre) | – |
 
 Alle Waffen-Chips nutzen denselben Physik-Sensor (0,27,−38). Lua-Grenze im Spiel: 8192 Zeichen je Skript
 (Lage-Skript 8119 – fast voll).
@@ -300,7 +300,7 @@ Keine Schrift (stünde quer).
 
 ---
 
-## 9. Raketensystem – ursprünglicher Plan (von Andre mit anderer KI gebaut)
+## 9. Raketensystem – ursprünglicher Plan (fertig gebaut von Andre)
 
 ### 9.1 Andres Plan, wie es funktionieren sollte
 - **Eigener Bildschirm** (Monitor 3×3 bei (−3,20,−10)): zeigt die Ziele des reservierten Raketen-Radars.
@@ -337,14 +337,9 @@ Keine Schrift (stünde quer).
 - **Bedienteile:** Monitor 3×3 (−3,20,−10), Lockable Button (−1,19,−8).
 
 ### 9.3 Stand
-- **05.10.2026: Andre hat das Raketensystem mit einer anderen KI fertig gebaut.** Claude baut, prüft und ändert es
-  nicht (Erfassen, Zielwahl, Start, Lenkung).
-- Für Claude gilt: Raketen-Chip „Figet Marena Raketen“, seine Kabel, Radar 6, Monitor 3×3, Startknopf und die 24
-  Raketen **unverändert lassen**. Bei Änderungen an anderen Chips (z. B. Lage) darauf achten, dass davon nichts
-  kaputtgeht.
-- Ein Zwischenstand vom 05.10. (Datei „Figet_Marena_Raketen.xml“) hatte den Chip auf belegtem Platz bei (5,5,−59)
-  (Konstante, Wandblöcke, Keile) und ein überflüssiges Strom-Kabel an den Chip – Andre weiß Bescheid. Der Endstand ist
-  in `fahrzeug/` noch nicht eingetragen.
+- **Fertig gebaut (Andre, 05.10.2026).** Raketen-Chip „Figet Marena Raketen“, seine Kabel, Radar 6, Monitor 3×3,
+  Startknopf und die 24 Raketen bei anderen Änderungen unverändert lassen.
+- Die Kopie in `fahrzeug/` ist noch der Stand vom 04.10. (ohne Raketen-Chip).
 
 ---
 
