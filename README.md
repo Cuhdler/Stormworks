@@ -12,7 +12,7 @@ Claude-Sitzung (auf dem PC oder in der Cloud) den aktuellen Stand kennt.
 | `CHECKLISTE.md`, `WAFFEN_PLAN.md`, `KONZEPT.md` | Details Antrieb, Waffen, Konzept | da |
 | `lua/` | alle Chip-Skripte | da |
 | `tools/` | Bau-, Einbau-, Prüfstand- und Logger-Programme | da |
-| `fahrzeug/Figet Marena.xml` | Kopie der Fahrzeugdatei (Stand 04.10. 22:56), nur zum Lesen; ohne Steam-Autorangaben | da |
+| `fahrzeug/Figet Marena.xml` | Kopie der Fahrzeugdatei (Stand 05.10. 19:08, mit Raketen-Chip), nur zum Lesen; ohne Steam-Autorangaben | da |
 
 `logs/`, `build/` und `backup/` werden nicht hochgeladen (groß bzw. erzeugt, siehe `.gitignore`). Einzelne Logs,
 die Claude auswerten soll, mit `git add -f logs/...` dazunehmen.
