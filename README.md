@@ -10,6 +10,7 @@ Claude-Sitzung (auf dem PC oder in der Cloud) den aktuellen Stand kennt.
 |---|---|---|
 | `SCHIFF_UEBERSICHT.md` | Gesamtübersicht (Stand 04.10.2026, 22:56) | da |
 | `CHECKLISTE.md`, `WAFFEN_PLAN.md`, `KONZEPT.md` | Details Antrieb, Waffen, Konzept | da |
+| `LUA_STORMWORKS.md` | welche Lua-Funktionen es im Microcontroller gibt (im Spiel gemessen) | da |
 | `lua/` | alle Chip-Skripte | da |
 | `tools/` | Bau-, Einbau-, Prüfstand- und Logger-Programme | da |
 | `fahrzeug/Figet Marena.xml` | Kopie der Fahrzeugdatei (Stand 05.10. 19:08, mit Raketen-Chip), nur zum Lesen; ohne Steam-Autorangaben | da |

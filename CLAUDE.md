@@ -5,5 +5,7 @@
   Kopie zum Lesen. Änderungen erreichen das Spiel erst, wenn Andre auf dem PC pullt und die `tools/` laufen lässt.
 - Mitschriften (Übersicht, Checklisten, Pläne) nach jeder Arbeitssitzung aktualisieren und pushen.
 - Antworten auf Deutsch, einfache Worte. Andre spielt allein, alles muss von einem Sitz aus bedienbar sein.
-- Lua im Spiel: höchstens 8192 Zeichen je Skript, kein `select`, kein `table.unpack`, Eingänge nicht in `onDraw` lesen.
+- Lua im Spiel (im Spiel gemessen, Liste in `LUA_STORMWORKS.md`): höchstens 8192 Zeichen je Skript; es fehlen u. a.
+  `select`, `print`, `pcall`, `error`, `setmetatable`, `unpack`, `load`, `os`; `table.unpack` geht. Eingänge nicht in
+  `onDraw` lesen.
 - Raketensystem ist fertig (Andre): Raketen-Chip, seine Kabel und Teile bei eigenen Änderungen unverändert lassen.
