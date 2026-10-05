@@ -300,7 +300,7 @@ Keine Schrift (stünde quer).
 
 ---
 
-## 9. Raketensystem – ursprünglicher Plan (nicht umgesetzt)
+## 9. Raketensystem – ursprünglicher Plan (von Andre mit anderer KI gebaut)
 
 ### 9.1 Andres Plan, wie es funktionieren sollte
 - **Eigener Bildschirm** (Monitor 3×3 bei (−3,20,−10)): zeigt die Ziele des reservierten Raketen-Radars.
@@ -337,10 +337,14 @@ Keine Schrift (stünde quer).
 - **Bedienteile:** Monitor 3×3 (−3,20,−10), Lockable Button (−1,19,−8).
 
 ### 9.3 Stand
-- **Nicht umgesetzt.** Die Logik zum Erfassen und Lenken auf ein Ziel baut Claude nicht.
-- Am Schiff wurde dafür nichts verändert: Radar 6 hängt weiter am Lage-Chip, die 24 Microcontroller haben das
-  Beispiel-Skript, Monitor 3×3 und Startknopf sind ohne Kabel.
-- Hilfe von außen: fertige Microcontroller im Steam Workshop, Tutorials, Stormworks-Discord / r/Stormworks.
+- **05.10.2026: Andre hat das Raketensystem mit einer anderen KI fertig gebaut.** Claude baut, prüft und ändert es
+  nicht (Erfassen, Zielwahl, Start, Lenkung).
+- Für Claude gilt: Raketen-Chip „Figet Marena Raketen“, seine Kabel, Radar 6, Monitor 3×3, Startknopf und die 24
+  Raketen **unverändert lassen**. Bei Änderungen an anderen Chips (z. B. Lage) darauf achten, dass davon nichts
+  kaputtgeht.
+- Ein Zwischenstand vom 05.10. (Datei „Figet_Marena_Raketen.xml“) hatte den Chip auf belegtem Platz bei (5,5,−59)
+  (Konstante, Wandblöcke, Keile) und ein überflüssiges Strom-Kabel an den Chip – Andre weiß Bescheid. Der Endstand ist
+  in `fahrzeug/` noch nicht eingetragen.
 
 ---
 
