@@ -354,3 +354,16 @@ Keine Schrift (stünde quer).
 - **Lage-Skript:** 8119 von 8192 Zeichen; für neue Funktionen müsste es aufgeteilt werden.
 - **Höchsttempo:** seit dem Umbau am 02.10. ca. 25 % mehr Widerstand (Ballast, Türme); Gang 8 ungetestet.
 - **Links/rechts-Unterschied** im Tempo der Seiten (seit 02.10.) – Ursache offen.
+- **Getriebe C** (z −100, beide Seiten): kein Wert in der Datei (Standard) – im Editor prüfen, ob 2:1.
+- **Werkzeuge:** `build_mc.py` (aus `stormworks_flugpanzer\tools`) fehlt im Repo – ohne kann Claude keine Chips bauen.
+
+## 11. Ideen für später
+
+- **Raketenabwehr** (Andre will am 06.10. abends anfangen): nur Rohrwaffen und Täuschung, keine Abfangraketen.
+  1. Lage erkennt schnelle kleine Luftziele als „Rakete“, höchster Vorrang für die Flaks (Lage-Skript vorher aufteilen).
+  2. evtl. eigener Abwehrturm (z. B. Rotary Autocannon + Radar), Logik aus Flak abgeleitet.
+  3. Auto-Chaff auch bei erkannter Rakete. 4. Warnung „RAKETE“ + Richtung auf Hauptbildschirm und Helm.
+  Offen: welche Gegner/Raketen, Flaks oder eigener Turm (wo, welche Kanone), Log einer anfliegenden Rakete (Tempo, Höhe).
+- **Ferngesteuerte Fahrzeuge** (Drohne/Boot vom Schiff): Sitz → Chip → Radio (Frequenz) → Radio → Chip im Fahrzeug,
+  Rückkanal auf zweiter Frequenz. Allein bedienbar nur, wenn das Schiff solange selbst Kurs hält oder stoppt. Grenzen:
+  Funkreichweite, ferne Fahrzeuge werden nicht simuliert, Video per Funk unklar.
