@@ -339,7 +339,7 @@ Keine Schrift (stünde quer).
 ### 9.3 Stand
 - **Fertig gebaut (Andre, 05.10.2026).** Raketen-Chip „Figet Marena Raketen“, seine Kabel, Radar 6, Monitor 3×3,
   Startknopf und die 24 Raketen bei anderen Änderungen unverändert lassen.
-- Die Kopie in `fahrzeug/` ist noch der Stand vom 04.10. (ohne Raketen-Chip).
+- Die Kopie in `fahrzeug/` ist Andres Stand vom 05.10. 19:08 (mit Raketen-Chip).
 
 ---
 
