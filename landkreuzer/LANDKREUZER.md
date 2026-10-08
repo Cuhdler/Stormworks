@@ -176,6 +176,9 @@ In dieser Reihenfolge. Anfangen jeweils mit **KI Pause an** und **Waffen sperren
   wie ein großer Motor leistet). Wie lange die Batterien reichen, ist offen. Für lange Einsätze braucht es einen
   Diesel-Generator; Platz dafür ist im Fahrwerksraum. Die KI fährt sparsam: Im Revier wartet sie an jedem Punkt,
   bei wenig Batterie fährt sie langsamer.
+  Laut Forum werden Elektromotoren mit sinkender Ladung schwächer (schon ab etwa 80 % merkbar). Darum fährt die KI
+  schon bei **40 %** Ladung nach Hause (Eigenschaft „Heim Batterie“ im KI-Chip), damit sie es noch den Hang hoch
+  schafft. Ab 50 % fährt sie wieder normal.
 - **Größe:** Der Panzer ist sehr groß (≈ 28 × 10 m). Eine kleinere Werkbank reicht nicht.
 - **Räder:** Welches Rad am besten passt, musst du ausprobieren (siehe oben).
 - **Licht:** Er hat keine Scheinwerfer, weil es im Schiff keine Licht-Teile gibt (siehe „Woher die Teile kommen“).

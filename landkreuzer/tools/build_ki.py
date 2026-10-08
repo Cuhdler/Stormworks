@@ -24,7 +24,8 @@ LASER_NAMEN = ["Laser vorn links", "Laser vorn Mitte", "Laser vorn rechts", "Las
 PROPS_KLEBER = [
     ("Start Verzoegerung s", 10, "Nach dem Spawnen so lange warten, bis die KI faehrt"),
     ("Waffen Verzoegerung s", 60, "Nach dem Spawnen so lange warten, bis die Waffen frei sind (die KI kennt keinen Freund)"),
-    ("Heim Batterie", 0.2, "Batterie darunter (0 bis 1): die KI faehrt von selbst nach Hause (0 = aus)"),
+    # 0,4: Elektromotoren werden mit sinkender Ladung schwaecher (Forum) - bei 20 % kaeme er nicht mehr den Hang hoch
+    ("Heim Batterie", 0.4, "Batterie darunter (0 bis 1): die KI faehrt von selbst nach Hause (0 = aus)"),
 ]
 PROPS_LENKUNG = [
     ("Lenk Faktor", 1, "Lenk-Variante: Lenkwinkel je Kurven-Befehl (1 = voller Befehl gibt 'Lenk max Grad')"),

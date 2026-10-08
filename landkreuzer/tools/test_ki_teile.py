@@ -66,12 +66,13 @@ def test_kleber():
     rueck.append(("nur BC-Ziel: dieses", o.get(104) and abs(o[20] - 400) < 1e-6 and abs(o[21] - 600) < 1e-6))
     o = tick(g, io, {1: 100.0, 3: 200.0})
     rueck.append(("kein Ziel: ungueltig", not o.get(104)))
-    o = tick(g, io, {1: 100.0, 3: 200.0, 27: 0.15})
-    o2 = tick(g, io, {1: 100.0, 3: 200.0, 27: 0.25})
-    o3 = tick(g, io, {1: 100.0, 3: 200.0, 27: 0.35})
+    hb = pr["Heim Batterie"]
+    o = tick(g, io, {1: 100.0, 3: 200.0, 27: hb - 0.05})
+    o2 = tick(g, io, {1: 100.0, 3: 200.0, 27: hb + 0.05})
+    o3 = tick(g, io, {1: 100.0, 3: 200.0, 27: hb + 0.15})
     o4 = tick(g, io, {1: 100.0, 3: 200.0, 27: 0.0})
-    rueck.append(("Batterie 15 %%: nach Hause (%s), 25 %%: bleibt (%s), 35 %%: wieder normal (%s), 0 = unbekannt (%s)"
-                  % (o.get(106), o2.get(106), o3.get(106), o4.get(106)),
+    rueck.append(("Batterie %.0f %%: nach Hause (%s), %.0f %%: bleibt (%s), %.0f %%: wieder normal (%s), 0 = unbekannt (%s)"
+                  % (100 * hb - 5, o.get(106), 100 * hb + 5, o2.get(106), 100 * hb + 15, o3.get(106), o4.get(106)),
                   o.get(106) is True and o2.get(106) is True and o3.get(106) is False and o4.get(106) is False))
     return rueck
 
