@@ -8,6 +8,9 @@ Prueft:
 4. Rumpf zusammenhaengend (Nachbar-Bloecke; Bauteile zaehlen mit 2 Bloecken Reichweite, weil sie groesser sind)
 5. Kabel: kein Eingang doppelt belegt (ausser Strom), jedes Kabel verbindet zwei verschiedene Orte
 6. Chips: Lua-Skripte hoechstens 8192 Zeichen, je Anschluss genau ein <slot/>
+7. Kabel-Enden: keines auf einem Bau-Block (dort ist kein Anschluss), keines weit weg von jedem Bauteil;
+   Chip-Anschluesse ohne Kabel werden als Hinweis genannt (erwartet: die im Schiff auch offenen und die Ausgaenge
+   'Zustand', 'Pumpen' sowie in der einfachen Variante 'Lenkung vorn/hinten')
 """
 import collections
 import os
@@ -95,6 +98,25 @@ def pruefe(txt, schiff=None, laut=True):
                 slots = t.xml[t.xml.rindex("<logic_slots>"):].count("<slot")
                 if nodes != slots:
                     fehler.append("Chip bei %s: %d Anschluesse, %d Slots" % (t.vp, nodes, slots))
+    # 7. Kabel-Enden
+    chips = F.chip_anschluesse()
+    chip_orte = {w for kn in chips.values() for *_, w in kn}
+    bloecke, bauteile = set(), []
+    for _, ts2 in F.koerper:
+        for t in ts2:
+            (bloecke.add(t.vp) if t.d in fz.STRUKTUR else bauteile.append(t.vp))
+    enden = {a for _, a, _ in F.kabel} | {b for _, _, b in F.kabel}
+    auf_block = sorted(e for e in enden if e in bloecke and e not in chip_orte)
+    if auf_block:
+        fehler.append("%d Kabel-Enden auf Bau-Bloecken, z. B. %s" % (len(auf_block), auf_block[:3]))
+    weit = sorted(e for e in enden if e not in chip_orte
+                  and min(max(abs(e[i] - p[i]) for i in range(3)) for p in bauteile) > 3)
+    if weit:
+        fehler.append("%d Kabel-Enden ohne Bauteil in der Naehe, z. B. %s" % (len(weit), weit[:3]))
+    for nm, kn in chips.items():
+        offen = [lab for lab, mode, typ, w in kn if w not in enden]
+        if offen:
+            hinweise.append("Chip %s: ohne Kabel %s" % (nm, offen))
     if laut:
         print("Pruefung: %d Koerper, %d Teile, %d Arten, %d Kabel" % (len(F.koerper), sum(arten.values()), len(arten),
                                                                        len(F.kabel)))
