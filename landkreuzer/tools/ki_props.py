@@ -43,7 +43,9 @@ PROPS_FAHREN = [
     ("Batterie min", 0.1, "Batterie darunter (0 bis 1): KI haelt an (0 = Pruefung aus; Eingang 0 = nicht angeschlossen)"),
     ("Kompass Richtung", -1, "-1: der Kompass des Physik-Sensors zaehlt gegen den Uhrzeigersinn (wie beim Schiff)"),
     ("Nick Richtung", 1, "1: Physik-Sensor meldet Bug hoch positiv; sonst -1"),
-    ("Roll Richtung", 1, "1: Physik-Sensor meldet rechte Seite tief positiv; sonst -1"),
+    # -1: der Physik-Sensor meldet 'rechte Seite tief' NEGATIV - so arbeiten die Flossen der Figet Marena (lua/flossen.lua:
+    # Roll = -Kanal 16), und die halten das Schiff im Spiel nachweislich gerade (v1.3, CHECKLISTE.md)
+    ("Roll Richtung", -1, "-1: Physik-Sensor meldet rechte Seite tief negativ (wie bei den Flossen des Schiffs); sonst 1"),
 ]
 
 PROPS_KARTE = [

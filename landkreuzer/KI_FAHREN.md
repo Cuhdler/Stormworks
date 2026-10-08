@@ -144,7 +144,7 @@ leicht aus Versehen), „−“ weiter weg, „+“ näher dran, „Revier“ (a
 | Batterie min | 0.1 | darunter anhalten (0 = aus) |
 | Kompass Richtung | −1 | Kompass zählt gegen den Uhrzeigersinn |
 | Nick Richtung | 1 | Bug hoch = positiv |
-| Roll Richtung | 1 | rechte Seite tief = positiv |
+| Roll Richtung | −1 | Physik-Sensor meldet „rechte Seite tief“ negativ (so arbeiten die Flossen des Schiffs, im Spiel bewährt) |
 | Zoom Start (Karte) | 1 | Karten-Zoom beim Einschalten |
 
 ---
@@ -172,7 +172,8 @@ leicht aus Versehen), „−“ weiter weg, „+“ näher dran, „Revier“ (a
 1. **Kompass**: KI an, Wegpunkt genau nördlich tippen – fährt er nach Norden? Sonst „Kompass Richtung“ umdrehen.
 2. **Rad-Richtung**: mit W fährt er vor, mit D dreht er rechts? Bool 5/6 nach der Anfahrprobe = umgelernt → Property
    richtig stellen.
-3. **Nick/Roll-Vorzeichen**: am Hang Bug hoch → Physik-Sensor Nick positiv? Rechte Seite tief → Roll positiv?
+3. **Nick/Roll-Vorzeichen**: am Hang Bug hoch → Physik-Sensor Nick positiv? Rechte Seite tief → Roll **negativ**
+   (so ist es bei den Flossen des Schiffs)? Sonst „Nick Richtung“ bzw. „Roll Richtung“ umdrehen.
 4. **Bug-Laser**: Grundwert auf ebenem Boden (Zahl 14) notieren; an einer Böschung zum Wasser: hält er rechtzeitig?
    Trifft der Laser die Wasseroberfläche oder den Grund? (beides wird erkannt)
 5. **Front-Laser**: vor einer Hauswand – kriecht er heran und setzt bei ca. 4 m zurück? An einem sanften Hügel

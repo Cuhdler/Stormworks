@@ -471,8 +471,9 @@ class Panzer:
         hd = self.psi / (2 * math.pi)
         kompass = ((-hd) + 0.5) % 1 - 0.5
         # Kanal 8 absichtlich mit falschem Vorzeichen: die KI rechnet ihr Tempo selbst aus der Ortsaenderung
+        # Roll wie im Spiel: rechte Seite tief = negativ (Flossen des Schiffs), daher 'Roll Richtung' -1
         return {1: self.x, 2: self.y0 + SENSOR_H, 3: self.z, 4: kompass, 5: self.nick / (2 * math.pi),
-                6: self.roll / (2 * math.pi), 7: abs(self.v), 8: -self.v}
+                6: -self.roll / (2 * math.pi), 7: abs(self.v), 8: -self.v}
 
     def boden(self, s):
         """Boden in s m vor der Mitte (Wasser, wenn < 0)."""
