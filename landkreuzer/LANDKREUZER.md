@@ -67,6 +67,7 @@ Gefundene **Fehler**, die im Spiel Ärger gemacht hätten (alle behoben und mit 
 - Nach Hause schon bei 40 % Batterie; der Status zeigt die **Restzeit** der Batterie.
 - **Fahrtenschreiber** im KI-Chip (wie in den Waffen-Chips, Standard aus), siehe Schnellstart.
 - Er fährt erst 30 s nach dem Spawnen los (vorher 10 s – zu kurz, um in die Brücke zu kommen).
+- Ladestand kommt von einer zusätzlichen kleinen Batterie (sichere Anschluss-Lage), siehe Technik.
 - Karte: „H“ am Heimatpunkt; Werkzeug `ki_log.py` wertet Fahrtenschreiber-Logs aus.
 - Status zeigt Nick/Roll/Kurs in Grad (Vorzeichen prüfen) und rot L!/R!, wenn eine Radseite falsch herum dreht.
 - Prüfstände: Wald, Damm durch einen See, enges Tal, größere Räder, Stehen am Hang, Lenk-Variante; Kabel-Vergleich
@@ -376,7 +377,9 @@ ersten Bildern von rechts).
 - **Schwerpunkt** (geschätzt, jedes Teil gleich schwer): y ≈ 5, also gut 2,5 m über dem Boden bei ≈ 8,5 m Spur.
   Er kippt erst bei sehr steilen Seitenhängen (über 45°); Ballast ist nicht nötig. Die KI meidet steile Hänge ohnehin.
 - **Chips** liegen auf dem Hauptboden in der Mitte (y 2, z −29 … −17), der Physik-Sensor bei (0, 2, −12).
-  Die Batterien sitzen im Fahrwerksraum.
+  Die Batterien sitzen im Fahrwerksraum. Den Ladestand liest die KI von einer **kleinen Batterie** bei (0, −3, −14)
+  im selben Stromnetz: Bei ihr sitzen alle Anschlüsse in ihrem einen Block, bei der großen ist offen, wo der
+  Ladestand herauskommt. Zeigt der Status „BAT ?“, kommt kein Wert an (dann fährt die KI ohne Batterie-Regeln).
 
 ---
 

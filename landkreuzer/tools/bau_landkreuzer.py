@@ -122,6 +122,7 @@ LASER = [
 # Batterien (Battery Large, Anschluss oben +2): im Fahrwerksraum
 # 24 Stueck ueber die ganze Laenge verteilt (nur Batterien, kein Generator: der Schiffs-Diesel kuehlt mit Seewasser)
 BATTERIEN = [(x, BODEN + 1, z) for z in (-6, -22, 28, 12, -38, -50) for x in (-9, -4, 4, 9)]
+BATTERIE_KLEIN = (0, BODEN + 1, -14)
 # Strom-Anschluesse im Schiff (Batterien, Generatoren): Kabel dorthin gehen im Panzer an die erste Batterie
 SCHIFF_STROM = {(8, -18, -64), (-8, -18, -64), (4, -11, -39), (-4, -11, -39), (4, -11, -46), (-4, -11, -46),
                 (8, -15, -96), (-8, -15, -96)}
@@ -329,6 +330,11 @@ class Bau:
             self.plus(b)
             self.batterien.append(b)
             self.reserviere(p, (-1, 0, -1), (1, 2, 1))
+        # kleine Batterie (1 Block, alle Anschluesse in diesem Block - bei der grossen ist offen, wo der Ladestand
+        # herauskommt) im selben Stromnetz: von ihr liest die KI den Ladestand
+        klein = vorlage(F, "battery_small", (-11, 0, -112))
+        self.bat_klein = klein.verschoben(fz.sub(BATTERIE_KLEIN, klein.vp))
+        self.plus(self.bat_klein)
 
     def lenkachse(self, seite, sx, z, motor, rw):
         """Lenkbare Achse: Gelenk wie das Ruder im Schiff, Rad-Motor und Stummel auf dem Gelenk-Koerper."""
@@ -767,8 +773,10 @@ class Bau:
             # Einschalten: die Turm-Kamera des Schiffs hat fuer ihren Laser einen Eingang 'Laser an' - der einzelne
             # Laser-Sensor sehr wahrscheinlich auch. Hat er keinen, findet das Kabel keinen Anschluss (schadet nicht).
             neu.append((0, self.knoten("KI", "Immer an"), t.vp))
-        # Ladestand der ersten Batterie (Annahme: am Strom-Anschluss oben; fehlt er, liest die KI 0 = unbekannt)
-        neu.append((1, bat, self.knoten("KI", "Batterie")))
+        # Ladestand: von der kleinen Batterie im selben Netz (alle Anschluesse in ihrem einen Block); fehlt er, liest die
+        # KI 0 = unbekannt
+        neu.append((4, bat, self.bat_klein.vp))
+        neu.append((1, self.bat_klein.vp, self.knoten("KI", "Batterie")))
         # KI-Chip
         phys = self.neu["phys"].vp
         neu.append((5, phys, self.knoten("KI", "Physik-Sensor")))
