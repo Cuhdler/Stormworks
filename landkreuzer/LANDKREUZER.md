@@ -1,8 +1,10 @@
 # KI-Landkreuzer – ein Panzer, der selbst fährt und kämpft
 
 **Stand:** 08.10.2026 (Nacht), Version v1.0, gebaut von Claude, **noch nie im Spiel gewesen**.
-**Datei:** `landkreuzer/fahrzeug/KI Landkreuzer.xml`. Sie ist fertig, nur die Räder fehlen (siehe Abschnitt 2).
-**Bilder:** `landkreuzer/bilder/schraeg.png` (schräg von vorn) und `landkreuzer/bilder/ansicht.png` (oben, Seite, vorn).
+**Dateien:** `landkreuzer/fahrzeug/KI Landkreuzer.xml` und `KI Landkreuzer Lenkung.xml` (zwei Varianten, siehe
+Abschnitt 2). Beide sind fertig, nur die Räder fehlen.
+**Bilder:** `landkreuzer/bilder/schraeg.png` und `schraeg_links.png` (schräg von vorn), `schraeg_lenkung.png`
+(Lenk-Variante), `ansicht.png` (oben, Seite, vorn).
 
 Andres Wunsch (08.10.): „eine Art Landkreuzer, groß, mit allen möglichen Geschützen, und er soll komplett autonom
 fahren – quasi ein KI-Panzer“.
@@ -21,7 +23,7 @@ fahren – quasi ein KI-Panzer“.
 | Brücke | die Brücke der Figet Marena: Steuersitz, Hauptmonitor 9×5 (Radar, Kamera, Zielliste), Monitor 3×3 = **Karte der KI**, Monitor 2×3 = **KI-Status**, Instrumentenblock; Aufstieg über Leitern hinten und hinter der Brücke |
 | Antrieb | 14 Elektromotoren (Medium), je einer pro Rad, 24 große Batterien im Fahrwerksraum; gelenkt wird wie bei einem Kettenfahrzeug (links und rechts verschieden schnell) |
 | KI | fährt Wegpunkte ab oder patrouilliert im Revier, weicht Hindernissen aus (7 Laser), meidet Wasser und Abhänge, befreit sich, wenn sie feststeckt, bleibt im Gefecht stehen, fährt auf Wunsch nach Hause |
-| Aussehen | Tarnanstrich (Wald: Oliv, Dunkelgrün, Braun, Schwarz) auf allen Blöcken, 45°-Bug-Schräge |
+| Aussehen | Tarnanstrich (Wald: Oliv, Dunkelgrün, Braun, Schwarz) auf allen Blöcken, 45°-Bug-Schräge, Kennung „KL-1“ weiß an beiden Seiten |
 
 ### Woher die Teile kommen
 Alles, was im Schiff schon funktioniert, ist **genau kopiert**: gleiche Teile, gleiche Abstände, gleiche Kabel,
@@ -60,8 +62,21 @@ Was an Land anders sein muss, ist in die Chips eingebaut:
 
 ## 2. Ins Spiel bringen
 
+### Zwei Varianten
+Der Panzer ist lang und schmal (Radstand 22 m, Spur ≈ 9 m). Solche Fahrzeuge drehen nur über
+„links schneller als rechts“ (Skid-Lenkung) oft schlecht, weil alle Räder quer rutschen müssen. Darum gibt es zwei
+Dateien:
+
+| Datei | Lenkung |
+|---|---|
+| `KI Landkreuzer.xml` | nur Skid-Lenkung (wie ein Kettenfahrzeug): 14 feste Räder. Einfacher, weniger Teile. |
+| `KI Landkreuzer Lenkung.xml` | dazu **Allrad-Lenkung**: Die vorderen 2 und die hinteren 2 Achsen sitzen auf senkrechten Gelenken (gebaut wie die Ruder der Figet Marena, mit kleinem Gelenk-Motor). Vorn und hinten lenken gegenläufig, die mittleren 3 Achsen bleiben fest. |
+
+**Empfehlung:** Erst `KI Landkreuzer.xml` ausprobieren. Dreht er schlecht, die Lenk-Variante nehmen. Beide
+haben denselben KI-Chip; die Lenk-Ausgänge sind in der einfachen Variante nur nicht verkabelt.
+
 1. Auf dem PC das Repo holen (pull).
-2. `landkreuzer/fahrzeug/KI Landkreuzer.xml` nach `%APPDATA%\Stormworks\data\vehicles\` kopieren.
+2. Die gewünschte Datei aus `landkreuzer/fahrzeug/` nach `%APPDATA%\Stormworks\data\vehicles\` kopieren.
 3. **Räder:** Die Spiel-Dateien der Räder liegen nur auf deinem PC, darum fehlen sie noch.
    - Im Editor den Landkreuzer laden.
    - **Ein** Rad an die **vorderste linke Welle** setzen. Das ist der Stummel, der links unten vorn aus der
@@ -70,7 +85,9 @@ Was an Land anders sein muss, ist in die Chips eingebaut:
        sie durch. Mehr und größere Räder sind besser als wenige.
      - Platz: bis ca. 12 Blöcke Durchmesser passen zwischen die Achsen (Abstand 15 Blöcke).
    - Im Repo-Ordner: `python landkreuzer/tools/raeder.py`. Das ist ein Probelauf: Er zeigt, welche 13 Räder
-     dazukommen.
+     dazukommen. Für die Lenk-Variante: `--datei "%APPDATA%\Stormworks\data\vehicles\KI Landkreuzer Lenkung.xml"`
+     anhängen. Dort sitzt der vorderste linke Stummel außen am Gelenk, und die gelenkten Räder kommen auf ihre
+     Gelenk-Körper.
    - Dann `python landkreuzer/tools/raeder.py --schreiben`. Es kopiert das Rad an alle Wellen (rechts
      gespiegelt) und legt vorher eine Sicherung an.
    - Im Spiel das Fahrzeug **neu laden, ohne vorher zu speichern**.
@@ -133,9 +150,12 @@ In dieser Reihenfolge. Anfangen jeweils mit **KI Pause an** und **Waffen sperren
    Annahme: Strom und Ausgang sitzen am Laser-Block selbst, der Strahl zeigt wie bei der Turm-Kamera.
 5. **Türme:** wie auf dem Schiff (Test Rohre usw.). Die Richtungs-Eigenschaften sind die vom Schiff, weil die Türme
    genauso eingebaut sind.
-6. **KI:** KI Pause aus, auf freiem Gelände. Fährt er los, weicht er aus, hält er vor Wasser?
-7. **Waffen:** Waffen sperren aus, mit Gegnern.
-8. **Chaff:** Auf dem Schiff war offen, ob der Radarwarner die **eigenen** Radare meldet. Wenn ja, wirft der Panzer
+6. **Lenk-Variante:** Hinsetzen, D drücken. Lenken die vorderen Räder nach rechts und die hinteren nach links?
+   Wenn es andersherum ist: Eigenschaft „Lenk Richtung“ im KI-Chip auf −1. Drehen sich die Gelenke gar nicht:
+   Bekommen die kleinen Gelenk-Motoren Strom und Gas (Konstante 1)? Beides ist wie beim Schiffs-Ruder verkabelt.
+7. **KI:** KI Pause aus, auf freiem Gelände. Fährt er los, weicht er aus, hält er vor Wasser?
+8. **Waffen:** Waffen sperren aus, mit Gegnern.
+9. **Chaff:** Auf dem Schiff war offen, ob der Radarwarner die **eigenen** Radare meldet. Wenn ja, wirft der Panzer
    dauernd Chaff, bis die 60 Salven leer sind. Dann bitte melden; ich baue dann eine Sperre ein.
 
 ### Bekannte Schwachstellen
@@ -153,16 +173,17 @@ In dieser Reihenfolge. Anfangen jeweils mit **KI Pause an** und **Waffen sperren
 
 | Datei | Was |
 |---|---|
-| `tools/bau_landkreuzer.py` | baut die ganze Fahrzeugdatei neu (`python landkreuzer/tools/bau_landkreuzer.py`) und prüft sie |
+| `tools/bau_landkreuzer.py` | baut die ganze Fahrzeugdatei neu und prüft sie (`python landkreuzer/tools/bau_landkreuzer.py`, Lenk-Variante mit `--lenkung`) |
 | `tools/fz.py` | Fahrzeugdatei lesen/schreiben (Teile, Körper, Kabel); Lesen und Schreiben ergibt byte-gleich dieselbe Datei |
 | `tools/build_mc.py` | Chip-Baukasten (Nachbau des fehlenden Originals; baut alle Schiffs-Chips byte-gleich nach, siehe `tools/test_build_mc.py`) |
-| `tools/build_ki.py` | KI-Chip (5×4) |
+| `tools/build_ki.py` | KI-Chip (5×5) |
 | `tools/raeder.py` | Räder kopieren |
 | `tools/pruefen.py` | Prüfungen der Datei (läuft nach jedem Bau) |
 | `tools/ansicht.py` | Bilder zeichnen (braucht matplotlib) |
 | `tools/test_ki.py` | Prüfstand der Fahr-KI (Simulation, braucht lupa) |
+| `tools/test_ki_teile.py` | Prüfstand Kleber, Lenkung, Status-Anzeige |
 | `tools/test_land_lage.py`, `tools/test_land_kanone.py` | Prüfstände Waffen an Land (mit den Schiffs-Prüfständen, braucht lupa) |
-| `lua/ki_kleber.lua`, `lua/ki_fahren.lua`, `lua/ki_karte.lua`, `lua/ki_status.lua` | die vier Skripte im KI-Chip |
+| `lua/ki_kleber.lua`, `lua/ki_fahren.lua`, `lua/ki_karte.lua`, `lua/ki_status.lua`, `lua/ki_lenkung.lua` | die fünf Skripte im KI-Chip |
 
 **Koordinaten** (Blöcke à 0,25 m): x rechts, y oben, z vorn.
 - Höhen: Boden des Fahrwerksraums y −4, Hauptboden y 1, Deck vorn y 6, Mitte y 10, hinten y 9.
