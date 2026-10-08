@@ -254,7 +254,8 @@ Keine Schrift (stünde quer).
 - **PC-Programm:** `python -u tools/waffen_logger.py` (im Ordner stormworks_schiff) → `logs/waffen_<Zeit>/<Kennung>.csv`
   (Spaltennamen aus `tools/schreiber_spalten.py`; `empfang.csv` = Ankunft/Paketnummern).
 - **Kennungen:** r1–r6 Mast-Radare, la/laD Lage, ba Bildschirm, fLr/fLf und fRr/fRf Flak-Radar/-Feuerleitung L/R,
-  kBr/kBf und kAr/kAf Kanonen, ka Kamera, sc Schutz.
+  kBr/kBf und kAr/kAf Kanonen, ka Kamera, sc Schutz; **ki** = Fahr-KI des Landkreuzers (Status-Skript, Spalten
+  in `schreiber_spalten.py`, Auswertung `landkreuzer/tools/ki_log.py`).
 - **Fahrtenschreiber** (Schiffsführung Port 8766) und **Flossen-Schreiber** (8767): `Log Port` steht auf 0 (aus).
   Anfragen an Ports ohne Lauscher blockieren die HTTP-Warteschlange des Spiels für Sekunden. Wieder an: Port setzen
   und `tools/logger.py` starten.

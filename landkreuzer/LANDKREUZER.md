@@ -31,7 +31,8 @@ Eigenschaft man im KI-Chip umstellt, wenn z. B. eine Seite falsch herum dreht.
 
 **Fahrtenschreiber (sehr hilfreich für mich):** Im KI-Chip die Eigenschaft „Schreiber Port“ auf **8768** stellen
 (oder den Panzer mit `python landkreuzer/tools/bau_landkreuzer.py --schreiber` bauen, dann schreiben auch die
-Waffen-Chips mit). Auf dem PC `python tools/waffen_logger.py` starten (wie beim Schiff). Dann landet jede Fahrt in
+Waffen-Chips mit). Auf dem PC `python tools/waffen_logger.py` starten (wie beim Schiff). **Nur mit laufendem Logger einschalten**:
+Anfragen an einen Port ohne Lauscher blockieren die HTTP-Warteschlange des Spiels (siehe Schiffs-Übersicht). Dann landet jede Fahrt in
 `logs/waffen_<Datum>_<Zeit>/ki.csv`: je Tick Zustand, Ort, Kurs, Tempo, Befehle, alle Laser, Batterie, Nick/Roll.
 Mit `git add -f logs/...` hochladen – dann sehe ich genau, was die KI gesehen und entschieden hat. Selbst
 anschauen: `python landkreuzer/tools/ki_log.py logs/waffen_<Datum>_<Zeit>` (Zusammenfassung und Bild der Fahrspur).
