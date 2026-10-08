@@ -54,8 +54,15 @@ HINTEN, VORN = -66, 37
 BODEN, HAUPTBODEN = -4, 1
 ABSCHNITTE = [(16, 36, 6), (0, 15, 10), (-30, -1, 10), (-65, -31, 9)]
 SOCKEL = ((-14, 11, -16), (14, 14, -3))
-# Bug-Schraege (45 Grad) vom vorderen Deck (y 6) bis zum Boden: z VORN .. VORN + 10; Schraege nach oben-vorn
-R_SCHRAEGE = (-1, 0, 0, 0, 1, 0, 0, 0, -1)       # 02_wedge so gedreht: offene Seiten +y und +z (aus dem Schiff gelesen)        # unter der Bruecke (Bruecken-Boden y 15 wie im Schiff)
+# Bug als Keil (wie die obere und untere Front-Platte eines Panzers): oben 45 Grad vom vorderen Deck (y 6) herab, unten
+# 45 Grad vom Boden herauf; die Spitze liegt bei z VORN + 5, y 0,5 (1,25 m ueber der Rumpf-Unterkante). Eine Spitze
+# unten am Boden 3 m vor den Vorderraedern wuerde schon an maessigen Haengen aufsetzen.
+BUG_SCHRITTE = 6
+R_SCHRAEGE = (-1, 0, 0, 0, 1, 0, 0, 0, -1)       # 02_wedge so gedreht: offene Seiten +y und +z (aus dem Schiff gelesen)
+R_SCHRAEGE_UNTEN = (1, 0, 0, 0, -1, 0, 0, 0, -1)  # ... um x gedreht: offene Seiten -y und +z (untere Bug-Schraege)
+# Heck: die letzten 3 Reihen unten 45 Grad hochgezogen (mehr Boden-Abstand beim Herunterfahren von Haengen)
+HECK_SCHRITTE = 3
+R_SCHRAEGE_HECK = (-1, 0, 0, 0, -1, 0, 0, 0, 1)   # offene Seiten -y und -z
 
 # Fahrwerk: Rad-Achsen je Seite (z), Achs-Hoehe y, Motor-Spalte x
 RAD_Z = [35, 20, 5, -10, -25, -40, -55]          # Mitte -10 = Schwerpunkt (grob geschaetzt)
@@ -106,7 +113,7 @@ LASER = [
     ("Laser vorn rechts", (13, 3, VORN + 4), R_VORN),
     ("Laser links", (X0 - 1, 6, -8), R_LINKS),          # ueber den Raedern (Rad-Radius bis 6 Bloecke frei)
     ("Laser rechts", (X1 + 1, 6, -8), R_RECHTS),
-    ("Laser unten", (0, BODEN - 1, VORN + 9), R_UNTEN),        # unter der Bugspitze
+    ("Laser unten", (0, BODEN + BUG_SCHRITTE - 2, VORN + BUG_SCHRITTE - 1), R_UNTEN),  # in der Bugspitze, nach unten
     ("Laser hinten", (0, 3, HINTEN - 1), R_HINTEN),
 ]
 # Batterien (Battery Large, Anschluss oben +2): im Fahrwerksraum
@@ -377,24 +384,32 @@ class Bau:
             self.teil_voxel.add(p)
             neu.append(block(p, farbe))
 
-        # Bug-Schraege: je Schritt eine Schraege oben, darunter Bloecke bis zum Boden
-        for k in range(0, 11):
+        def schraege(p, r):
+            if p not in self.teil_voxel:
+                self.teil_voxel.add(p)
+                neu.append(fz.Teil('<c d="02_wedge"><o r="%s" bc="%s" ac="%s" sc="5">%s</o></c>'
+                                   % (rstr(r), FARBE_RUMPF, FARBE_RUMPF, fz.vox("vp", p))))
+
+        # Bug-Keil: je Reihe oben eine Schraege (y top), unten eine (y lo - 1, ab der 2. Reihe), dazwischen hohl
+        # (unterste und oberste Lage, Seitenwaende)
+        for k in range(BUG_SCHRITTE):
             z = VORN + k
-            top = 6 - k
+            top, lo = 6 - k, BODEN + k
             for x in range(X0, X1 + 1):
-                for y in range(BODEN, top):
-                    # hohl: Boden, eine Lage unter der Schraege, Seitenwaende
-                    if y in (BODEN, top - 1) or x in (X0, X1):
-                        setze((x, y, z), FARBE_BODEN if y == BODEN else FARBE_RUMPF, True)
-                p = (x, top, z)
-                if p not in self.teil_voxel:
-                    self.teil_voxel.add(p)
-                    neu.append(fz.Teil('<c d="02_wedge"><o r="%s" bc="%s" ac="%s" sc="5">%s</o></c>'
-                                       % (rstr(R_SCHRAEGE), FARBE_RUMPF, FARBE_RUMPF, fz.vox("vp", p))))
+                for y in range(lo, top):
+                    if y in (lo, top - 1) or x in (X0, X1):
+                        setze((x, y, z), FARBE_BODEN if y == lo else FARBE_RUMPF, True)
+                schraege((x, top, z), R_SCHRAEGE)
+                if k:
+                    schraege((x, lo - 1, z), R_SCHRAEGE_UNTEN)
         for z in range(HINTEN, VORN):
+            # Unterkante: am Heck in HECK_SCHRITTE Reihen 45 Grad hochgezogen
+            unten = BODEN + max(0, HINTEN + HECK_SCHRITTE - z)
             for x in range(X0, X1 + 1):
-                setze((x, BODEN, z), FARBE_BODEN, True)
-            for y in range(BODEN + 1, HAUPTBODEN):
+                setze((x, unten, z), FARBE_BODEN, True)
+                if unten > BODEN:
+                    schraege((x, unten - 1, z), R_SCHRAEGE_HECK)
+            for y in range(unten + 1, HAUPTBODEN):
                 setze((X0, y, z), aussen=True)
                 setze((X1, y, z), aussen=True)
             h = self.deck(z)
@@ -402,7 +417,7 @@ class Bau:
                 # Bug- und Heckplatte bis zur Deckhoehe dahinter/davor
                 top = self.deck(z - 1) if z > 0 else self.deck(z + 1)
                 for x in range(X0, X1 + 1):
-                    for y in range(BODEN + 1, top + 1):
+                    for y in range(unten + 1, top + 1):
                         setze((x, y, z), aussen=True)
                 continue
             for x in range(X0, X1 + 1):
@@ -467,7 +482,8 @@ class Bau:
         """Leitern (wie im Schiff, 2 Bloecke hoch): hinten vom Boden aufs Deck, hinter der Bruecke auf die Plattform."""
         lt = vorlage(self.F, "ladder_small", (14, 3, -20))
         r = (1, 0, 0, 0, 0, -1, 0, 1, 0)          # Leiter an einer Wand, die nach -z (hinten) schaut
-        orte = [(-3, y, HINTEN - 1) for y in range(-5, 10, 2)] + [(sx * 12, y, -20) for sx in (-1, 1) for y in (11, 13, 15)]
+        # hinten: unterstes Stueck haengt vor der Heck-Schraege (Boden-Abstand), die anderen an der Heckplatte
+        orte = [(-3, y, HINTEN - 1) for y in range(BODEN + 1, 10, 2)] + [(sx * 12, y, -20) for sx in (-1, 1) for y in (11, 13, 15)]
         for p in orte:
             xml = lt.xml.replace('r="0,0,1,1,0,0,0,1,0"', 'r="%s"' % rstr(r))
             self.plus(fz.Teil(xml).verschoben(fz.sub(p, lt.vp)))

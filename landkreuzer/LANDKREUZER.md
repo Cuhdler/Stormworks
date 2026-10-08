@@ -16,7 +16,7 @@ fahren – quasi ein KI-Panzer“.
 
 | | |
 |---|---|
-| Größe | Rumpf 28 m lang (mit Bug-Schräge), mit AC-Rohr 29 m; 7,75 m breit + Räder ≈ 9–10 m; Mast ≈ 9 m über dem Boden des Rumpfs |
+| Größe | Rumpf 27 m lang, mit AC-Rohr 29 m; 7,75 m breit + Räder ≈ 9–10 m; Mast ≈ 9 m über dem Boden des Rumpfs |
 | Teile | ca. 17 000 (ein Drittel der Figet Marena mit ≈ 56 000), 25 Körper, ca. 410 Kabel, 9 Chips |
 | Waffen | vorn **Heavy-Autocannon-Turm** (AP), dahinter erhöht **Battle-Cannon-Turm mit 2 Rohren** (HE), hinten **2 Flak-Türme** mit je 2 Heavy Autocannons (Splitter, Zeitzünder) |
 | Schutz | **Auto-Chaff**: 8 Werfer-Ketten mit je 15 Werfern (wie auf dem Schiff), Radarwarner auf dem Brückendach |
@@ -24,7 +24,7 @@ fahren – quasi ein KI-Panzer“.
 | Brücke | die Brücke der Figet Marena: Steuersitz, Hauptmonitor 9×5 (Radar, Kamera, Zielliste), Monitor 3×3 = **Karte der KI**, Monitor 2×3 = **KI-Status**, Instrumentenblock; Aufstieg über Leitern hinten und hinter der Brücke |
 | Antrieb | 14 Elektromotoren (Medium), je einer pro Rad, 24 große Batterien im Fahrwerksraum; gelenkt wird wie bei einem Kettenfahrzeug (links und rechts verschieden schnell) |
 | KI | fährt Wegpunkte ab oder patrouilliert im Revier, weicht Hindernissen aus (7 Laser), meidet Wasser und Abhänge, befreit sich, wenn sie feststeckt, bleibt im Gefecht stehen, fährt auf Wunsch nach Hause |
-| Aussehen | Tarnanstrich (Wald: Oliv, Dunkelgrün, Braun, Schwarz) auf allen Blöcken, unten Schlamm-Spritzer, 45°-Bug-Schräge, Kennung „KL-1“ weiß an beiden Seiten |
+| Aussehen | Tarnanstrich (Wald: Oliv, Dunkelgrün, Braun, Schwarz) auf allen Blöcken, unten Schlamm-Spritzer, Bug als Keil (oben und unten 45°), Heck unten abgeschrägt, Kennung „KL-1“ weiß an beiden Seiten |
 
 ### Woher die Teile kommen
 Alles, was im Schiff schon funktioniert, ist **genau kopiert**: gleiche Teile, gleiche Abstände, gleiche Kabel,
@@ -95,7 +95,8 @@ haben denselben KI-Chip; die Lenk-Ausgänge sind in der einfachen Variante nur n
    - Im Spiel das Fahrzeug **neu laden, ohne vorher zu speichern**.
    - Wenn du rechts ein anderes Rad willst: auch rechts vorn eines setzen, dann nimmt das Programm dieses für rechts.
 4. Spawnen. Er ist groß und braucht eine große Werkbank bzw. einen großen Platz.
-5. **Einsteigen:** Leiter hinten (links der Mitte) aufs Deck. Nach vorn zur Plattform hinter der Brücke, dort die
+5. **Einsteigen:** Leiter hinten (links der Mitte) aufs Deck. Die unterste Sprosse hängt je nach Rad etwa
+   1 m über dem Boden (das Heck ist unten abgeschrägt): hinlaufen und hochspringen. Nach vorn zur Plattform hinter der Brücke, dort die
    Leiter hoch, dann durch die Tür in der Rückwand der Brücke.
 
 ---
@@ -206,7 +207,14 @@ In dieser Reihenfolge. Anfangen jeweils mit **KI Pause an** und **Waffen sperren
 
 **Koordinaten** (Blöcke à 0,25 m): x rechts, y oben, z vorn.
 - Höhen: Boden des Fahrwerksraums y −4, Hauptboden y 1, Deck vorn y 6, Mitte y 10, hinten y 9.
-- Bug-Schräge z 37 … 47. Brücken-Boden y 15.
+- Bug-Keil z 37 … 42: oben 45° vom Deck (y 6) herab, unten 45° vom Boden herauf, Spitze bei y 0,5 (1,25 m über der
+  Rumpf-Unterkante). Vorher lag die Spitze unten am Boden, 3 m vor den Vorderrädern; mit kleinen Rädern hätte er
+  schon an Hängen ab etwa 10° aufgesetzt. Jetzt begrenzt die untere Schräge (45°).
+- Heck: die letzten 3 Reihen (z −64 … −66) unten 45° hochgezogen. Mit großen Rädern (12 Blöcke) setzt das Heck erst
+  an Hängen über etwa 34° auf (vorher 24°).
+- Bodenfreiheit = Rad-Radius − 1,5 Blöcke (Achse bei y −3, Unterkante y −4,5). Bei 7er-Rädern nur 0,5 m, darum
+  lieber große Räder.
+- Brücken-Boden y 15.
 - Wellen-Stummel bei x ±15, y −3, z 35 / 20 / 5 / −10 / −25 / −40 / −55 (Mitte = geschätzter Schwerpunkt).
 - **Schwerpunkt** (geschätzt, jedes Teil gleich schwer): y ≈ 5, also gut 2,5 m über dem Boden bei ≈ 8,5 m Spur.
   Er kippt erst bei sehr steilen Seitenhängen (über 45°); Ballast ist nicht nötig. Die KI meidet steile Hänge ohnehin.
