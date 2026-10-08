@@ -18,6 +18,7 @@ Was nachgebildet wird:
 60 Ticks je Sekunde. Jede Pruefung druckt eine Zeile (OK/FEHLER), am Ende 'ALLES OK'.
 """
 import math
+import random
 import os
 import re
 import sys
@@ -30,7 +31,7 @@ LUA_DIR = os.path.join(os.path.dirname(HIER), "lua")
 sys.path.insert(0, HIER)
 from ki_props import PROPS_FAHREN, PROPS_KARTE  # noqa: E402
 
-GRENZE = 8000          # Zeichen je Skript nach dem Verkleinern (im Spiel hart 8192)
+GRENZE = 8192          # im Spiel gemessen (LUA_STORMWORKS.md); das Bildschirm-Skript des Schiffs hat 8176 und laeuft
 DT = 1.0 / 60
 
 # ---------------------------------------------------------------------------------------------------------------
@@ -1089,6 +1090,38 @@ def test_hang():
         pruefe("Hang %d Grad, Kampf (steht): in 30 s %.1f m bewegt (Zustand %d)" % (grad, d, s.zs), d < 1.0 and s.zs == 6)
 
 
+def test_gelaende():
+    """Wald (80 duenne Baeume), Damm durch einen See (16 m breit), enges Tal (30 m Sohle zwischen steilen Huegeln):
+    jeweils ein Wegpunkt 400 m voraus."""
+    r = random.Random(3)
+    baeume = []
+    for _ in range(140):
+        x, z = r.uniform(-150, 150), r.uniform(80, 320)
+        if all(math.hypot(x - a, z - b) > 14 for _, a, b, *_ in baeume):
+            baeume.append(("k", x, z, r.uniform(0.4, 1.0), 12))
+    welten = [
+        ("Wald (%d Baeume, 0,4-1 m dick)" % len(baeume), Welt(hind=baeume, name="Wald"), 4),
+        ("Damm durch den See (16 m breit)", Welt(lambda x, z: -5.0 if 150 < z < 250 and abs(x) > 8 else 20.0, 20.0,
+                                                name="Damm"), 0),
+        ("enges Tal (30 m Sohle)", Welt(lambda x, z: 20.0 + 40.0 / (1 + math.exp(-(abs(x) - 25) / 3.0))
+                                        * math.exp(-((z - 200) / 120.0) ** 2), 60.0, name="Tal"), 0),
+    ]
+    for name, welt, stoss_max in welten:
+        s = Sim(welt)
+        s.tippe(0, 400)
+        nass = []
+
+        def bis(s):
+            if s.pz.boden(0) < 0:
+                nass.append(s.t)
+            return len(s.erreicht) >= 1 or s.pz.abgestuerzt
+        s.lauf(400, bis)
+        ok = s.erreicht and s.pz.stoesse <= stoss_max and not nass and not s.pz.abgestuerzt
+        pruefe("%s: Wegpunkt 400 m erreicht nach %s s, Stoesse %d (erlaubt %d), nass %d, abgestuerzt %s" % (
+            name, round(s.erreicht[0][0]) if s.erreicht else "-", s.pz.stoesse, stoss_max, len(nass),
+            s.pz.abgestuerzt), ok)
+
+
 def test_grosse_raeder():
     """Andre waehlt die Raeder erst im Spiel: mit 12er-Raedern steht der Panzer 0,6 m hoeher. Mit den Standard-
     Eigenschaften (Hoehen 0 = Automatik aus dem Bug-Laser) muss die KI genauso Wand, Huegel, Klippe und See schaffen."""
@@ -1114,7 +1147,7 @@ def test_grosse_raeder():
 TESTS = [test_groesse, test_karte, test_aus, test_bodenlaser, test_hand, test_batterie, test_pause, test_heim, test_lernen, test_kampf,
          test_wegpunkte, test_wand,
          test_huegel, test_fest, test_sackgasse, test_see, test_klippe, test_revier, test_dauerlauf,
-         test_nie_falsch_gelernt, test_hang, test_grosse_raeder]
+         test_nie_falsch_gelernt, test_hang, test_gelaende, test_grosse_raeder]
 
 if __name__ == "__main__":
     wahl = sys.argv[1:]

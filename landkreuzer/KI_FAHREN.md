@@ -8,7 +8,7 @@ Prüfstand im Rechner. Im Spiel noch **nicht** erprobt – alles unten unter „
 | `lua/ki_fahren.lua` | das Fahr-Gehirn (Antrieb links/rechts) |
 | `lua/ki_karte.lua` | Touch-Karte im Cockpit (Monitor 3×3 oder 5×3) |
 | `tools/ki_props.py` | alle Properties mit Standardwert und Erklärung (`PROPS_FAHREN`, `PROPS_KARTE`, `PROPS`) |
-| `tools/test_ki.py` | Prüfstand: Simulator + 45 Prüfungen (auch mit 0,6 m höheren Rädern und am Hang), am Ende „ALLES OK“ |
+| `tools/test_ki.py` | Prüfstand: Simulator + 49 Prüfungen (auch Wald, Damm, Tal, 0,6 m höhere Räder, Stehen am Hang), am Ende „ALLES OK“ |
 
 ---
 
