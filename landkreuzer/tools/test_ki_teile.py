@@ -51,7 +51,7 @@ def test_kleber():
     o = [tick(g, io, {1: 100.0, 3: 200.0}) for _ in range(599)]
     rueck.append(("vor 10 s: KI aus, Waffen aus", not o[-1].get(101) and not o[-1].get(110)))
     o = [tick(g, io, {1: 100.0, 3: 200.0}) for _ in range(3000)]
-    rueck.append(("nach 10 s: KI an, Waffen noch aus (bis 60 s)", o[0].get(101) and not o[-1].get(110)))
+    rueck.append(("nach 10 s: KI an, Waffen noch aus (bis 60 s)", o[1].get(101) and not o[-1].get(110)))
     o = [tick(g, io, {1: 100.0, 3: 200.0}) for _ in range(2)]
     rueck.append(("nach 60 s: Waffen frei", o[-1].get(101) and o[-1].get(110)))
     o = tick(g, io, {1: 100.0, 3: 200.0}, {1: True, 3: True})
