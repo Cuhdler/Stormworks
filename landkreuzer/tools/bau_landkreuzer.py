@@ -523,6 +523,7 @@ class Bau:
         self.koerper = [[neu(t) for t in k] for k in self.koerper]
         # self.neu zeigt auf Bauteile (keine Bloecke) - bleibt gueltig
         self.kennung()
+        self.abzeichen()
 
     def kennung(self, text="KL-1", z0=-12, y0=7, farbe="E6E6E6"):
         """Kennung in Blockschrift (3 x 5) auf beide Seitenwaende, von aussen lesbar."""
@@ -544,6 +545,33 @@ class Bau:
                 x = re.sub(r' (bc|ac)="[0-9A-Fa-f]*"', "", t.xml, count=2)
                 x = re.sub(r'<o( r="[^"]*")?', lambda m: m.group(0) + ' bc="%s" ac="%s"' % (farbe, farbe), x, count=1)
                 self.rumpf[k] = fz.Teil(x)
+
+    def farbe_setzen(self, ziele):
+        """ziele: {Position: Farbe} - nur Bau-Bloecke des Rumpfs werden umgefaerbt."""
+        for k, t in enumerate(self.rumpf):
+            f = ziele.get(t.vp)
+            if f and t.d == "block":
+                x = re.sub(r' (bc|ac)="[0-9A-Fa-f]*"', "", t.xml, count=2)
+                x = re.sub(r'<o( r="[^"]*")?', lambda m: m.group(0) + ' bc="%s" ac="%s"' % (f, f), x, count=1)
+                self.rumpf[k] = fz.Teil(x)
+
+    def abzeichen(self):
+        """Nur Farbe: Lueftungsgitter (Batterie-Raum) auf dem Heckdeck und ein Abzeichen (gelber Blitz auf schwarzem
+        Feld) an beiden Seiten hinter der Kennung."""
+        ziele = {}
+        y = self.deck(-46)
+        for x in range(-6, 7):
+            for z in range(-51, -40):
+                rand = x in (-6, 6) or z in (-51, -41)
+                ziele[(x, y, z)] = "2F3B1E" if rand else ("151515" if z % 2 == 0 else "3A3A3A")
+        blitz = ["...Y.", "..Y..", ".YYY.", "..Y..", ".Y..."]
+        for zeile, muster in enumerate(blitz):
+            for sp, c in enumerate(muster):
+                f = "E8C21A" if c == "Y" else "151515"
+                yy = 7 - zeile
+                ziele[(X0, yy, -32 - sp)] = f          # links: von vorn nach hinten
+                ziele[(X1, yy, -36 + sp)] = f          # rechts: von hinten nach vorn (von aussen gleich herum)
+        self.farbe_setzen(ziele)
 
     # ---------------- Chips ----------------
     def koerper_liste(self):
