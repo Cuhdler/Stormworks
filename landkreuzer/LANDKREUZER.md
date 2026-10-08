@@ -19,7 +19,7 @@ fahren – quasi ein KI-Panzer“.
 | Schutz | **Auto-Chaff**: 8 Werfer-Ketten mit je 15 Werfern (wie auf dem Schiff), Radarwarner auf dem Brückendach |
 | Ortung | **6 Phalanx-Radare** am Mast (wie auf der Figet Marena), dazu ein Radar auf jedem Turm, Dachkamera |
 | Brücke | die Brücke der Figet Marena: Steuersitz, Hauptmonitor 9×5 (Radar, Kamera, Zielliste), Monitor 3×3 = **Karte der KI**, Monitor 2×3 = **KI-Status**, Instrumentenblock; Aufstieg über Leitern hinten und hinter der Brücke |
-| Antrieb | 14 Elektromotoren (Medium), je einer pro Rad, 8 große Batterien; gelenkt wird wie bei einem Kettenfahrzeug (links und rechts verschieden schnell) |
+| Antrieb | 14 Elektromotoren (Medium), je einer pro Rad, 24 große Batterien im Fahrwerksraum; gelenkt wird wie bei einem Kettenfahrzeug (links und rechts verschieden schnell) |
 | KI | fährt Wegpunkte ab oder patrouilliert im Revier, weicht Hindernissen aus (7 Laser), meidet Wasser und Abhänge, befreit sich, wenn sie feststeckt, bleibt im Gefecht stehen, fährt auf Wunsch nach Hause |
 | Aussehen | Tarnanstrich (Wald: Oliv, Dunkelgrün, Braun, Schwarz) auf allen Blöcken, 45°-Bug-Schräge |
 
@@ -139,7 +139,8 @@ In dieser Reihenfolge. Anfangen jeweils mit **KI Pause an** und **Waffen sperren
    dauernd Chaff, bis die 60 Salven leer sind. Dann bitte melden; ich baue dann eine Sperre ein.
 
 ### Bekannte Schwachstellen
-- **Strom:** Es gibt nur Batterien, keinen Generator. 14 Medium-Motoren ziehen viel Strom (laut Forum etwa so viel
+- **Strom:** Es gibt nur Batterien (24 große), keinen Generator. Den Schiffs-Diesel kann man nicht einfach übernehmen,
+  weil er mit Seewasser kühlt. 14 Medium-Motoren ziehen viel Strom (laut Forum etwa so viel
   wie ein großer Motor leistet). Wie lange die Batterien reichen, ist offen. Für lange Einsätze braucht es einen
   Diesel-Generator; Platz dafür ist im Fahrwerksraum. Die KI fährt sparsam: Im Revier wartet sie an jedem Punkt,
   bei wenig Batterie fährt sie langsamer.

@@ -100,7 +100,8 @@ LASER = [
     ("Laser hinten", (0, 3, HINTEN - 1), R_HINTEN),
 ]
 # Batterien (Battery Large, Anschluss oben +2): im Fahrwerksraum
-BATTERIEN = [(x, BODEN + 1, z) for z in (-6, -22) for x in (-9, -4, 4, 9)]
+# 24 Stueck ueber die ganze Laenge verteilt (nur Batterien, kein Generator: der Schiffs-Diesel kuehlt mit Seewasser)
+BATTERIEN = [(x, BODEN + 1, z) for z in (-6, -22, 28, 12, -38, -50) for x in (-9, -4, 4, 9)]
 # Strom-Anschluesse im Schiff (Batterien, Generatoren): Kabel dorthin gehen im Panzer an die erste Batterie
 SCHIFF_STROM = {(8, -18, -64), (-8, -18, -64), (4, -11, -39), (-4, -11, -39), (4, -11, -46), (-4, -11, -46),
                 (8, -15, -96), (-8, -15, -96)}
