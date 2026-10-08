@@ -8,4 +8,5 @@
 - Lua im Spiel (im Spiel gemessen, Liste in `LUA_STORMWORKS.md`): höchstens 8192 Zeichen je Skript; es fehlen u. a.
   `select`, `print`, `pcall`, `error`, `setmetatable`, `unpack`, `load`, `os`; `table.unpack` geht. Eingänge nicht in
   `onDraw` lesen.
-- Raketensystem ist fertig (Andre): Raketen-Chip, seine Kabel und Teile bei eigenen Änderungen unverändert lassen.
+- Raketen und Raketen-Chip sind seit 07.10. entfernt; an ihre Stelle kommt der ferngesteuerte Jet (nur Flug, Kamera,
+  Aufklärung). Teile ohne r-Attribut haben die Drehung 0,0,1,-1,0,0,0,-1,0 (nicht die Grunddrehung).

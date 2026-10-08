@@ -17,16 +17,20 @@ from lupa.lua53 import LuaRuntime  # noqa: E402
 PR = {n: v for n, v, _ in PROPS}
 
 
-# Lua-Funktionen, die es in Stormworks nicht gibt (04.10.: 'select' lief im Pruefstand und stuerzte im Spiel ab)
-NICHT_IM_SPIEL = ("select", "unpack", "load", "loadstring", "dofile", "require", "rawget", "rawset", "setmetatable",
-                  "getmetatable", "coroutine", "os", "io", "debug")
+# Lua-Funktionen, die es in Stormworks nicht gibt (04.10.: 'select' lief im Pruefstand und stuerzte im Spiel ab;
+# 05.10. im Spiel gemessen, LUA_STORMWORKS.md - table.unpack gibt es, debug nur mit debug.log)
+NICHT_IM_SPIEL = ("select", "unpack", "load", "loadstring", "dofile", "loadfile", "require", "rawget", "rawset",
+                  "rawequal", "rawlen", "setmetatable", "getmetatable", "coroutine", "os", "io", "utf8", "package",
+                  "print", "pcall", "xpcall", "error", "assert", "collectgarbage", "_G", "_VERSION")
 
 
 def sperren(rt):
     g = rt.globals()
     for n in NICHT_IM_SPIEL:
         g[n] = None
-    g.table.unpack = None
+    g.debug = rt.table(log=lambda *a: None)
+    for n in ("atan2", "pow", "log10", "cosh", "sinh", "tanh", "frexp", "ldexp"):
+        g.math[n] = None
 
 
 def load(name, props):

@@ -1,8 +1,10 @@
--- BILD v3.3 - Figet Marena, grosser Bildschirm am Steuersitz (Monitor 9x5), in drei Teilen - nur Anzeige, nichts zum
+-- BILD v3.6 - Figet Marena, grosser Bildschirm am Steuersitz (Monitor 9x5), in drei Teilen - nur Anzeige, nichts zum
 -- Antippen (Andre 03.10.: "muss simpler werden"):
--- links 3D-Radar (Schiff in der Mitte, Bug oben; Luftziele auf einem Strich, je hoeher desto laenger). Zoomt selbst:
---  die groesste Reichweite, bei der alle Ziele darin mindestens ZA Pixel auseinander liegen; Ziele dahinter stehen als
---  Pfeil am Rand (Richtung stimmt). Rotes Quadrat = darauf zielt gerade eine Waffe (Farbpunkte darunter: welche).
+-- links 3D-Radar (Schiff in der Mitte, Bug oben; Luftziele auf einem Strich, je hoeher desto laenger). Reichweite in 4
+--  Stufen 10 / 5 / 2,5 / 1 km (Andre 06.10.: "der Zoom ist zu weit rumgesprungen"), v3.6 wieder automatisch: die
+--  groesste Stufe, bei der keine zwei Seeziele (nicht Luft, hoechstens 'SH' m ueber dem Meer) naeher als ZA Pixel
+--  beieinander liegen - nur Seeziele loesen den Zoom aus (Andre: "Zoom-Stufen koennen nur von Seezielen getriggert
+--  werden"). Ziele dahinter stehen als Pfeil am Rand (Richtung stimmt). Rotes Quadrat = darauf zielt gerade eine Waffe (Farbpunkte darunter: welche).
 -- Mitte Kamera der gewaehlten Waffe (Video ueber die Video Switchboxes, der Chip zeichnet darueber).
 -- Rechts Zielliste (Platz 1-5, L/S = Luft/See, km, Richtung ab Bug, Hoehe; rote Umrandung = wird beschossen, Farb-
 --  striche = welche Waffe; leere Plaetze zeigen ihre Art: 1-2 Luft, 3-4 See, 5 Raketen), darunter gewaehlte Waffe,
@@ -50,15 +52,16 @@ function C(r,g,b,a) st.setColor(r,g,b,a or 255) end
 function R(x,y,w,h) st.drawRectF(x,y,w,h) end
 function T(x,y,s) st.drawText(x,y,s) end
 
-RZ={200,300,500,700,1000,1500,2000,3000,4000,6000,8000,10000}
+RZ={1000,2500,5000,10000}
+ZA=10
+SH=7
 -- Sperrprofile Flak L/R (je 5 Grad Richtung ab Bug ein Zeichen: Grad + 48, aufgerundet) und Lage der Tuerme zum
 -- Physik-Sensor (m: rechts (L gespiegelt), vorn, hoch; tiefster Rohrwinkel Grad) - der Bau-Schritt setzt die Werte ein
 PL='0'
 PR='0'
 GS={0,0}
 FX,FZ,FH,FE=0,0,0,0
-ZA=10
-rr=4000
+rr=10000
 WN={"BATTLE CANNON","AC VORN","FLAK L","FLAK R"}
 WF={{255,140,0},{190,90,255},{0,210,255},{255,255,255}}
 wf=0 hl=false tk=0 hd=0 thr=false wl=0 ma=false ab=false ws=0 fL=0 fR=0 al=0
@@ -191,8 +194,8 @@ function onTick()
 		t.sh=t.a and m.min(h*.55,2.5*m.sqrt(m.max(t.U,0))) or 0
 		t.fr=t.a and (frei(3,t) or frei(4,t))
 	end
-	-- Radar-Zoom: groesste Reichweite, bei der alle Ziele darin mindestens ZA px auseinander liegen
-	if tk%30==1 then
+	-- Radar-Reichweite (jede Sekunde): groesste Stufe, bei der alle Seeziele darin mindestens ZA px auseinander liegen
+	if tk%60==1 then
 		local rx=m.floor(w/3)/2-4
 		rr=RZ[1]
 		for _,r in ipairs(RZ) do
@@ -200,9 +203,9 @@ function onTick()
 			for i=1,4 do
 				for j=i+1,5 do
 					local p,q=Z[i],Z[j]
-					if p.l and q.l and p.d<r and q.d<r then
+					if p.l and q.l and not p.a and not q.a and p.U<SH and q.U<SH and p.d<r and q.d<r then
 						local dx=(p.d*m.sin(p.b*pi2)-q.d*m.sin(q.b*pi2))/r*rx
-						local dy=(p.d*m.cos(p.b*pi2)-q.d*m.cos(q.b*pi2))/r*rx*.42+p.sh-q.sh
+						local dy=(p.d*m.cos(p.b*pi2)-q.d*m.cos(q.b*pi2))/r*rx*.42
 						if dx*dx+dy*dy<ZA*ZA then ok=false end
 					end
 				end

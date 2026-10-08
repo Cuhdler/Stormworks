@@ -14,7 +14,7 @@ from build_schiff import MC, minify, fmt, LUA_LIMIT, LUA_DIR, BUILD  # noqa: E40
 from build_lage import schreiber_props, kopf  # noqa: E402
 import sperrprofil  # noqa: E402
 
-VERSION = "v2.8"
+VERSION = "v2.9"
 # Turm: Name, Drehmitte (x, z), Hoehe der Rohr-Drehachse (y)
 TUERME = [("L", -10, -105, 18), ("R", 10, -105, 18)]
 # v1.3: Vorgabe vom Bildschirm-Chip (Ausgang 'Bedienung', am Anschluss 'Lage'): Waffe 3 = Flak L, 4 = Flak R ->
@@ -57,6 +57,7 @@ PROPS = [
     ("Spur Alpha", 0.1, "v2.0 Flak-Radar: wie stark eine neue Ortung den Ort der Spur verschiebt (kleiner = ruhiger)"),
     ("Spur Beta", 0.005, "v2.0 Flak-Radar: wie stark sie das Tempo der Spur aendert (kleiner = ruhiger, folgt langsamer)"),
     ("Ziel Hoehe fest m", -999, "v2.2: Schiffsziele - so hoch ueber dem Meer zielen statt der Radar-Hoehe (-999 = aus, Flak)"),
+    ("Land ab m", 7, "v2.9: liegt die Vorgabe hoeher ueber dem Meer, ist es ein Bodenziel - dann die Radar-Hoehe statt 'Ziel Hoehe fest m'"),
     ("Radar ueber Physik m", 0, "v2.2: so viele Meter sitzt das Turm-Radar hoeher als der Physik-Sensor (nur fuer 'Ziel Hoehe fest m')"),
     ("Radar vor Physik m", 0, "v2.2: so viele Meter sitzt das Turm-Radar weiter vorn als der Physik-Sensor (Nicken hebt es an)"),
     ("Test Rohre", 0, "1 = Flak aus, Turm nach vorn, beide Rohre und die Kamera 20 Grad hoch (Richtungen pruefen); 2 = dazu Turm 90 Grad nach rechts; danach wieder 0"),

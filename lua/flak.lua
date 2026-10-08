@@ -41,7 +41,8 @@
 --  'Lader Zeit' zu und 2 s auf 'Loaded' warten, sonst von vorn (wie die KI-Panzer im Spiel); waehrenddessen kein
 --  Feuer. 'Lader Zeit s' 0 (Autocannon): Zufuehrung immer an, kein Verschluss.
 -- v2.2 (Kanonen gegen Schiffe): bei flacher Bahn kosten 0,5 m Hoehenfehler am Ziel ~15 m in der Weite - die Radar-Hoehe
---  rauscht zu stark. 'Ziel Hoehe fest m' (> -900): das Ziel liegt so hoch ueber dem Meer (Rumpf); die eigene Hoehe =
+--  rauscht zu stark. 'Ziel Hoehe fest m' (> -900): das Ziel liegt so hoch ueber dem Meer (Rumpf) - v2.9 (Andre 06.10.:
+--  Bodenziele vom Seeradar): nur, wenn die Vorgabe tiefer als 'Land ab m' liegt, sonst die Radar-Hoehe; die eigene Hoehe =
 --  Physik-Sensor + 'Radar ueber Physik m' + 'Radar vor Physik m' * Nick (das Radar sitzt vorn am Bug). Bahnrechnung:
 --  von der Sichtlinie in 0,02-rad-Schritten anheben, bis die Bahn das Ziel erreicht, dann eingrenzen (lange, stark
 --  gebremste Bahnen der Battle Cannon kamen mit der alten Rechnung zu kurz; nicht erreichbar -> keine Loesung).
@@ -206,6 +207,7 @@ function onTick()
 		emn=P('AA tiefster Winkel Grad')/360
 		aoh=P('AA Radar ueber Rohr m')
 		zfh=P('Ziel Hoehe fest m')
+		lnd=P('Land ab m')
 		rvy=P('Radar ueber Physik m')
 		rvz=P('Radar vor Physik m')
 		asr=P('AA Streuung m')
@@ -243,7 +245,7 @@ function onTick()
 		el=20/360
 	elseif ok then
 		local E,Nn,U,vE,vN,vU=N(3),N(4),N(5)+aoh,N(6),N(7),N(8)
-		if zfh>-900 then
+		if zfh>-900 and N(20)<lnd then
 			-- Schiffsziel: feste Hoehe statt Radar-Hoehe; N(11)-N(5) = Hoehe des Physik-Sensors
 			U=zfh-(N(11)-N(5)+rvy+rvz*m.sin(nk*pi2))+aoh
 			vU=0

@@ -21,7 +21,7 @@ from build_lage import kopf  # noqa: E402
 import build_flak  # noqa: E402
 import sperrprofil  # noqa: E402
 
-VERSION = "v1.6"
+VERSION = "v1.7"
 # Kuerzel (Schreiber kB / kA), Name, Waffe im Bildschirm (1 BC, 2 AC), Drehmitte (x, z), Hoehe der Rohr-Drehachse (y),
 # Geschuetz, Turm-Name in den Anschluss-Beschreibungen, Verschluss
 KANONEN = [("B", "BC", 1, 0, 5, 14, "Battle Cannon", "BC-Turm", True),
