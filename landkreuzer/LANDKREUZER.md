@@ -199,3 +199,22 @@ In dieser Reihenfolge. Anfangen jeweils mit **KI Pause an** und **Waffen sperren
 - Wellen-Stummel bei x ±15, y −3, z 35 / 20 / 5 / −10 / −25 / −40 / −55 (Mitte = geschätzter Schwerpunkt).
 - **Chips** liegen auf dem Hauptboden in der Mitte (y 2, z −29 … −17), der Physik-Sensor bei (0, 2, −12).
   Die Batterien sitzen im Fahrwerksraum.
+
+---
+
+## 6. Ideen für später
+
+- **Freund-Kennung per Funk:** Deine Fahrzeuge (Schiff, Heli) senden ihren GPS-Ort auf einer Frequenz. Der Panzer
+  schießt dort nicht hin und zeigt sie auf der Karte. Dafür braucht es Funk-Teile (Antenne, Radio). Die gibt es im
+  Schiff noch nicht, darum kann Claude sie nicht per Datei einbauen. Setzt du sie einmal ein, kann ich die Logik bauen.
+- **Raketen-Abwehr (APS):** Die Flaks schießen schnelle Objekte ab, die auf den Panzer zufliegen. Das ist dieselbe
+  Idee wie die geplante Raketenabwehr des Schiffs (`SCHIFF_UEBERSICHT.md`, Abschnitt 11). Das Lage-Skript ist dafür
+  zu voll und muss erst aufgeteilt werden.
+- **Diesel-Generator** für lange Einsätze: Der Schiffs-Diesel kühlt mit Seewasser. An Land braucht es einen
+  geschlossenen Kühlkreis mit Kühlern.
+- **Befehle vom Schiff:** Wegpunkte für den Panzer auf der Schiffskarte setzen (Funk).
+- **Keep Active Block** (siehe Schiffs-Übersicht): Ohne ihn wird der Panzer nicht simuliert, wenn du weit weg bist.
+  Er bleibt dann stehen.
+- **Weitere Geschütz-Arten** (Rotary/Light Autocannon, Artillerie, Bertha): Deren Spiel-Definitionen sind nicht in
+  der Schiffsdatei. Setzt du je eins auf ein Testfahrzeug und lädst es hoch, kann der Generator sie einbauen.
+
