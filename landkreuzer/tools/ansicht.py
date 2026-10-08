@@ -66,3 +66,51 @@ if __name__ == "__main__":
     pf = sys.argv[1] if len(sys.argv) > 1 else os.path.join(LK, "fahrzeug", "KI Landkreuzer.xml")
     au = sys.argv[2] if len(sys.argv) > 2 else os.path.join(LK, "bilder", "ansicht.png")
     zeichnen(pf, au)
+
+
+def schraeg(pfad, aus, rechts=True):
+    """Schraegbild (isometrisch, von vorn rechts oben): jedes Teil als Wuerfel, hinten zuerst gezeichnet."""
+    import matplotlib
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+    from matplotlib.collections import PolyCollection
+    import matplotlib.colors as mc
+    F = fz.Fahrzeug.lesen(pfad)
+    teile = [t for _, ts in F.koerper for t in ts]
+    sx = 1 if rechts else -1
+    # Projektion: x nach rechts-unten, z nach rechts-oben, y nach oben
+    cx, cz = 0.866, 0.5
+
+    def p(x, y, z):
+        # Blick aus Richtung (+x, +y, +z): naeher = groesseres x+z -> weiter unten
+        return ((sx * x - z) * cx, y - (sx * x + z) * cz)
+    belegt = {t.vp for t in teile}
+    polys, farben = [], []
+    for t in sorted(teile, key=lambda t: t.vp[2] + sx * t.vp[0] + t.vp[1]):
+        x, y, z = t.vp
+        f = mc.to_rgb(farbe(t))
+        flaechen = []
+        if (x, y + 1, z) not in belegt:     # oben
+            flaechen.append(([p(x - .5, y + .5, z - .5), p(x + .5, y + .5, z - .5), p(x + .5, y + .5, z + .5),
+                              p(x - .5, y + .5, z + .5)], 1.0))
+        if (x + sx, y, z) not in belegt:    # Seite (rechts)
+            xs = x + .5 * sx
+            flaechen.append(([p(xs, y - .5, z - .5), p(xs, y + .5, z - .5), p(xs, y + .5, z + .5), p(xs, y - .5, z + .5)], .7))
+        if (x, y, z + 1) not in belegt:     # vorn
+            flaechen.append(([p(x - .5, y - .5, z + .5), p(x + .5, y - .5, z + .5), p(x + .5, y + .5, z + .5),
+                              p(x - .5, y + .5, z + .5)], .85))
+        for poly, hell in flaechen:
+            polys.append(poly)
+            farben.append(tuple(min(1, c * hell) for c in f))
+    # Malreihenfolge: wie die Teile sortiert sind (hinten-links-unten zuerst)
+    reihen = range(len(polys))
+    fig, ax = plt.subplots(figsize=(16, 10))
+    ax.add_collection(PolyCollection([polys[i] for i in reihen], facecolors=[farben[i] for i in reihen], edgecolors="none"))
+    ax.autoscale()
+    ax.set_aspect("equal")
+    ax.axis("off")
+    fig.suptitle("KI Landkreuzer - Schraegbild von vorn %s oben (Raeder fehlen noch: setzt Andre, siehe LANDKREUZER.md)"
+                 % ("rechts" if rechts else "links"))
+    fig.tight_layout()
+    fig.savefig(aus, dpi=90)
+    print("gezeichnet:", aus)

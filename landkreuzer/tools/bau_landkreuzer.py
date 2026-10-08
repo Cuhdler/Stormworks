@@ -435,7 +435,8 @@ class Bau:
 
         def muster(p):
             v = sum(math.sin(a * p[0] + b * p[1] + c * p[2] + ph) for a, b, c, ph in wellen)
-            return farben[0 if v < -0.6 else 1 if v < 0.4 else 2 if v < 1.3 else 3]
+            # Summe von 4 Sinus ~ Normalverteilung (Streuung 1,41): 40 % Oliv, 30 % Dunkelgruen, 20 % Braun, 10 % Schwarz
+            return farben[0 if v < -0.36 else 1 if v < 0.74 else 2 if v < 1.81 else 3]
 
         def neu(t):
             if t.d not in fz.STRUKTUR:
