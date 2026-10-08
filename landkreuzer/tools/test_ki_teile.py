@@ -50,9 +50,10 @@ def test_kleber():
     # Start-Verzoegerung 10 s: vorher weder KI noch Waffen frei, danach beides (Schalter aus = KI darf)
     o = [tick(g, io, {1: 100.0, 3: 200.0}) for _ in range(599)]
     rueck.append(("vor 10 s: KI aus, Waffen aus", not o[-1].get(101) and not o[-1].get(110)))
-    o = tick(g, io, {1: 100.0, 3: 200.0})
-    o = tick(g, io, {1: 100.0, 3: 200.0})
-    rueck.append(("nach 10 s: KI an, Waffen frei", o.get(101) and o.get(110)))
+    o = [tick(g, io, {1: 100.0, 3: 200.0}) for _ in range(3000)]
+    rueck.append(("nach 10 s: KI an, Waffen noch aus (bis 60 s)", o[0].get(101) and not o[-1].get(110)))
+    o = [tick(g, io, {1: 100.0, 3: 200.0}) for _ in range(2)]
+    rueck.append(("nach 60 s: Waffen frei", o[-1].get(101) and o[-1].get(110)))
     o = tick(g, io, {1: 100.0, 3: 200.0}, {1: True, 3: True})
     rueck.append(("Schalter 'Waffen sperren' und 'KI Pause' an: beides aus", not o.get(101) and not o.get(110)))
     o = tick(g, io, {1: 100.0, 3: 200.0}, {4: True})

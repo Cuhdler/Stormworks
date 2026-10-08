@@ -22,7 +22,8 @@ VERSION = "v1.0"
 LASER_NAMEN = ["Laser vorn links", "Laser vorn Mitte", "Laser vorn rechts", "Laser links", "Laser rechts",
                "Laser unten", "Laser hinten"]
 PROPS_KLEBER = [
-    ("Start Verzoegerung s", 10, "Nach dem Spawnen so lange warten, bis die KI faehrt und die Waffen frei sind"),
+    ("Start Verzoegerung s", 10, "Nach dem Spawnen so lange warten, bis die KI faehrt"),
+    ("Waffen Verzoegerung s", 60, "Nach dem Spawnen so lange warten, bis die Waffen frei sind (die KI kennt keinen Freund)"),
 ]
 PROPS_LENKUNG = [
     ("Lenk Faktor", 1, "Lenk-Variante: Lenkwinkel je Kurven-Befehl (1 = voller Befehl gibt 'Lenk max Grad')"),

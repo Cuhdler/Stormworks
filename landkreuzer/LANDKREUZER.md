@@ -100,8 +100,16 @@ haben denselben KI-Chip; die Lenk-Ausgänge sind in der einfachen Variante nur n
 
 ## 3. Bedienung
 
-**Ganz ohne Bedienung:** 10 s nach dem Spawnen fährt er los, schießt selbst und wirft Chaff, wenn ihn ein Radar
-erfasst. Er patrouilliert dann in 400 m um den Spawn-Punkt.
+**Ganz ohne Bedienung:** 10 s nach dem Spawnen fährt er los, nach 60 s sind die Waffen frei. Dann schießt er selbst
+und wirft Chaff, wenn ihn ein Radar erfasst. Er patrouilliert in 400 m um den Spawn-Punkt.
+
+> **Achtung, kein Freund-Feind:** Die KI kennt keine Freunde. Mit freien Waffen beschießt sie **alles, was sich
+> bewegt** und in Reichweite ist (BC bis 6 km). Das gilt auch für dich in Auto, Hubschrauber oder auf dem Schiff.
+> Das Schiff macht es mit Master Arm genauso. Darum gilt:
+> - Zum Testen vorher **„Waffen sperren“ an**.
+> - Nach dem Spawnen hast du 60 s, um wegzukommen.
+> - Willst du zu ihm hin, nähere dich zu Fuß. Ob Radare Menschen sehen, ist ungeprüft.
+> - Idee für später: Freund-Kennung per Funk. Deine Fahrzeuge senden ihren Ort, der Panzer schießt dort nicht hin.
 
 ### Schalter im Instrumentenblock (Brücke, links vom Sitz)
 Die Schalter sind andersherum als auf dem Schiff. **Aus heißt: Die KI darf.**

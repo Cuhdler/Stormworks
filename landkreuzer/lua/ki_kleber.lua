@@ -1,8 +1,8 @@
 -- KI-KLEBER v1.0 - KI Landkreuzer: verbindet Schalter, Waffen und Fahr-KI (ein Skript im KI-Chip, laeuft vor KI_FAHREN).
 -- Andre 08.10.: "komplett autonom" - darum heissen die Schalter im Instrumentenblock andersherum: aus = die KI darf.
 --  Bool 1 'Waffen sperren' (aus = Master Arm an), Bool 3 'KI Pause' (aus = KI faehrt), Bool 4 'Nach Hause'.
--- Nach dem Spawnen wartet alles 'Start Verzoegerung s' (nicht sofort losfahren und schiessen, wenn man noch daneben
--- steht).
+-- Nach dem Spawnen wartet die Fahr-KI 'Start Verzoegerung s', die Waffen 'Waffen Verzoegerung s' (laenger: die KI
+-- kennt keinen Freund - wer nach dem Spawnen noch in der Naehe ist, soll Zeit haben wegzukommen).
 -- Ziel fuer die Fahr-KI: von den Zielen, die der Bildschirm-Chip den beiden Kanonen (BC, AC) gegeben hat, das naechste.
 -- Die Vorgabe des Bildschirm-Chips ist Ost/Nord relativ zu uns (m) und Hoehe ueber dem Meer (m) - hier in die Welt
 -- umgerechnet.
@@ -19,7 +19,7 @@ tk=0
 function onTick()
 	if not ini then
 		ini=1
-		sv=P('Start Verzoegerung s')*60
+		sv,wv=P('Start Verzoegerung s')*60,P('Waffen Verzoegerung s')*60
 	end
 	tk=tk+1
 	local x,z=N(1),N(3)
@@ -38,5 +38,5 @@ function onTick()
 	O(1,los and not B(3))
 	O(4,bd~=nil)
 	O(6,B(4))
-	O(10,los and not B(1))
+	O(10,tk>wv and not B(1))
 end
