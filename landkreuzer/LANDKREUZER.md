@@ -224,7 +224,9 @@ In dieser Reihenfolge. Anfangen jeweils mit **KI Pause an** und **Waffen sperren
 | `tools/test_land_lage.py`, `tools/test_land_kanone.py` | Prüfstände Waffen an Land (mit den Schiffs-Prüfständen, braucht lupa) |
 | `lua/ki_kleber.lua`, `lua/ki_fahren.lua`, `lua/ki_karte.lua`, `lua/ki_status.lua`, `lua/ki_lenkung.lua` | die fünf Skripte im KI-Chip |
 
-**Koordinaten** (Blöcke à 0,25 m): x rechts, y oben, z vorn.
+**Koordinaten** (Blöcke à 0,25 m): x rechts, y oben, z vorn. Das ist ein **Linkssystem** (wie die Welt im Spiel:
+x Ost, y oben, z Nord). Wer Bilder zeichnet, muss darauf achten, sonst ist alles spiegelverkehrt (so war es bei den
+ersten Bildern von rechts).
 - Höhen: Boden des Fahrwerksraums y −4, Hauptboden y 1, Deck vorn y 6, Mitte y 10, hinten y 9.
 - Bug-Keil z 37 … 42: oben 45° vom Deck (y 6) herab, unten 45° vom Boden herauf, Spitze bei y 0,5 (1,25 m über der
   Rumpf-Unterkante). Vorher lag die Spitze unten am Boden, 3 m vor den Vorderrädern; mit kleinen Rädern hätte er
