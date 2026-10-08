@@ -124,7 +124,7 @@ Was an Land anders sein muss, ist in die Chips eingebaut:
 |---|---|
 | `tools/test_land_lage.py` | Panzer auf 100 m Höhe, 2 Bodenfahrzeuge, Hubschrauber, Jet, Gebäude. Kanonen auf Bodenfahrzeugen 329/360 Zeitschritte, nie auf Gebäude oder Luftziel. Flaks nur auf Luftzielen. Ohne die Land-Änderung: 0/360. |
 | `tools/test_land_kanone.py` | BC und AC gegen fahrende Bodenziele am Hang (+45 m bis −25 m, 0,8–3 km): 47–55 % Treffer. Mit der festen Schiffs-Zielhöhe: 0 Treffer. |
-| `tools/test_ki.py` | Fahr-KI in einer Simulation mit Hügeln, See, Klippe, Häusern, Wänden, Sackgasse, Wald, Damm, Tal: 52 Prüfungen, auch 10-Minuten-Dauerläufe ohne Unfall, mit größeren Rädern und Stehen am Hang (Einzelheiten `KI_FAHREN.md`) |
+| `tools/test_ki.py` | Fahr-KI in einer Simulation mit Hügeln, See, Klippe, Häusern, Wänden, Sackgasse, Wald, Damm, Tal: 57 Prüfungen, auch 10-Minuten-Dauerläufe ohne Unfall, mit größeren Rädern und Stehen am Hang (Einzelheiten `KI_FAHREN.md`) |
 | `tools/pruefen.py` | Datei: XML, Teil-Arten, keine doppelten Plätze, Rumpf hängt zusammen, Kabel, Chips |
 | `tools/test_build_mc.py` | Chip-Baukasten baut alle Schiffs-Chips byte-gleich nach |
 

@@ -1164,6 +1164,33 @@ def test_lenkvariante():
         round(s.erreicht[0][0]) if s.erreicht else "-", s.pz.stoesse), bool(s.erreicht) and s.pz.stoesse <= 1)
 
 
+def test_holprig():
+    """Bodenwellen bis etwa +-0,6 m (Wellenlaengen 2-20 m) ueber allen Welten (Strand und Wasser glatt): keine falsche
+    Kante/Wasser-Erkennung - Wand, Huegel, See, Klippe und ein Dauerlauf muessen wie auf glattem Boden klappen."""
+    alt = Welt.__init__
+
+    def init(self, hoehe=None, hmax=20.0, hind=(), name=""):
+        alt(self, hoehe, hmax, hind, name)
+        h0 = self.h
+
+        def h(x, z):
+            b = h0(x, z)
+            if b < 0.5:
+                return b
+            return b + 0.3 * (math.sin(x * 1.7) * math.sin(z * 1.3) + 0.6 * math.sin(x * 0.37 + z * 0.29)
+                              + 0.4 * math.sin(x * 3.1 + z * 2.3))
+        self.h = h
+        self.hmax = hmax + 0.6
+    Welt.__init__ = init
+    try:
+        print("   (holpriger Boden:)")
+        for t in (test_wand, test_huegel, test_see, test_klippe):
+            t()
+        dauerlauf(2)
+    finally:
+        Welt.__init__ = alt
+
+
 def test_grosse_raeder():
     """Andre waehlt die Raeder erst im Spiel: mit 12er-Raedern steht der Panzer 0,6 m hoeher. Mit den Standard-
     Eigenschaften (Hoehen 0 = Automatik aus dem Bug-Laser) muss die KI genauso Wand, Huegel, Klippe und See schaffen."""
@@ -1189,7 +1216,7 @@ def test_grosse_raeder():
 TESTS = [test_groesse, test_karte, test_aus, test_bodenlaser, test_hand, test_batterie, test_pause, test_heim, test_lernen, test_kampf,
          test_wegpunkte, test_wand,
          test_huegel, test_fest, test_sackgasse, test_see, test_klippe, test_revier, test_dauerlauf,
-         test_nie_falsch_gelernt, test_hang, test_gelaende, test_lenkvariante, test_grosse_raeder]
+         test_nie_falsch_gelernt, test_hang, test_gelaende, test_lenkvariante, test_holprig, test_grosse_raeder]
 
 if __name__ == "__main__":
     wahl = sys.argv[1:]
