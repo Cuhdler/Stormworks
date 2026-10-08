@@ -3,9 +3,12 @@
 -- (z. B. ob ein Laser 0 meldet = nicht verkabelt / kein Strom).
 -- Eingang (Composite): derselbe wie KI_FAHREN (Zahl 1-3 Ort, 9-15 Laser, 16 Batterie; Bool 1 KI an, 2 Sitz besetzt,
 --  4 Ziel, 6 Nach Hause, 10 Master Arm, 11 Schutzzone sperrt vom Klebe-Skript), ueberschrieben: Zahl 26 Zustand, 27 Zahl Wegpunkte, 28 Soll-
---  Tempo, 29 aktueller Wegpunkt, 30 Links, 31 Rechts, 32 Tempo vorwaerts (von KI_FAHREN gerechnet); Bool 7 Fahrt
+--  Tempo, 29 aktueller Wegpunkt, 30 Lenkbefehl, 31 Fahrbefehl (roh, + rechts / + vor), 32 Tempo vorwaerts (von
+--  KI_FAHREN gerechnet); Bool 7 Fahrt
 --  aktiv, 9 Revier
 -- Video: Monitor 2x3 (64 x 96 Pixel, hochkant) und Helm des Steuersitzes (breit: dort nur eine Zeile unten)
+-- Unten zwischen den Motor-Balken: N Nick (+ = Bug hoch), R Roll (+ = rechts tief), K Kurs (Grad, 0 Nord, 90 Ost) - so,
+-- wie die Fahr-KI sie sieht (mit 'Nick/Roll/Kompass Richtung'). Zum Pruefen der Vorzeichen am Hang.
 N=input.getNumber
 B=input.getBool
 st=screen
@@ -13,13 +16,18 @@ ZN={'AUS','HAND','WEGPUNKT','REVIER','AUSWEICHEN','ZURUECK','KAMPF','BATTERIE','
 L={'VL','VM','VR','LI','RE','UN','HI'}
 W={}
 function onTick()
-	for i=1,31 do W[i]=N(i) end
+	if not ini then
+		ini=1
+		NR,RR,KR=property.getNumber('Nick Richtung'),property.getNumber('Roll Richtung'),property.getNumber('Kompass Richtung')
+	end
+	for i=1,32 do W[i]=N(i) end
+	ni,ro,ku=W[5]*NR*360,W[6]*RR*360,(W[4]*KR*360)%360
 	ki,sb,zi,hm,fa,wa,rv,sz=B(1),B(2),B(4),B(6),B(7),B(10),B(9),B(11)
 end
 function f(v)
 	if v<=0 then return '--' end
 	if v>=1000 then return '>1k' end
-	return string.format('%.0f',v)
+	return string.format(v<10 and '%.1f' or '%.0f',v)
 end
 function onDraw()
 	if not W[1] then return end
@@ -58,9 +66,12 @@ function onDraw()
 		local x=(i<=4) and 1 or 33
 		st.drawText(x,y,L[i]..' '..f(W[8+i] or 0))
 	end
-	-- Motoren: zwei Balken (links/rechts), Mitte = 0
+	st.setColor(200,200,120)
+	st.drawText(9,81,string.format('N%+.0f R%+.0f',ni,ro))
+	st.drawText(9,88,string.format('K%03.0f',ku))
+	-- Motoren: zwei Balken (links/rechts, + = vorwaerts, wie die KI es meint - unabhaengig von der Einbau-Richtung)
 	for k=0,1 do
-		local v=math.max(-1,math.min(1,W[30+k] or 0))
+		local v=math.max(-1,math.min(1,(W[31] or 0)+(k==0 and 1 or -1)*(W[30] or 0)))
 		local x=k==0 and 2 or w-6
 		st.setColor(60,60,60)
 		st.drawRectF(x,h-16,4,15)

@@ -109,7 +109,7 @@ def test_lenkung():
 
 def test_status():
     rueck = []
-    g, io = lade("ki_status", {})
+    g, io = lade("ki_status", {n: v for n, v, _ in build_ki.props()})
     for w, h in ((64, 96), (288, 160)):
         io["w"], io["h"] = w, h
         ok = True

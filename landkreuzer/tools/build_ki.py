@@ -107,9 +107,10 @@ def build(src=None, eigen=None):
     w = mc.comp(41, (-3, 1.5), {"count": 1, "offset": 4}, [("inc", (w, 0)), (rd(karte, 4, (-4, -1.5), 29), 0)])
     next(c for c in mc.comps if c[1] == fahren)[3].append((w, 0))
 
-    # --- KI_STATUS: Eingang von KI_FAHREN + dessen Ausgang (Zahl 26-32, Bool 7-9) -> Monitor 2x3 und Helm
+    # --- KI_STATUS: Eingang von KI_FAHREN + dessen Ausgang (Zahl 26-32: Zustand, Zahl Wegpunkte, Soll-Tempo,
+    #     aktueller Wegpunkt, Lenk- und Fahrbefehl roh, Tempo; Bool 7-9) -> Monitor 2x3 und Helm
     st = mc.comp(40, (1, -2), {"count": 7, "offset": 25}, [("inc", (w, 0))] + [
-        (rd(fahren, ch, (-1, -1 - .5 * j)), 0) for j, ch in enumerate((2, 9, 27, 10, 0, 1, 31))])
+        (rd(fahren, ch, (-1, -1 - .5 * j)), 0) for j, ch in enumerate((2, 9, 27, 10, 28, 29, 31))])
     st = mc.comp(41, (1, -3), {"count": 3, "offset": 6}, [("inc", (st, 0))] + [
         (rd(fahren, ch, (-1, -4.5 - .5 * j), 29), 0) for j, ch in enumerate((0, 1, 2))])
     status = mc.comp(56, (3, -2), {"script": src["ki_status"]}, [(st, 0)])

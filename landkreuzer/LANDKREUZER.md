@@ -173,8 +173,14 @@ Der Monitor zeigt:
 
 - das Tempo (ist/soll), den Wegpunkt, die Batterie, ob die Waffen frei sind
 - die **7 Laser-Entfernungen**: VL, VM, VR = vorn links/Mitte/rechts, LI, RE = Seiten, UN = unten, HI = hinten.
-  „--“ heißt: der Laser meldet nichts.
-- zwei Balken für die Motoren links und rechts.
+  „--“ heißt: der Laser meldet 0 (kein Kabel oder kein Strom), „>1K“ heißt: frei (nichts in 1 km).
+- **N** Nick (+ = Bug hoch), **R** Roll (+ = rechte Seite tief), **K** Kurs in Grad (0 Nord, 90 Ost) – so, wie die
+  KI es sieht. Damit prüfst du die Vorzeichen: auf einen Hang stellen, rechte Seite tief → muss R+ zeigen; Bug bergauf
+  → N+; nach Norden fahren → K um 0. Stimmt eins nicht, im KI-Chip „Roll Richtung“, „Nick Richtung“ bzw.
+  „Kompass Richtung“ umdrehen (1 ↔ −1).
+- zwei Balken für die Motoren links und rechts (grün = vorwärts, rot = rückwärts, wie die KI es meint).
+
+Vorschau beider Monitore: `bilder/anzeigen.png` (gezeichnet mit `tools/anzeige_bild.py`).
 
 Im Helm steht dasselbe kurz in einer Zeile unten.
 
@@ -240,6 +246,7 @@ In dieser Reihenfolge. Anfangen jeweils mit **KI Pause an** und **Waffen sperren
 | `tools/raeder.py` | Räder kopieren |
 | `tools/pruefen.py` | Prüfungen der Datei (läuft nach jedem Bau) |
 | `tools/ansicht.py` | Bilder zeichnen (braucht matplotlib) |
+| `tools/anzeige_bild.py` | Vorschau der Monitore Karte und KI-Status (braucht lupa und pillow) |
 | `tools/test_ki.py` | Prüfstand der Fahr-KI (Simulation, braucht lupa) |
 | `KI_FAHREN.md` | **alles zur Fahr-KI**: Verhalten, Kanäle, alle Eigenschaften mit Erklärung, Grenzen, Prüfliste im Spiel |
 | `tools/ki_props.py` | Eigenschaften der Fahr-KI und Karte (Standardwerte) |
