@@ -289,6 +289,29 @@ In dieser Reihenfolge. Anfangen jeweils mit **KI Pause an** und **Waffen sperren
    leert, wirft der Panzer Chaff nur, wenn seine Radare auch einen Gegner sehen. Wirft er trotzdem ständig (sobald
    irgendein Ziel da ist), bitte melden.
 
+### Fehlersuche: wenn du das siehst …
+
+Alle Eigenschaften stehen im **KI-Chip** (im Editor anklicken). Nach dem Ändern speichern und neu spawnen.
+
+| Du siehst | Dann |
+|---|---|
+| Status zeigt **LASER?**, fährt nicht | ein Laser meldet 0: Status-Zeilen VM/UN prüfen; Laser-Kabel/Strom im Editor ansehen |
+| Status-Monitor bleibt **dunkel** | hat der Monitor 2×3 einen Ein-Schalter-Eingang? Kabel vom KI-Chip „Immer an“ dorthin |
+| Bei W fährt er **rückwärts** | „Rad Richtung links“ und „Rad Richtung rechts“ umdrehen (1 ↔ −1) |
+| Er **dreht statt zu fahren**, rot **L!** oder **R!** | diese Seite in „Rad Richtung links/rechts“ umdrehen |
+| Fährt zum Wegpunkt in **falscher Richtung**/Spirale | Status K beim Fahren nach Norden ≈ 0? Sonst „Kompass Richtung“ umdrehen |
+| Am Hang **GEFAHR**, obwohl flach, oder dreht falsch | Status N/R prüfen (Bug hoch = N+, rechts tief = R+), sonst „Nick/Roll Richtung“ umdrehen |
+| Bleibt vor jedem **sanften Hügel** stehen | „Steigung max Grad“ höher (30 → 35) |
+| **Fährt zu schnell** an Hindernisse | „Tempo m/s“ kleiner (8 → 6) |
+| **Dreht zu träge** | „Lenk Staerke“ höher; Lenk-Variante: „Lenk Faktor“ höher |
+| **Schaukelt/pendelt** beim Geradeausfahren | „Lenk Staerke“ kleiner (4 → 2) |
+| Lenk-Variante lenkt **falsch herum** | „Lenk Richtung“ = −1 |
+| **Batterie** schnell leer (Restzeit im Status) | „Tempo m/s“ kleiner, „Patrouille Pause s“ länger, „Heim Batterie“ höher |
+| Schießt **nicht** | Status: WAFFEN FREI? SCHUTZZONE? Schalter „Waffen sperren“ aus? 60 s nach dem Spawnen? |
+| Schießt auf **eigene Fahrzeuge** | dort einen Freund-Punkt setzen (Karte, Finger 1,5 s halten) oder „Schutzzone m“ größer |
+| Wirft **dauernd Chaff** | melden (Radarwarner sieht vermutlich die eigenen Radare) |
+| Steckt im **Wald** fest | Wegpunkte um den Wald setzen; Lenk-Variante streift weniger |
+
 ### Bekannte Schwachstellen
 - **Strom:** Es gibt nur Batterien (24 große), keinen Generator. Den Schiffs-Diesel kann man nicht einfach übernehmen,
   weil er mit Seewasser kühlt. 14 Medium-Motoren ziehen viel Strom (laut Forum etwa so viel
