@@ -181,6 +181,9 @@ ankommt. Der Monitor zeigt:
   | LASER? | Laser vorn Mitte oder Bug-Laser meldet 0 (kein Strom, kein Kabel, nicht eingeschaltet): die KI ist blind und fährt nicht |
 
 - das Tempo (ist/soll), den Wegpunkt, die Batterie, ob die Waffen frei sind
+- hinter der Batterie die **Restzeit**: „BAT 83% 45M“ = bei diesem Verbrauch noch etwa 45 Minuten bis leer (gemessen
+  alle 10 s; nach Hause fährt er schon bei 40 %). So siehst du beim ersten Test, wie lange er durchhält – bitte
+  aufschreiben, dann kann ich Tempo und Pausen anpassen.
 - die **7 Laser-Entfernungen**: VL, VM, VR = vorn links/Mitte/rechts, LI, RE = Seiten, UN = unten, HI = hinten.
   „--“ heißt: der Laser meldet 0 (kein Kabel oder kein Strom), „>1K“ heißt: frei (nichts in 1 km).
 - **N** Nick (+ = Bug hoch), **R** Roll (+ = rechte Seite tief), **K** Kurs in Grad (0 Nord, 90 Ost) – so, wie die

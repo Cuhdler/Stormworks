@@ -132,9 +132,23 @@ def test_status():
     return rueck
 
 
+def test_status_batterie():
+    """Restzeit: Batterie faellt 1 % je Minute -> bei 87 % etwa 87 Minuten."""
+    g, io = lade("ki_status", {n: v for n, v, _ in build_ki.props()})
+    io["w"], io["h"] = 64, 96
+    b = 0.9
+    for _ in range(3 * 3600):
+        b -= 0.01 / 3600
+        tick(g, io, {1: 1.0, 16: b, 26: 2.0, 32: 5.0}, {1: True})
+    io["draw"] = []
+    g.onDraw()
+    t = [d[3] for d in io["draw"] if d[0] == "drawText" and "BAT" in str(d[3])]
+    return [("Batterie-Restzeit (1 %%/min, %.0f %%): %s" % (b * 100, t), t and t[0].endswith(" %dM" % round(b / 0.01)))]
+
+
 def main():
     ok = True
-    for t in (test_kleber, test_lenkung, test_status):
+    for t in (test_kleber, test_lenkung, test_status, test_status_batterie):
         for txt, g in t():
             print("%-75s %s" % (txt, "ok" if g else "FEHLER"))
             ok &= bool(g)

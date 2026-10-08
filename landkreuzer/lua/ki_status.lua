@@ -9,6 +9,8 @@
 -- Video: Monitor 2x3 (64 x 96 Pixel, hochkant) und Helm des Steuersitzes (breit: dort nur eine Zeile unten)
 -- Unten zwischen den Motor-Balken: N Nick (+ = Bug hoch), R Roll (+ = rechts tief), K Kurs (Grad, 0 Nord, 90 Ost) - so,
 -- wie die Fahr-KI sie sieht (mit 'Nick/Roll/Kompass Richtung'). Zum Pruefen der Vorzeichen am Hang.
+-- Batterie-Restzeit: alle 10 s wird gemessen, wie viel Ladung weg ist (geglaettet); 'BAT 83% 45M' = bei diesem
+-- Verbrauch noch etwa 45 Minuten bis leer (bis 'nach Hause' bei 'Heim Batterie' entsprechend weniger).
 -- Rot 'L!' / 'R!' hinter dem Kurs: die KI hat gemerkt, dass die linke/rechte Seite falsch herum dreht, und es selbst
 -- umgedreht (Bool 13/14) - dann im KI-Chip 'Rad Richtung links/rechts' dauerhaft umdrehen.
 N=input.getNumber
@@ -25,6 +27,13 @@ function onTick()
 	for i=1,32 do W[i]=N(i) end
 	ni,ro,ku=W[5]*NR*360,W[6]*RR*360,(W[4]*KR*360)%360
 	ul,ur=B(13),B(14)
+	-- Batterie-Verbrauch je Tick (alle 600 Ticks gemessen, geglaettet)
+	tk=(tk or 0)+1
+	if tk%600==0 then
+		local b=W[16]
+		if b0 and b>0 and b<=b0 then dv=dv and dv*.7+(b0-b)/600*.3 or (b0-b)/600 end
+		b0=b
+	end
 	ki,sb,zi,hm,fa,wa,rv,sz=B(1),B(2),B(4),B(6),B(7),B(10),B(9),B(11)
 end
 function f(v)
@@ -58,7 +67,7 @@ function onDraw()
 	st.drawText(1,15,string.format('V %.1f/%.0f',W[32] or 0,W[28] or 0))
 	st.drawText(1,22,'WP '..math.floor(W[29] or 0)..'/'..math.floor(W[27] or 0)..(rv and ' REV' or ''))
 	local b=W[16] or 0
-	st.drawText(1,29,'BAT '..(b>0 and string.format('%.0f%%',b*100) or '?'))
+	st.drawText(1,29,'BAT '..(b>0 and string.format('%.0f%%',b*100) or '?')..(dv and dv>0 and b>0 and string.format(' %.0fM',b/dv/3600) or ''))
 	st.setColor(wa and 255 or sz and 80 or 120,wa and 80 or sz and 160 or 120,wa and 80 or sz and 255 or 120)
 	st.drawText(1,36,wa and 'WAFFEN FREI' or sz and 'SCHUTZZONE' or 'WAFFEN AUS')
 	if zi then st.setColor(255,160,0) st.drawText(1,43,'ZIEL') end
