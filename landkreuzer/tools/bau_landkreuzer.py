@@ -46,7 +46,7 @@ MODULE = [
     ("BRUECKE", (-14, 15, -16), (14, 34, -3), (0, 0, 0), [17, 27]),    # Bruecke: Sitz, Monitore, Fenster, Tueren, Dachkamera
     ("HECK", (-15, 6, -110), (15, 14, -76), (0, -5, 45), [8, 10, 12, 15, 9, 11, 2, 16]),   # 2 Flak-Tuerme + 48 Trommeln
 ]
-NICHT_MIT = ("inventory_", "sign_", "solid_rocket", "microprocessor")
+NICHT_MIT = ("inventory_", "sign_", "microprocessor")   # (die 2 solid_rocket_small auf dem Bruecken-Dach tragen die Kamera)
 
 # Rumpf: x -15..15, z HINTEN..VORN; Decks je Abschnitt (z von, z bis, Deck-Hoehe)
 X0, X1 = -15, 15
@@ -82,7 +82,7 @@ BRUECKE_TEILE = {"sitz": ("seat_compact", (0, 17, -10)), "monitor": ("monitor_9"
 # Mast-Radare: Schiff -> Panzer um MAST verschoben (Anordnung wie im Schiff, Lage-Chip unveraendert)
 MAST = (0, -10, 27)
 RADARE_SCHIFF = [(0, 42, -56), (0, 42, -46), (0, 36, -44), (0, 36, -58), (-5, 36, -51), (5, 36, -51)]
-MAST_TURM = ((-1, 11, -25), (1, 30, -23))          # Turm aus Bloecken (lo, hi)
+MAST_TURM = ((-1, 11, -25), (1, 31, -23))          # Turm aus Bloecken (lo, hi)
 
 # Laser der Fahr-KI: (Name, Position, Drehung) - Strahl = lokale +y-Achse (wie der Laser an der Turm-Kamera)
 R_VORN = (1, 0, 0, 0, 0, 1, 0, -1, 0)
@@ -704,6 +704,8 @@ def main():
     alt, neu = b.kabel_bauen()
     txt = b.text()
     G = b.pruefen(txt)
+    import pruefen
+    fehler, _ = pruefen.pruefe(txt, b.F)
     os.makedirs(os.path.dirname(AUS_DATEI), exist_ok=True)
     with open(AUS_DATEI, "w", encoding="utf-8", newline="") as f:
         f.write(txt)
@@ -714,6 +716,8 @@ def main():
     print("Rad-Stummel:", len(b.stummel), " Datei:", AUS_DATEI, "(%d KB)" % (len(txt) // 1024))
     for m in b.meldungen:
         print("HINWEIS:", m)
+    if fehler:
+        sys.exit("Pruefung mit Fehlern - Datei trotzdem geschrieben")
 
 
 if __name__ == "__main__":
