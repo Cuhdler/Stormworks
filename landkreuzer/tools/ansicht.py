@@ -1,7 +1,8 @@
 """Zeichnet ein Stormworks-Fahrzeug von oben, von der Seite und von vorn (PNG), zum Ansehen ohne Spiel.
 
-Aufruf (mit matplotlib): python landkreuzer/tools/ansicht.py [Fahrzeug.xml] [Ausgabe.png]
-Standard: landkreuzer/fahrzeug/KI Landkreuzer.xml -> landkreuzer/bilder/ansicht.png
+Aufruf (mit matplotlib): python landkreuzer/tools/ansicht.py              alle Bilder in landkreuzer/bilder neu
+                         python landkreuzer/tools/ansicht.py Fahrzeug.xml [Ausgabe.png]   nur die drei Ansichten
+Blickrichtungen wie im Spiel (nicht gespiegelt): die Kennung KL-1 ist auf beiden Seiten von aussen lesbar.
 Jedes Teil ist ein Kaestchen an seiner Position (0,25 m); Bloecke in ihrer Farbe, Bauteile nach Art eingefaerbt.
 """
 import os
@@ -41,18 +42,22 @@ def zeichnen(pfad, aus):
     F = fz.Fahrzeug.lesen(pfad)
     teile = [t for _, ts in F.koerper for t in ts]
     fig, ax = plt.subplots(3, 1, figsize=(14, 15), gridspec_kw={"height_ratios": [1.1, 1, 0.9]})
-    for a, (i, j, titel) in zip(ax, ((2, 0, "von oben (vorn rechts)"), (2, 1, "von links (vorn rechts)"),
-                                     (0, 1, "von vorn"))):
+    # Blickrichtungen wie im Spiel (x rechts, y oben, z vorn; Linkssystem): von oben mit Bug rechts liegt die linke
+    # Seite oben, von rechts mit Bug rechts, von vorn liegt die rechte Seite links im Bild
+    sichten = (("von oben (Bug rechts, linke Seite oben)", lambda v: (v[2], -v[0]), lambda t: t.vp[1], "z (vorn)", "-x (links)"),
+               ("von rechts (Bug rechts)", lambda v: (v[2], v[1]), lambda t: t.vp[0], "z (vorn)", "y (oben)"),
+               ("von vorn (rechte Seite links im Bild)", lambda v: (-v[0], v[1]), lambda t: t.vp[2], "-x (links)",
+                "y (oben)"))
+    for a, (titel, proj, tiefe, xl, yl) in zip(ax, sichten):
+        a.set_xlabel(xl)
+        a.set_ylabel(yl)
         # nach Tiefe sortieren, damit das Naeherliegende oben liegt
-        k = ({0: 1, 1: 0, 2: 1}[i] if titel != "von vorn" else 2)
-        tiefe = (lambda t: t.vp[1]) if titel.startswith("von oben") else (
-            (lambda t: -t.vp[0]) if titel.startswith("von links") else (lambda t: t.vp[2]))
         ts = sorted(teile, key=tiefe)
-        a.scatter([t.vp[i] for t in ts], [t.vp[j] for t in ts], c=[farbe(t) for t in ts], marker="s", s=16, linewidths=0)
+        pts = [proj(t.vp) for t in ts]
+        a.scatter([q[0] for q in pts], [q[1] for q in pts], c=[farbe(t) for t in ts], marker="s", s=16, linewidths=0)
         a.set_aspect("equal")
         a.set_title(titel)
         a.grid(alpha=.2)
-        _ = k
     ax[0].legend(handles=[Patch(color=f, label=l) for _, f, l in ARTEN], loc="upper left", fontsize=8, ncol=4)
     fig.suptitle("%s - %d Teile, %d Koerper, %d Kabel (1 Kaestchen = 0,25 m)" % (
         os.path.basename(pfad), len(teile), len(F.koerper), len(F.kabel)))
@@ -60,12 +65,6 @@ def zeichnen(pfad, aus):
     os.makedirs(os.path.dirname(aus), exist_ok=True)
     fig.savefig(aus, dpi=80)
     print("gezeichnet:", aus)
-
-
-if __name__ == "__main__":
-    pf = sys.argv[1] if len(sys.argv) > 1 else os.path.join(LK, "fahrzeug", "KI Landkreuzer.xml")
-    au = sys.argv[2] if len(sys.argv) > 2 else os.path.join(LK, "bilder", "ansicht.png")
-    zeichnen(pf, au)
 
 
 def schraeg(pfad, aus, rechts=True, markiert=(), titel=None, ausschnitt=None):
@@ -82,8 +81,9 @@ def schraeg(pfad, aus, rechts=True, markiert=(), titel=None, ausschnitt=None):
     cx, cz = 0.866, 0.5
 
     def p(x, y, z):
-        # Blick aus Richtung (+x, +y, +z): naeher = groesseres x+z -> weiter unten
-        return ((sx * x - z) * cx, y - (sx * x + z) * cz)
+        # Blick aus Richtung (sx, +1, +1), wie eine Kamera im Spiel (Linkssystem: x rechts, y oben, z vorn).
+        # Von vorn rechts liegt der Bug rechts im Bild, von vorn links links. Naeher = groesseres sx*x+z -> weiter unten
+        return ((sx * z - x) * cx, y - (sx * x + z) * cz)
     belegt = {t.vp for t in teile}
     polys, farben = [], []
     if ausschnitt:
@@ -118,3 +118,30 @@ def schraeg(pfad, aus, rechts=True, markiert=(), titel=None, ausschnitt=None):
     fig.tight_layout()
     fig.savefig(aus, dpi=90)
     print("gezeichnet:", aus)
+
+
+def alle_bilder():
+    """Alle Bilder in landkreuzer/bilder neu zeichnen (nach bau_landkreuzer.py und bau_landkreuzer.py --lenkung)."""
+    sys.path.insert(0, HIER)
+    import bau_landkreuzer as B
+    fzg = os.path.join(LK, "fahrzeug")
+    bi = os.path.join(LK, "bilder")
+    einfach, lenk = os.path.join(fzg, "KI Landkreuzer.xml"), os.path.join(fzg, "KI Landkreuzer Lenkung.xml")
+    zeichnen(einfach, os.path.join(bi, "ansicht.png"))
+    schraeg(einfach, os.path.join(bi, "schraeg.png"))
+    schraeg(einfach, os.path.join(bi, "schraeg_links.png"), rechts=False)
+    if os.path.exists(lenk):
+        schraeg(lenk, os.path.join(bi, "schraeg_lenkung.png"),
+                titel="KI Landkreuzer Lenkung - vordere und hintere Achsen auf Gelenken (Raeder setzt Andre)")
+    schraeg(einfach, os.path.join(bi, "rad_stummel.png"), rechts=False, markiert={(-B.X1, B.ACHSE_Y, B.RAD_Z[0])},
+            ausschnitt=((-16, -5, 10), (0, 12, 48)),
+            titel="Hier das EINE Rad ansetzen: pinker Wellen-Stummel links vorn (x -15, y -3, z 35), Blick von vorn links")
+
+
+if __name__ == "__main__":
+    if len(sys.argv) > 1:
+        pf = sys.argv[1]
+        au = sys.argv[2] if len(sys.argv) > 2 else os.path.join(LK, "bilder", "ansicht.png")
+        zeichnen(pf, au)
+    else:
+        alle_bilder()

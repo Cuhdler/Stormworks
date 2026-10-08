@@ -478,6 +478,12 @@ class Bau:
         wellen = [(0.11, 0.07, 0.05, 1.3), (0.05, 0.13, 0.09, 4.1), (0.08, 0.04, 0.12, 2.2), (0.15, 0.10, 0.03, 5.7)]
 
         def muster(p):
+            # Schlamm: unten am Rumpf (Spritzer der Raeder), nach oben immer seltener, fleckig
+            h = p[1] - BODEN
+            if h < 6:
+                k = math.sin(0.9 * p[2] + 0.3 * p[0]) * math.sin(0.37 * p[2] + 1.1 * p[1] + 0.5) * 0.5 + 0.5
+                if k > h / 6:
+                    return "6B5A3E" if (p[0] + p[2] + p[1]) % 3 else "4A3B28"
             v = sum(math.sin(a * p[0] + b * p[1] + c * p[2] + ph) for a, b, c, ph in wellen)
             # Summe von 4 Sinus ~ Normalverteilung (Streuung 1,41): 40 % Oliv, 30 % Dunkelgruen, 20 % Braun, 10 % Schwarz
             return farben[0 if v < -0.36 else 1 if v < 0.74 else 2 if v < 1.81 else 3]

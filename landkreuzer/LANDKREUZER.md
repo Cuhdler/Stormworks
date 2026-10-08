@@ -16,14 +16,14 @@ fahren – quasi ein KI-Panzer“.
 | | |
 |---|---|
 | Größe | Rumpf 28 m lang (mit Bug-Schräge), mit AC-Rohr 29 m; 7,75 m breit + Räder ≈ 9–10 m; Mast ≈ 9 m über dem Boden des Rumpfs |
-| Teile | ca. 17 000, 25 Körper, ca. 390 Kabel, 9 Chips |
+| Teile | ca. 17 000 (ein Drittel der Figet Marena mit ≈ 56 000), 25 Körper, ca. 410 Kabel, 9 Chips |
 | Waffen | vorn **Heavy-Autocannon-Turm** (AP), dahinter erhöht **Battle-Cannon-Turm mit 2 Rohren** (HE), hinten **2 Flak-Türme** mit je 2 Heavy Autocannons (Splitter, Zeitzünder) |
 | Schutz | **Auto-Chaff**: 8 Werfer-Ketten mit je 15 Werfern (wie auf dem Schiff), Radarwarner auf dem Brückendach |
 | Ortung | **6 Phalanx-Radare** am Mast (wie auf der Figet Marena), dazu ein Radar auf jedem Turm, Dachkamera |
 | Brücke | die Brücke der Figet Marena: Steuersitz, Hauptmonitor 9×5 (Radar, Kamera, Zielliste), Monitor 3×3 = **Karte der KI**, Monitor 2×3 = **KI-Status**, Instrumentenblock; Aufstieg über Leitern hinten und hinter der Brücke |
 | Antrieb | 14 Elektromotoren (Medium), je einer pro Rad, 24 große Batterien im Fahrwerksraum; gelenkt wird wie bei einem Kettenfahrzeug (links und rechts verschieden schnell) |
 | KI | fährt Wegpunkte ab oder patrouilliert im Revier, weicht Hindernissen aus (7 Laser), meidet Wasser und Abhänge, befreit sich, wenn sie feststeckt, bleibt im Gefecht stehen, fährt auf Wunsch nach Hause |
-| Aussehen | Tarnanstrich (Wald: Oliv, Dunkelgrün, Braun, Schwarz) auf allen Blöcken, 45°-Bug-Schräge, Kennung „KL-1“ weiß an beiden Seiten |
+| Aussehen | Tarnanstrich (Wald: Oliv, Dunkelgrün, Braun, Schwarz) auf allen Blöcken, unten Schlamm-Spritzer, 45°-Bug-Schräge, Kennung „KL-1“ weiß an beiden Seiten |
 
 ### Woher die Teile kommen
 Alles, was im Schiff schon funktioniert, ist **genau kopiert**: gleiche Teile, gleiche Abstände, gleiche Kabel,
@@ -177,6 +177,10 @@ In dieser Reihenfolge. Anfangen jeweils mit **KI Pause an** und **Waffen sperren
   bei wenig Batterie fährt sie langsamer.
 - **Größe:** Der Panzer ist sehr groß (≈ 28 × 10 m). Eine kleinere Werkbank reicht nicht.
 - **Räder:** Welches Rad am besten passt, musst du ausprobieren (siehe oben).
+- **Licht:** Er hat keine Scheinwerfer, weil es im Schiff keine Licht-Teile gibt (siehe „Woher die Teile kommen“).
+  Die KI fährt nachts trotzdem, denn die Laser sehen im Dunkeln. Willst du ihn nachts sehen: im Editor 2–4
+  Scheinwerfer vorn an die Bug-Schräge setzen, Strom von einer Batterie, an einen Knopf in der Brücke. Laut Forum
+  machen viele Lichter große Fahrzeuge langsamer, also lieber wenige.
 
 ---
 
@@ -200,6 +204,8 @@ In dieser Reihenfolge. Anfangen jeweils mit **KI Pause an** und **Waffen sperren
 - Höhen: Boden des Fahrwerksraums y −4, Hauptboden y 1, Deck vorn y 6, Mitte y 10, hinten y 9.
 - Bug-Schräge z 37 … 47. Brücken-Boden y 15.
 - Wellen-Stummel bei x ±15, y −3, z 35 / 20 / 5 / −10 / −25 / −40 / −55 (Mitte = geschätzter Schwerpunkt).
+- **Schwerpunkt** (geschätzt, jedes Teil gleich schwer): y ≈ 5, also gut 2,5 m über dem Boden bei ≈ 8,5 m Spur.
+  Er kippt erst bei sehr steilen Seitenhängen (über 45°); Ballast ist nicht nötig. Die KI meidet steile Hänge ohnehin.
 - **Chips** liegen auf dem Hauptboden in der Mitte (y 2, z −29 … −17), der Physik-Sensor bei (0, 2, −12).
   Die Batterien sitzen im Fahrwerksraum.
 
