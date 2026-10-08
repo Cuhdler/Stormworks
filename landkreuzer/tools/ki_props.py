@@ -19,7 +19,7 @@ PROPS_FAHREN = [
     # Ziele
     ("Ziel Radius m", 20, "So nah muss der Panzer an einen Wegpunkt, dann gilt er als erreicht"),
     ("Revier m", 400, "Ohne Wegpunkte faehrt die KI zu Zufallspunkten hoechstens so weit vom Startpunkt"),
-    ("Patrouille Pause s", 45, "Am Revier-Punkt so lange stehen bleiben (Strom sparen, Tuerme arbeiten weiter); 0 = gleich weiter"),
+    ("Patrouille Pause s", 45, "Am Revier-Punkt so lange stehen bleiben (haelt die Stelle, Tuerme arbeiten weiter); 0 = gleich weiter"),
     # Hindernisse und Gelaende
     ("Hindernis m", 25, "Meldet ein Front-Laser weniger, wird langsamer gefahren und zur freien Seite gelenkt"),
     ("Notstopp m", 8, "Unter diesem Abstand nur noch Schleich-Tempo, bis klar ist: Hang oder Hindernis"),
