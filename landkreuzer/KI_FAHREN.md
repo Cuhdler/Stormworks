@@ -161,6 +161,9 @@ leicht aus Versehen), „−“ weiter weg, „+“ näher dran, „Revier“ (a
   bemerkt, wenn er schon einmal getroffen wurde oder ein Seiten-Laser ihn sah. Im Prüfstand: von 10 Dauerläufen
   (je 10 min) streifte einer dreimal einen runden Fels, der genau in dieser Lücke lag; die anderen 9 ohne Stoß. Flache Hindernisse unter 2,4 m sieht
   kein Front-Laser – dafür gibt es die Festfahr-Erkennung.
+- **Dichter Wald** (Bäume im Mittel 30 m auseinander): von 8 zufälligen Wäldern schafft sie 5, in 3 bleibt sie
+  hängen (viele Stöße). Versucht und verworfen: zwei Eck-Laser ganz außen am Bug (mit Gedächtnis 3/8, nur bremsen
+  und weglenken 3/8 – beides schlechter). Lichter Wald (Prüfung „Wald“) geht.
 - **Wand oder Hang** erkennt sie erst bei ca. 4 m: vor Hindernissen kriecht sie deshalb das letzte Stück.
 - **Kanten seitlich** sieht nur der Bug-Laser, wenn der Bug drüber ist. Schräg an eine Kante herangefahren kann eine
   Ecke überstehen, bevor die KI es merkt.

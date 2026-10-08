@@ -238,6 +238,11 @@ In dieser Reihenfolge. Anfangen jeweils mit **KI Pause an** und **Waffen sperren
   schon bei **40 %** Ladung nach Hause (Eigenschaft „Heim Batterie“ im KI-Chip), damit sie es noch den Hang hoch
   schafft. Ab 50 % fährt sie wieder normal.
 - **Größe:** Der Panzer ist sehr groß (≈ 27 × 10 m). Eine kleinere Werkbank reicht nicht.
+- **Dichter Wald:** Im Simulator kommt er durch einen lichten Wald, in dichtem Wald (Bäume im Mittel 30 m
+  auseinander) bleibt er aber in 3 von 8 Fällen hängen und streift viele Bäume. Grund: Er ist 27 m lang und 9,5 m
+  breit, und dünne Stämme genau vor einer Bugecke sieht kein Laser. Zwei zusätzliche Eck-Laser habe ich ausprobiert –
+  damit wurde es schlechter, darum sind sie nicht drin. **Wegpunkte um Wälder herum setzen** und das Revier nicht in
+  ein Waldgebiet legen.
 - **Wackeln/Zittern:** Laut Forum hilft bei großen Fahrzeugen mit Gelenken eine höhere Physik-Stufe in den
   Einstellungen (Allgemein). Räder berühren den Boden nur an einem Punkt (dem untersten beim Bauen); darum sind die
   Lenk-Gelenke senkrecht, so bleibt dieser Punkt beim Lenken unten.

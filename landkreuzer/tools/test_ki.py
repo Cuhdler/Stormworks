@@ -1116,7 +1116,7 @@ def test_gelaende():
                 nass.append(s.t)
             return len(s.erreicht) >= 1 or s.pz.abgestuerzt
         s.lauf(400, bis)
-        ok = s.erreicht and s.pz.stoesse <= stoss_max and not nass and not s.pz.abgestuerzt
+        ok = bool(s.erreicht) and s.pz.stoesse <= stoss_max and not nass and not s.pz.abgestuerzt
         pruefe("%s: Wegpunkt 400 m erreicht nach %s s, Stoesse %d (erlaubt %d), nass %d, abgestuerzt %s" % (
             name, round(s.erreicht[0][0]) if s.erreicht else "-", s.pz.stoesse, stoss_max, len(nass),
             s.pz.abgestuerzt), ok)
