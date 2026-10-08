@@ -6,7 +6,7 @@ Anschluesse (Feld x, z):
              (0..4,1) Laser vorn links / vorn Mitte / vorn rechts / links / rechts   (0,2) Laser unten  (1,2) Laser hinten
              (2,2) Batterie (Ladestand, darf fehlen)   Ausgaenge (3,2) Schutz (an den Schutz-Chip: Auto-Chaff),
              (4,2) Status (Video an den Monitor 2x3)   (0,4) Lenkung vorn, (1,4) Lenkung hinten (nur Lenk-Variante)
-             (4,4) Laser an (Ausgang: schaltet alle Laser ein)
+             (4,4) Immer an (Ausgang: schaltet alle Laser und den Monitor 2x3 ein)
   Ausgaenge  (0,3) Links (alle linken Motoren)  (1,3) Rechts  (2,3) Karte (Video)  (3,3) Wahl (an den Bildschirm-Chip:
              Bool 1 Master Arm)  (4,3) Zustand (Ausgang von KI_FAHREN)
 """
@@ -146,7 +146,8 @@ def build(src=None, eigen=None):
             (status, 1))
     aus("Lenkung vorn", lenkung, 0, 1, "Lenk-Variante: Robotic Pivots der vorderen Achsen: Rotation Target", 0, -6, fz=4)
     aus("Lenkung hinten", lenkung, 1, 1, "Lenk-Variante: Robotic Pivots der hinteren Achsen: Rotation Target", 1, -7, fz=4)
-    aus("Laser an", kleber, 12, 0, "alle Laser Distance Sensors: Laser an (immer an)", 4, -8, typ=29, fz=4)
+    aus("Immer an", kleber, 12, 0, "immer an: alle Laser Distance Sensors (Laser an) und Monitor 2x3 (Power Switch)", 4, -8,
+        typ=29, fz=4)
     mc.node("Schutz", 0, 5, "an den Schutz-Chip (Eingang 'Instrumente'): Bool 3 Auto-Chaff = Waffen frei + Ziel", 3, 2, (8, 1),
             (schutz, 0))
     assert len(mc.desc) <= 128, len(mc.desc)

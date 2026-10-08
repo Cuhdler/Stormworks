@@ -765,7 +765,7 @@ class Bau:
             neu.append((1, t.vp, self.knoten("KI", name)))
             # Einschalten: die Turm-Kamera des Schiffs hat fuer ihren Laser einen Eingang 'Laser an' - der einzelne
             # Laser-Sensor sehr wahrscheinlich auch. Hat er keinen, findet das Kabel keinen Anschluss (schadet nicht).
-            neu.append((0, self.knoten("KI", "Laser an"), t.vp))
+            neu.append((0, self.knoten("KI", "Immer an"), t.vp))
         # Ladestand der ersten Batterie (Annahme: am Strom-Anschluss oben; fehlt er, liest die KI 0 = unbekannt)
         neu.append((1, bat, self.knoten("KI", "Batterie")))
         # KI-Chip
@@ -777,6 +777,9 @@ class Bau:
         neu.append((5, self.neu["karte"].vp, self.knoten("KI", "Karte Touch")))
         neu.append((6, self.knoten("KI", "Karte"), self.neu["karte"].vp))
         neu.append((6, self.knoten("KI", "Status"), self.neu["wahlmonitor"].vp))
+        # Monitor 2x3: auf dem Schiff schaltete ihn der Waffenwahl-Chip ein ('Monitor an' -> Power Switch); den gibt es
+        # hier nicht - ohne das Signal bliebe er dunkel
+        neu.append((0, self.knoten("KI", "Immer an"), self.neu["wahlmonitor"].vp))
         # Helm (Headset Video des Sitzes; im Schiff kam dort die Schiffsfuehrung an, Sitz (0,17,-10) + (1,4,0))
         neu.append((6, self.knoten("KI", "Status"), fz.add(self.neu["sitz"].vp, (1, 4, 0))))
         neu.append((5, self.knoten("KI", "Wahl"), self.knoten("Bildschirm", "Wahl")))

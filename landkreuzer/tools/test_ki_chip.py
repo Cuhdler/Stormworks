@@ -98,8 +98,8 @@ def main():
     rueck.append(("Laser melden 0: Zustand %d (10 = LASER?), %.1f m gefahren" % (zustand(r[-1][1]), math.hypot(*r[-1][0])),
                   zustand(r[-1][1]) == 10 and math.hypot(*r[-1][0]) < 0.5))
     r = lauf(1)
-    la = (r[-1][1].get("Laser an"))
-    rueck.append(("Ausgang 'Laser an' ist an (%s)" % la, la is True))
+    la = (r[-1][1].get("Immer an"))
+    rueck.append(("Ausgang 'Immer an' (Laser, Monitor 2x3) ist an (%s)" % la, la is True))
     # Ziel in 600 m: Kampf (Zustand 6)
     r = lauf(20, ziel=(0.0, 600.0))
     rueck.append(("Ziel der Kanonen 600 m voraus: Zustand %d (6 = Kampf)" % zustand(r[-1][1]), zustand(r[-1][1]) == 6))

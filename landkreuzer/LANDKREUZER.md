@@ -161,7 +161,9 @@ Die Schalter sind andersherum als auf dem Schiff. **Aus heißt: Die KI darf.**
 - Oben steht der Zustand der KI (siehe unten).
 
 ### KI-Status (Monitor 2×3 rechts vom Sitz und im Helm)
-Der Monitor zeigt:
+Auf dem Schiff schaltete der Waffenwahl-Chip diesen Monitor ein. Im Panzer macht das der KI-Chip (Ausgang
+„Immer an“). Bleibt er dunkel, im Editor nachsehen, ob der Monitor einen Ein-Schalter-Eingang hat und das Kabel dort
+ankommt. Der Monitor zeigt:
 - den Zustand der KI:
 
   | Zustand | heißt |
@@ -215,7 +217,7 @@ In dieser Reihenfolge. Anfangen jeweils mit **KI Pause an** und **Waffen sperren
 4. **Laser:** Auf dem KI-Status-Monitor stehen alle 7 Entfernungen. Bei „--“ hängt ein Laser nicht richtig.
    Annahme: Strom, Ausgang und Einschalten sitzen am Laser-Block selbst, der Strahl zeigt wie bei der Turm-Kamera.
    Die Turm-Kamera hat für ihren Laser einen Eingang „Laser an“; darum bekommt jeder Laser vom KI-Chip
-   (Ausgang „Laser an“, immer an) ein Einschalt-Kabel. Zeigen trotzdem alle „--“: im Editor an einem Laser nachsehen,
+   (Ausgang „Immer an“) ein Einschalt-Kabel. Zeigen trotzdem alle „--“: im Editor an einem Laser nachsehen,
    welche Anschlüsse er hat, und mir sagen. Solange der mittlere Front-Laser oder der Bug-Laser 0 meldet, fährt die
    KI nicht (Zustand LASER?) – sie fährt also nie blind los.
 5. **Türme:** wie auf dem Schiff (Test Rohre usw.). Die Richtungs-Eigenschaften sind die vom Schiff, weil die Türme
