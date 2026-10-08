@@ -4103,6 +4103,7 @@ end
 local r=M(hx+zr,hz)-a
 C(255,60,60)
 DK(a,b,r)
+if hx~=0 or hz~=0 then st.drawText(a-1,b-2,'H') end
 C(80,160,255)
 for _,p in ipairs(F) do
 local c,d=M(p[1],p[2])

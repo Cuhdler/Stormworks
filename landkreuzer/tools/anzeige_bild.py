@@ -115,7 +115,7 @@ def binde(g, schirm):
 def fahrt(sek=40):
     """Kurze Fahrt: Panzer auf freiem Land, nach 12 s zwei Tipps auf die Karte. -> ChipSim nach der Fahrt"""
     sim = ChipSim(build_ki.build())
-    x, z, hd, v, rl, rr = 0.0, 0.0, 0.0, 0.0, 0.0, 0.0
+    x, z, hd, v, rl, rr = 1200.0, -800.0, 0.0, 0.0, 0.0, 0.0
     tipps = {720: (78, 22), 780: (30, 30)}
     for t in range(int(sek * 60)):
         L, R = rl, -rr

@@ -1,7 +1,7 @@
 -- KI KARTE v1.0 - KI Landkreuzer (08.10.2026): Touch-Karte im Cockpit (Monitor 3x3 = 96x96 Pixel oder 5x3 = 160x96).
 -- Zeigt die Karte um den eigenen Ort (Norden oben), den Panzer als Pfeil in Fahrtrichtung, die Wegpunkte mit Nummer
 -- (der aktuelle gelb), die Route (im Revier-Modus zurueck zum ersten), den Revier-Kreis um die Heimat (nur im
--- Revier-Modus), die Schutzzone um die Heimat (rot gestrichelt: Ziele darin beschiesst er nicht), das aktuelle Ziel
+-- Revier-Modus), die Heimat (H), die Schutzzone um die Heimat (rot gestrichelt: Ziele darin beschiesst er nicht), das aktuelle Ziel
 -- (Strich vom Panzer; Revier-Punkt lila Kreis; im Kampf der Feind als rotes Kreuz) und oben den Zustand der KI mit Tempo.
 -- Bedienung (ein Finger):
 --  - Karte kurz antippen = Wegpunkt an dieser Stelle (ki_fahren nimmt hoechstens 8; zaehlt beim Loslassen)
@@ -112,6 +112,8 @@ function onDraw()
 	local r=M(hx+zr,hz)-a
 	C(255,60,60)
 	DK(a,b,r)
+	-- Heimat (Startpunkt; dorthin faehrt 'Nach Hause')
+	if hx~=0 or hz~=0 then st.drawText(a-1,b-2,'H') end
 	C(80,160,255)
 	for _,p in ipairs(F) do
 		local c,d=M(p[1],p[2])
