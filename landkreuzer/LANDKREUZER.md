@@ -3,8 +3,9 @@
 **Stand:** 08.10.2026 (Nacht), Version v1.0, gebaut von Claude, **noch nie im Spiel gewesen**.
 **Dateien:** `landkreuzer/fahrzeug/KI Landkreuzer.xml` und `KI Landkreuzer Lenkung.xml` (zwei Varianten, siehe
 Abschnitt 2). Beide sind fertig, nur die Räder fehlen.
-**Bilder:** `landkreuzer/bilder/schraeg.png` und `schraeg_links.png` (schräg von vorn), `schraeg_lenkung.png`
-(Lenk-Variante), `ansicht.png` (oben, Seite, vorn).
+**Bilder:** `landkreuzer/bilder/beschriftet.png` (was wo ist), `schraeg.png` und `schraeg_links.png` (schräg von
+vorn), `schraeg_lenkung.png` (Lenk-Variante), `ansicht.png` (oben, rechts, vorn), `rad_stummel.png` (wo das Rad hin
+muss). Alle Bilder zeigen ihn so, wie man ihn im Spiel sieht (nicht gespiegelt).
 
 Andres Wunsch (08.10.): „eine Art Landkreuzer, groß, mit allen möglichen Geschützen, und er soll komplett autonom
 fahren – quasi ein KI-Panzer“.

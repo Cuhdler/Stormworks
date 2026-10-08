@@ -67,8 +67,9 @@ def zeichnen(pfad, aus):
     print("gezeichnet:", aus)
 
 
-def schraeg(pfad, aus, rechts=True, markiert=(), titel=None, ausschnitt=None):
-    """Schraegbild (isometrisch, von vorn rechts oben): jedes Teil als Wuerfel, hinten zuerst gezeichnet."""
+def schraeg(pfad, aus, rechts=True, markiert=(), titel=None, ausschnitt=None, beschriftung=()):
+    """Schraegbild (isometrisch, von vorn rechts oben): jedes Teil als Wuerfel, hinten zuerst gezeichnet.
+    beschriftung: [(Text, (x, y, z), (dx, dy) Versatz des Textes in Bildpunkten)] - Pfeil vom Text zum Ort."""
     import matplotlib
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
@@ -110,6 +111,10 @@ def schraeg(pfad, aus, rechts=True, markiert=(), titel=None, ausschnitt=None):
     reihen = range(len(polys))
     fig, ax = plt.subplots(figsize=(16, 10))
     ax.add_collection(PolyCollection([polys[i] for i in reihen], facecolors=[farben[i] for i in reihen], edgecolors="none"))
+    for txt, ort, (dx, dy) in beschriftung:
+        ax.annotate(txt, xy=p(*ort), xytext=(dx, dy), textcoords="offset points", fontsize=11, ha="center",
+                    bbox=dict(boxstyle="round,pad=0.3", fc="white", ec="0.3", alpha=0.9),
+                    arrowprops=dict(arrowstyle="->", color="0.1", lw=1.2))
     ax.autoscale()
     ax.set_aspect("equal")
     ax.axis("off")
@@ -118,6 +123,22 @@ def schraeg(pfad, aus, rechts=True, markiert=(), titel=None, ausschnitt=None):
     fig.tight_layout()
     fig.savefig(aus, dpi=90)
     print("gezeichnet:", aus)
+
+
+# Was wo ist (Blick von vorn links): Text, Ort, Versatz des Textes
+BESCHRIFTUNG = [
+    ("AC-Turm (vorn, Panzerbrechend)", (0, 9, 34), (-60, 90)),
+    ("BC-Turm (2 Rohre, Sprenggranaten)", (0, 14, 9), (-150, 110)),
+    ("Bruecke: Sitz, Monitore, Instrumente", (-6, 22, -6), (-90, 150)),
+    ("Radarmast (6 Phalanx-Radare)", (-5, 26, -24), (60, 150)),
+    ("Dachkamera + Radarwarner", (0, 33, -15), (-40, 110)),
+    ("Chaff-Werfer (links und rechts)", (-10, 12, -30), (200, 120)),
+    ("Flak L und Flak R (je 2 Rohre)", (-10, 13, -57), (90, 110)),
+    ("Laser vorn (3 Stueck, + unten)", (-13, 3, 41), (-120, -60)),
+    ("Laser Seite (je einer)", (-16, 6, -8), (-100, -90)),
+    ("Wellen fuer die Raeder (7 je Seite)", (-15, -3, 5), (60, -100)),
+    ("Kennung KL-1", (-15, 5, -16), (160, -90)),
+]
 
 
 def alle_bilder():
@@ -133,6 +154,8 @@ def alle_bilder():
     if os.path.exists(lenk):
         schraeg(lenk, os.path.join(bi, "schraeg_lenkung.png"),
                 titel="KI Landkreuzer Lenkung - vordere und hintere Achsen auf Gelenken (Raeder setzt Andre)")
+    schraeg(einfach, os.path.join(bi, "beschriftet.png"), rechts=False, beschriftung=BESCHRIFTUNG,
+            titel="KI Landkreuzer - was wo ist (von vorn links)")
     schraeg(einfach, os.path.join(bi, "rad_stummel.png"), rechts=False, markiert={(-B.X1, B.ACHSE_Y, B.RAD_Z[0])},
             ausschnitt=((-16, -5, 10), (0, 12, 48)),
             titel="Hier das EINE Rad ansetzen: pinker Wellen-Stummel links vorn (x -15, y -3, z 35), Blick von vorn links")
