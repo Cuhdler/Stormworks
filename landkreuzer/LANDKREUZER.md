@@ -12,6 +12,25 @@ fahren – quasi ein KI-Panzer“.
 
 ---
 
+## Schnellstart (die ersten 15 Minuten)
+
+1. Auf dem PC pullen. `landkreuzer/fahrzeug/KI Landkreuzer.xml` nach `%APPDATA%\Stormworks\data\vehicles\` kopieren.
+2. Im Editor laden, **ein** Rad an den pinken Stummel links vorn setzen (Bild `bilder/rad_stummel.png`), speichern.
+   Große Räder nehmen (bis 12 Blöcke), dann hat er mehr Bodenfreiheit.
+3. `python landkreuzer/tools/raeder.py --schreiben` (kopiert das Rad an alle 14 Wellen), im Spiel neu laden
+   **ohne** zu speichern.
+4. In der Brücke im Instrumentenblock **„Waffen sperren“ an** und **„KI Pause“ an**, dann spawnen.
+5. Hinsetzen, W/A/S/D: fährt und lenkt er? Status-Monitor rechts vom Sitz: stehen bei allen 7 Lasern Zahlen
+   (nicht „--“)?
+6. „KI Pause“ aus: Er fährt allein (Revier 400 m um den Startpunkt). Auf die Karte links vom Sitz tippen = Wegpunkt.
+7. Erst wenn das klappt: „Waffen sperren“ aus. Achtung: Er schießt auf alles außerhalb der Schutzzone (300 m um
+   den Startpunkt).
+
+Was nicht klappt, bitte aufschreiben (am besten mit der Anzeige des Status-Monitors). Abschnitt 4 sagt, welche
+Eigenschaft man im KI-Chip umstellt, wenn z. B. eine Seite falsch herum dreht.
+
+---
+
 ## 1. Was er ist
 
 | | |
