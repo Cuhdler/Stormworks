@@ -59,7 +59,7 @@ Prüfstand im Rechner. Im Spiel noch **nicht** erprobt – alles unten unter „
 ### Rad-Richtung und Lernen
 „Rad Richtung links/rechts“ (1/−1) drehen die Ausgänge um (rechts ist gespiegelt eingebaut → −1). Mit „Richtung
 lernen“ = 1 fährt er nach dem Einschalten bis 2 s gerade an und merkt selbst, wenn eine Seite (oder beide) falsch
-herum dreht. Das Gelernte gilt bis zum Neustart des Skripts – Bool 5/6 am Ausgang zeigen es, dann das Property
+herum dreht. Das Gelernte gilt bis zum Neustart des Skripts – der Status-Monitor zeigt es rot (L! / R!; Bool 5/6 am Ausgang), dann das Property
 richtig stellen.
 
 ### Tempo
@@ -176,7 +176,7 @@ leicht aus Versehen), „−“ weiter weg, „+“ näher dran, „Revier“ (a
 ## 6. Im Spiel prüfen
 
 1. **Kompass**: KI an, Wegpunkt genau nördlich tippen – fährt er nach Norden? Sonst „Kompass Richtung“ umdrehen.
-2. **Rad-Richtung**: mit W fährt er vor, mit D dreht er rechts? Bool 5/6 nach der Anfahrprobe = umgelernt → Property
+2. **Rad-Richtung**: mit W fährt er vor, mit D dreht er rechts? Rot L! / R! auf dem Status-Monitor = umgelernt → Property
    richtig stellen.
 3. **Nick/Roll-Vorzeichen**: am Hang Bug hoch → Physik-Sensor Nick positiv? Rechte Seite tief → Roll **negativ**
    (so ist es bei den Flossen des Schiffs)? Sonst „Nick Richtung“ bzw. „Roll Richtung“ umdrehen.

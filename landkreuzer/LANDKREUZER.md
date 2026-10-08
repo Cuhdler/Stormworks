@@ -184,6 +184,9 @@ Der Monitor zeigt:
   KI es sieht. Damit prüfst du die Vorzeichen: auf einen Hang stellen, rechte Seite tief → muss R+ zeigen; Bug bergauf
   → N+; nach Norden fahren → K um 0. Stimmt eins nicht, im KI-Chip „Roll Richtung“, „Nick Richtung“ bzw.
   „Kompass Richtung“ umdrehen (1 ↔ −1).
+- rot **L!** / **R!** hinter dem Kurs: Die KI hat gemerkt, dass die linke/rechte Radseite falsch herum dreht, und es
+  selbst umgedreht. Das gilt nur bis zum nächsten Spawn – stell dann im KI-Chip „Rad Richtung links“ bzw. „rechts“
+  dauerhaft um (1 ↔ −1).
 - zwei Balken für die Motoren links und rechts (grün = vorwärts, rot = rückwärts, wie die KI es meint).
 
 Vorschau beider Monitore: `bilder/anzeigen.png` (gezeichnet mit `tools/anzeige_bild.py`).

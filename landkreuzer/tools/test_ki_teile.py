@@ -121,14 +121,14 @@ def test_status():
         ok = True
         for z in range(10):
             tick(g, io, {1: 1.0, 6: -0.01, 26: float(z), 27: 2.0, 29: 1.0, 9: 25.0, 16: 0.5, 30: 0.5, 31: -0.5, 32: 6.0},
-                 {1: True, 10: True})
+                 {1: True, 10: True, 13: True})
             io["draw"] = []
             g.onDraw()
             ok &= len(io["draw"]) > 3
         texte = " | ".join(str(d[3]) for d in io["draw"] if d[0] == "drawText")
         # Tempo (Zahl 32) muss ankommen; Roll -0,01 U mit 'Roll Richtung' -1 = 3,6 Grad rechts tief -> R+4
-        ok &= ("V 6.0/" in texte or "V 6/" in texte) and (w > 100 or "R+4" in texte)
-        rueck.append(("Status zeichnet auf %dx%d (Tempo, Roll): %s" % (w, h, texte[:60]), ok))
+        ok &= ("V 6.0/" in texte or "V 6/" in texte) and (w > 100 or "R+4" in texte and "L!" in texte)
+        rueck.append(("Status zeichnet auf %dx%d (Tempo, Roll, umgelernt): %s" % (w, h, texte[:50]), ok))
     return rueck
 
 

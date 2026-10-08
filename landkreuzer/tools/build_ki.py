@@ -119,6 +119,9 @@ def build(src=None, eigen=None):
         (rd(fahren, ch, (-1, -1 - .5 * j)), 0) for j, ch in enumerate((2, 9, 27, 10, 28, 29, 31))])
     st = mc.comp(41, (1, -3), {"count": 3, "offset": 6}, [("inc", (st, 0))] + [
         (rd(fahren, ch, (-1, -4.5 - .5 * j), 29), 0) for j, ch in enumerate((0, 1, 2))])
+    # Bool 13/14: Richtung links/rechts umgelernt (KI_FAHREN Bool 5/6) - Hinweis fuer Andre
+    st = mc.comp(41, (1, -3.5), {"count": 2, "offset": 12}, [("inc", (st, 0))] + [
+        (rd(fahren, ch, (-1, -6.5 - .5 * j), 29), 0) for j, ch in enumerate((4, 5))])
     status = mc.comp(56, (3, -2), {"script": src["ki_status"]}, [(st, 0)])
     # --- KI_LENKUNG (nur Lenk-Variante): Ausgang von KI_FAHREN + Tempo (Physik 13) auf Zahl 32
     lk = mc.comp(40, (1, -5), {"count": 1, "offset": 31}, [("inc", (fahren, 0)), (rd(phys, 12, (-1, -6)), 0)])

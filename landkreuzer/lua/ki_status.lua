@@ -9,6 +9,8 @@
 -- Video: Monitor 2x3 (64 x 96 Pixel, hochkant) und Helm des Steuersitzes (breit: dort nur eine Zeile unten)
 -- Unten zwischen den Motor-Balken: N Nick (+ = Bug hoch), R Roll (+ = rechts tief), K Kurs (Grad, 0 Nord, 90 Ost) - so,
 -- wie die Fahr-KI sie sieht (mit 'Nick/Roll/Kompass Richtung'). Zum Pruefen der Vorzeichen am Hang.
+-- Rot 'L!' / 'R!' hinter dem Kurs: die KI hat gemerkt, dass die linke/rechte Seite falsch herum dreht, und es selbst
+-- umgedreht (Bool 13/14) - dann im KI-Chip 'Rad Richtung links/rechts' dauerhaft umdrehen.
 N=input.getNumber
 B=input.getBool
 st=screen
@@ -22,6 +24,7 @@ function onTick()
 	end
 	for i=1,32 do W[i]=N(i) end
 	ni,ro,ku=W[5]*NR*360,W[6]*RR*360,(W[4]*KR*360)%360
+	ul,ur=B(13),B(14)
 	ki,sb,zi,hm,fa,wa,rv,sz=B(1),B(2),B(4),B(6),B(7),B(10),B(9),B(11)
 end
 function f(v)
@@ -69,6 +72,8 @@ function onDraw()
 	st.setColor(200,200,120)
 	st.drawText(9,81,string.format('N%+.0f R%+.0f',ni,ro))
 	st.drawText(9,88,string.format('K%03.0f',ku))
+	st.setColor(255,60,60)
+	st.drawText(34,88,(ul and 'L!' or '')..(ur and 'R!' or ''))
 	-- Motoren: zwei Balken (links/rechts, + = vorwaerts, wie die KI es meint - unabhaengig von der Einbau-Richtung)
 	for k=0,1 do
 		local v=math.max(-1,math.min(1,(W[31] or 0)+(k==0 and 1 or -1)*(W[30] or 0)))
