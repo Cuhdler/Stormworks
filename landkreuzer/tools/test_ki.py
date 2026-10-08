@@ -326,6 +326,7 @@ def eben():
 LANG, BREIT = 27.5, 9.5
 HL = LANG / 2
 SENSOR_H = 2.1
+SKID = 0.4              # Drehrate (rad/s) bei vollem Links/Rechts-Unterschied (Kettenlenkung)
 BUG_H = 1.6
 LASER = {  # Kanal: (vor, rechts, hoch, Richtung)
     9: (13.25, -3.5, 2.4, "f"), 10: (13.25, 0.0, 2.4, "f"), 11: (13.25, 3.5, 2.4, "f"),
@@ -423,7 +424,7 @@ class Panzer:
             nv = 0.0 if abs(kraft) < 0.3 else v + (kraft - 0.3 * math.copysign(1, kraft)) * dt
         # Lenk-Variante: vordere 2 Achsen (im Mittel 6,9 m vor der Mitte) und hintere 2 (9,4 m dahinter) lenken
         # gegenlaeufig -> Drehrate aus der Geometrie (die festen Mittelachsen rutschen dabei etwas)
-        self.om += (0.4 * dif + v * 2 * math.tan(lenk) / 16.3 - self.om) * dt / 0.4
+        self.om += (SKID * dif + v * 2 * math.tan(lenk) / 16.3 - self.om) * dt / 0.4
         npsi = self.psi + self.om * dt
         nx = self.x + nv * math.sin(npsi) * dt
         nz = self.z + nv * math.cos(npsi) * dt

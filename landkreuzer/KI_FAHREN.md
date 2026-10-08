@@ -165,6 +165,10 @@ leicht aus Versehen), „−“ weiter weg, „+“ näher dran, „Revier“ (a
 - **Dichter Wald** (Bäume im Mittel 30 m auseinander): von 8 zufälligen Wäldern schafft sie 5, in 3 bleibt sie
   hängen (viele Stöße). Die Lenk-Variante schafft 4 von 8, streift aber deutlich weniger (69 statt 97 Stöße). Versucht und verworfen: zwei Eck-Laser ganz außen am Bug (mit Gedächtnis 3/8, nur bremsen
   und weglenken 3/8 – beides schlechter). Lichter Wald (Prüfung „Wald“) geht.
+- **Träge Kettenlenkung:** Im Simulator dreht der Panzer bei vollem Links/Rechts-Unterschied mit 23°/s
+  (`SKID` in `test_ki.py`). Mit einem Drittel davon (ein 27-m-Fahrzeug rutscht im Spiel vielleicht schwerer)
+  bestehen noch alle Einzelprüfungen (Wegpunkte, Wand, Sackgasse, See, Klippe, Hügel, Kampf), in den
+  10-Minuten-Dauerläufen kommt er aber deutlich weniger weit. Dreht er im Spiel so träge: Lenk-Variante nehmen.
 - **Wand oder Hang** erkennt sie erst bei ca. 4 m: vor Hindernissen kriecht sie deshalb das letzte Stück.
 - **Kanten seitlich** sieht nur der Bug-Laser, wenn der Bug drüber ist. Schräg an eine Kante herangefahren kann eine
   Ecke überstehen, bevor die KI es merkt.
