@@ -271,6 +271,8 @@ In dieser Reihenfolge. Anfangen jeweils mit **KI Pause an** und **Waffen sperren
 | `tools/build_ki.py` | KI-Chip (5×5) |
 | `tools/raeder.py` | Räder kopieren |
 | `tools/pruefen.py` | Prüfungen der Datei (läuft nach jedem Bau) |
+| `tools/kabel_vergleich.py` | jedes Kabel des Schiffs, dessen Quelle im Panzer fehlt (fand den dunklen Monitor 2×3) |
+| `tools/alles_pruefen.py` | baut beide Varianten und lässt alle Prüfstände laufen (`--schnell` ohne die langen) |
 | `tools/ansicht.py` | Bilder zeichnen (braucht matplotlib) |
 | `tools/anzeige_bild.py` | Vorschau der Monitore Karte und KI-Status (braucht lupa und pillow) |
 | `tools/test_ki.py` | Prüfstand der Fahr-KI (Simulation, braucht lupa) |
