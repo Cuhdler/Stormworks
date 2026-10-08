@@ -31,6 +31,37 @@ Eigenschaft man im KI-Chip umstellt, wenn z. B. eine Seite falsch herum dreht.
 
 ---
 
+## Was in der Nacht noch dazukam (nachdem du ins Bett bist)
+
+Gefundene **Fehler**, die im Spiel Ärger gemacht hätten (alle behoben und mit Prüfungen abgesichert):
+- **Laser einschalten:** Die Turm-Kamera des Schiffs braucht für ihren Laser ein „Laser an“-Signal. Die Laser des
+  Panzers bekommen jetzt so ein Kabel vom KI-Chip. Und: Meldet ein wichtiger Laser 0, fährt die KI nicht los
+  (Zustand LASER?) – vorher hätte sie das als „frei“ gelesen und wäre blind gefahren.
+- **KI-Status-Monitor** wäre dunkel geblieben: Auf dem Schiff schaltete ihn der Waffenwahl-Chip ein. Jetzt der KI-Chip.
+- **Roll-Vorzeichen** war in der Fahr-KI andersherum als bei den Flossen deines Schiffs (die im Spiel funktionieren).
+- **Composite-Kanal 33** (gibt es nicht, nur 1–32) – hätte den KI-Chip im Spiel kaputt machen können.
+- **Status zeigte immer Tempo 0**, der rechte Motor-Balken war beim Vorwärtsfahren rot.
+- **Wegrollen am Hang:** Elektromotoren ohne Gas bremsen nicht. Im Kampf rollte er am 10°-Hang in 30 s 16 m zurück;
+  jetzt hält er die Stelle.
+- **Bug:** Die Spitze lag unten am Boden, 3 m vor den Vorderrädern – an Hängen ab ~10° hätte er aufgesetzt. Jetzt Keil
+  (oben und unten 45°), Heck unten abgeschrägt.
+- Bilder von rechts waren spiegelverkehrt.
+
+**Neu:**
+- **Schutzzone** 300 m um den Startpunkt und **Freund-Punkte** auf der Karte (Finger 1,5 s halten): Ziele dort
+  beschießt er nicht.
+- Auto-Chaff nur, wenn die Radare auch einen Gegner sehen.
+- Laser- und Sensor-Höhe stellt die KI selbst auf die Radgröße ein.
+- Nach Hause schon bei 40 % Batterie; der Status zeigt die **Restzeit** der Batterie.
+- Status zeigt Nick/Roll/Kurs in Grad (Vorzeichen prüfen) und rot L!/R!, wenn eine Radseite falsch herum dreht.
+- Prüfstände: Wald, Damm durch einen See, enges Tal, größere Räder, Stehen am Hang; Kabel-Vergleich Schiff ↔ Panzer.
+- Aussehen: Schlamm unten, Lüftungsgitter, Abzeichen; Bild `beschriftet.png` (was wo ist), `anzeigen.png` (Monitore).
+
+Ausprobiert und **verworfen**: zwei zusätzliche Eck-Laser für dichten Wald (im Simulator schlechter). Ein
+Diesel-Generator aus Schiffsteilen geht nicht sicher (im Schiff fehlen Kraftstoff-Teile, Kühlung mit Seewasser).
+
+---
+
 ## 1. Was er ist
 
 | | |
