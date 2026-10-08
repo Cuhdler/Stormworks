@@ -70,8 +70,11 @@ Gefundene **Fehler**, die im Spiel Ärger gemacht hätten (alle behoben und mit 
 - Ladestand kommt von einer zusätzlichen kleinen Batterie (sichere Anschluss-Lage), siehe Technik.
 - Karte: „H“ am Heimatpunkt; Werkzeug `ki_log.py` wertet Fahrtenschreiber-Logs aus.
 - Status zeigt Nick/Roll/Kurs in Grad (Vorzeichen prüfen) und rot L!/R!, wenn eine Radseite falsch herum dreht.
-- Prüfstände: Wald, Damm durch einen See, enges Tal, größere Räder, Stehen am Hang, Lenk-Variante; Kabel-Vergleich
-  Schiff ↔ Panzer.
+- Prüfstände: Wald, Damm durch einen See, enges Tal, holpriger Boden, größere Räder, Stehen am Hang, Lenk-Variante;
+  Kabel-Vergleich Schiff ↔ Panzer.
+- **Zuverlässigkeit im Simulator (Endstand):** 12 zufällige Welten mit Hügel, See, Klippe, Felsen, Häusern, je
+  10 Minuten Patrouille: 12 von 12 fehlerfrei – zusammen 2 Stunden, rund 39 km, nie im Wasser, nie abgestürzt,
+  2 leichte Stöße.
 - **Lenk-Variante:** Beim Rückwärtsfahren schlugen die Achsen falsch herum ein (Lenkung und Kettenlenkung arbeiteten
   gegeneinander). Behoben; im Simulator jetzt geprüft.
 - Aussehen: Schlamm unten, Lüftungsgitter, Abzeichen; Bild `beschriftet.png` (was wo ist), `anzeigen.png` (Monitore).

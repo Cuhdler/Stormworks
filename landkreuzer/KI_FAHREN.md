@@ -162,6 +162,10 @@ leicht aus Versehen), „−“ weiter weg, „+“ näher dran, „Revier“ (a
 
 ## 5. Grenzen (was die KI nicht kann)
 
+Zum Vergleich der Endstand (09.10. früh): 12 zufällige gemischte Welten je 10 Minuten Patrouille (Seeds 1–12):
+12/12 fehlerfrei, zusammen ≈ 39 km, 0 Ticks im Wasser, nie abgestürzt, 2 Stöße.
+
+
 - **Lücke zwischen Außenstrahl und Bordwand** (3,5 m bis 4,75 m seitlich): ein schmaler Pfosten genau dort wird erst
   bemerkt, wenn er schon einmal getroffen wurde oder ein Seiten-Laser ihn sah. Im Prüfstand: von 10 Dauerläufen
   (je 10 min) streifte einer dreimal einen runden Fels, der genau in dieser Lücke lag; die anderen 9 ohne Stoß. Flache Hindernisse unter 2,4 m sieht
