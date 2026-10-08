@@ -89,9 +89,12 @@ def build(src=None, eigen=None):
     fahren_in = w                                  # Karten-Befehle kommen unten dazu (Kreis ueber KI_KARTE)
     fahren = mc.comp(56, (-2, 5), {"script": src["ki_fahren"]}, [])
 
-    # --- KI_KARTE: Ausgang von KI_FAHREN + Monitor-Touch (Zahl 29-32, Bool 32)
-    k = mc.comp(40, (0, 3), {"count": 4, "offset": 28}, [("inc", (fahren, 0))] + [
-        (rd(touch, ch, (-2, 2 - .5 * j)), 0) for j, ch in enumerate((0, 1, 2, 3))])
+    # --- KI_KARTE: Ausgang von KI_FAHREN, ueberschrieben Zahl 1/2 Touch x/y (Monitor 3/4), 29/30 eigener Ort Ost/Nord
+    #     (Physik 1/3), Bool 32 Touch gedrueckt (Monitor-Bool 1)
+    k = mc.comp(40, (0, 3), {"count": 2}, [("inc", (fahren, 0))] + [
+        (rd(touch, ch, (-2, 2 - .5 * j)), 0) for j, ch in enumerate((2, 3))])
+    k = mc.comp(40, (0, 2.5), {"count": 2, "offset": 28}, [("inc", (k, 0))] + [
+        (rd(phys, ch, (-2, 1 - .5 * j)), 0) for j, ch in enumerate((0, 2))])
     k = mc.comp(41, (0, 2), {"count": 1, "offset": 31}, [("inc", (k, 0)), (rd(touch, 0, (-2, 0), 29), 0)])
     karte = mc.comp(56, (2, 2), {"script": src["ki_karte"]}, [(k, 0)])
     # Karten-Befehle (Zahl 23-25, Bool 3/5) zurueck in den Eingang von KI_FAHREN
@@ -101,9 +104,9 @@ def build(src=None, eigen=None):
     w = mc.comp(41, (-3, 1.5), {"count": 1, "offset": 4}, [("inc", (w, 0)), (rd(karte, 4, (-4, -1.5), 29), 0)])
     next(c for c in mc.comps if c[1] == fahren)[3].append((w, 0))
 
-    # --- KI_STATUS: Eingang von KI_FAHREN + dessen Ausgang (Zahl 26-31, Bool 7-9) -> Monitor 2x3
-    st = mc.comp(40, (1, -2), {"count": 6, "offset": 25}, [("inc", (w, 0))] + [
-        (rd(fahren, ch, (-1, -1 - .5 * j)), 0) for j, ch in enumerate((2, 9, 27, 10, 0, 1))])
+    # --- KI_STATUS: Eingang von KI_FAHREN + dessen Ausgang (Zahl 26-32, Bool 7-9) -> Monitor 2x3 und Helm
+    st = mc.comp(40, (1, -2), {"count": 7, "offset": 25}, [("inc", (w, 0))] + [
+        (rd(fahren, ch, (-1, -1 - .5 * j)), 0) for j, ch in enumerate((2, 9, 27, 10, 0, 1, 31))])
     st = mc.comp(41, (1, -3), {"count": 3, "offset": 6}, [("inc", (st, 0))] + [
         (rd(fahren, ch, (-1, -4 - .5 * j), 29), 0) for j, ch in enumerate((0, 1, 2))])
     status = mc.comp(56, (3, -2), {"script": src["ki_status"]}, [(st, 0)])

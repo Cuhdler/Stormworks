@@ -103,7 +103,7 @@ def test_status():
         io["w"], io["h"] = w, h
         ok = True
         for z in range(10):
-            tick(g, io, {1: 1.0, 26: float(z), 27: 2.0, 29: 1.0, 9: 25.0, 16: 0.5, 30: 0.5, 31: -0.5}, {1: True, 8: True})
+            tick(g, io, {1: 1.0, 26: float(z), 27: 2.0, 29: 1.0, 9: 25.0, 16: 0.5, 30: 0.5, 31: -0.5, 32: 6.0}, {1: True, 10: True})
             io["draw"] = []
             g.onDraw()
             ok &= len(io["draw"]) > 3

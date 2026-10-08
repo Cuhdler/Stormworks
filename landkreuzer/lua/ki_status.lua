@@ -1,9 +1,10 @@
 -- KI-STATUS v1.0 - KI Landkreuzer: Anzeige auf dem kleinen Monitor 2x3 rechts am Sitz (liegt flach auf seinem Gelenk).
 -- Zeigt, was die Fahr-KI gerade macht und was ihre Sensoren melden - fuer den ersten Test im Spiel gedacht
 -- (z. B. ob ein Laser 0 meldet = nicht verkabelt / kein Strom).
--- Eingang (Composite): derselbe wie KI_FAHREN (Zahl 1-3 Ort, 7 Tempo, 8 Tempo vorwaerts, 9-15 Laser, 16 Batterie;
---  Bool 1 KI an, 2 Sitz besetzt, 4 Ziel, 6 Nach Hause), ueberschrieben: Zahl 26 Zustand, 27 Zahl Wegpunkte, 28 Soll-
---  Tempo, 29 aktueller Wegpunkt, 30 Links, 31 Rechts; Bool 7 Fahrt aktiv, 8 Waffen frei, 9 Revier
+-- Eingang (Composite): derselbe wie KI_FAHREN (Zahl 1-3 Ort, 9-15 Laser, 16 Batterie; Bool 1 KI an, 2 Sitz besetzt,
+--  4 Ziel, 6 Nach Hause, 10 Master Arm vom Klebe-Skript), ueberschrieben: Zahl 26 Zustand, 27 Zahl Wegpunkte, 28 Soll-
+--  Tempo, 29 aktueller Wegpunkt, 30 Links, 31 Rechts, 32 Tempo vorwaerts (von KI_FAHREN gerechnet); Bool 7 Fahrt
+--  aktiv, 9 Revier
 -- Video: Monitor 2x3 (64 x 96 Pixel, hochkant) und Helm des Steuersitzes (breit: dort nur eine Zeile unten)
 N=input.getNumber
 B=input.getBool
@@ -13,7 +14,7 @@ L={'VL','VM','VR','LI','RE','UN','HI'}
 W={}
 function onTick()
 	for i=1,31 do W[i]=N(i) end
-	ki,sb,zi,hm,fa,wa,rv=B(1),B(2),B(4),B(6),B(7),B(8),B(9)
+	ki,sb,zi,hm,fa,wa,rv=B(1),B(2),B(4),B(6),B(7),B(10),B(9)
 end
 function f(v)
 	if v<=0 then return '--' end
@@ -28,7 +29,7 @@ function onDraw()
 		-- Helm (Headset Video am Steuersitz, breiter Bildschirm): nur eine Zeile ganz unten, wie die Schiffs-Anzeige
 		local b=W[16] or 0
 		local t=string.format('KI %s  WP %d/%d  V %.0f/%.0f  %s%s%s',ki and (ZN[z+1] or z) or 'PAUSE',math.floor(W[29] or 0),
-			math.floor(W[27] or 0),W[8] or 0,W[28] or 0,b>0 and string.format('BAT %.0f%%',b*100) or '',wa and '  WAFFEN FREI' or '',
+			math.floor(W[27] or 0),W[32] or 0,W[28] or 0,b>0 and string.format('BAT %.0f%%',b*100) or '',wa and '  WAFFEN FREI' or '',
 			zi and '  ZIEL' or '')
 		st.setColor(0,0,0,160)
 		st.drawRectF(0,h-8,#t*5+4,8)
@@ -43,7 +44,7 @@ function onDraw()
 	st.drawText(1,1,ZN[z+1] or ('Z'..z))
 	st.setColor(200,200,200)
 	st.drawText(1,8,(ki and 'KI AN' or 'KI PAUSE')..(sb and ' S' or ''))
-	st.drawText(1,15,string.format('V %.1f/%.0f',W[8] or 0,W[28] or 0))
+	st.drawText(1,15,string.format('V %.1f/%.0f',W[32] or 0,W[28] or 0))
 	st.drawText(1,22,'WP '..math.floor(W[29] or 0)..'/'..math.floor(W[27] or 0)..(rv and ' REV' or ''))
 	local b=W[16] or 0
 	st.drawText(1,29,'BAT '..(b>0 and string.format('%.0f%%',b*100) or '?'))
