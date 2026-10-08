@@ -8,7 +8,7 @@ Prüfstand im Rechner. Im Spiel noch **nicht** erprobt – alles unten unter „
 | `lua/ki_fahren.lua` | das Fahr-Gehirn (Antrieb links/rechts) |
 | `lua/ki_karte.lua` | Touch-Karte im Cockpit (Monitor 3×3 oder 5×3) |
 | `tools/ki_props.py` | alle Properties mit Standardwert und Erklärung (`PROPS_FAHREN`, `PROPS_KARTE`, `PROPS`) |
-| `tools/test_ki.py` | Prüfstand: Simulator + 38 Prüfungen, am Ende „ALLES OK“ |
+| `tools/test_ki.py` | Prüfstand: Simulator + 43 Prüfungen (auch mit 0,6 m höheren Rädern), am Ende „ALLES OK“ |
 
 ---
 
@@ -41,6 +41,7 @@ Prüfstand im Rechner. Im Spiel noch **nicht** erprobt – alles unten unter „
 - **Sackgasse** (vorn zu, beide Seiten enger als „Breite m“): gerade zurück, bis der ganze Rumpf draußen ist; die
   ganze Sackgasse wird gemerkt und künftig umfahren.
 - **Bug-Laser** (senkrecht nach unten): Grundwert lernt er beim Stehen vor dem KI-Start („Boden Laser Hoehe m“ = 0).
+  Daraus folgen auch die Höhen der Front-Laser und des Physik-Sensors (Automatik) – die Radgröße ist also egal.
   - Boden unter dem Bug unter 0,5 m über dem Meer = **Wasser** → kräftig bremsen, zurück. Je tiefer der Boden unter
     dem Bug, desto langsamer (ab 10 m über „Wasser Hoehe m“), damit 50 t bergab rechtzeitig stehen.
   - Boden fällt **plötzlich** mehr als „Absturz m“ weg (steiler als „Steigung max“) = **Kante** → zurück. Über eine
@@ -134,9 +135,9 @@ leicht aus Versehen), „−“ weiter weg, „+“ näher dran, „Revier“ (a
 | Absturz m | 2.5 | so viel tiefer und plötzlich = Kante |
 | Breite m | 9.5 | Breite mit Rädern |
 | Laenge m | 27.5 | Länge (Physik-Sensor in der Mitte, Bug-Laser vorn) |
-| Laser Hoehe m | 2.4 | Höhe der Front-Laser über dem Boden |
+| Laser Hoehe m | 0 | Höhe der Front-Laser über dem Boden; 0 = Automatik (Bug-Laser-Grundwert + 0,8 m, passt zu jeder Radgröße) |
 | Boden Laser Hoehe m | 0 | Grundwert des Bug-Lasers; 0 = beim Stehen vor dem Start lernen |
-| Sensor Hoehe m | 2.1 | Höhe des Physik-Sensors über dem Boden |
+| Sensor Hoehe m | 0 | Höhe des Physik-Sensors über dem Boden; 0 = Automatik (Bug-Laser-Grundwert + 0,55 m) |
 | Kampf Abstand m | 1500 | Ziel näher = anhalten |
 | Kampf Tempo m/s | 0 | Tempo im Kampf |
 | Kampf Winkel Grad | 30 | Bug so weit zum Ziel drehen (0 = nicht drehen) |

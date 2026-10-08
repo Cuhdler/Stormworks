@@ -1063,10 +1063,32 @@ def test_nie_falsch_gelernt():
         sorted(FALSCH_GELERNT) or ""), not FALSCH_GELERNT)
 
 
+def test_grosse_raeder():
+    """Andre waehlt die Raeder erst im Spiel: mit 12er-Raedern steht der Panzer 0,6 m hoeher. Mit den Standard-
+    Eigenschaften (Hoehen 0 = Automatik aus dem Bug-Laser) muss die KI genauso Wand, Huegel, Klippe und See schaffen."""
+    global LASER, SENSOR_H, BUG_H
+    alt = (LASER, SENSOR_H, BUG_H)
+    hub = 0.6
+    LASER = {k: (v, r, h + hub, ri) for k, (v, r, h, ri) in LASER.items()}
+    SENSOR_H, BUG_H = SENSOR_H + hub, BUG_H + hub
+    try:
+        s = Sim(eben())
+        s.tippe(0, 300)
+        s.lauf(15)
+        g = s.chip.g
+        pruefe("grosse Raeder (+0,6 m): Automatik lernt Bug %.2f, Front-Laser %.2f (echt %.2f), Sensor %.2f (echt %.2f)"
+               % (g.BH, g.LH, LASER[10][2], g.SH, SENSOR_H),
+               abs(g.LH - LASER[10][2]) < 0.1 and abs(g.SH - SENSOR_H) < 0.1)
+        for t in (test_wand, test_huegel, test_klippe, test_see):
+            t()
+    finally:
+        LASER, SENSOR_H, BUG_H = alt
+
+
 TESTS = [test_groesse, test_karte, test_aus, test_bodenlaser, test_hand, test_batterie, test_pause, test_heim, test_lernen, test_kampf,
          test_wegpunkte, test_wand,
          test_huegel, test_fest, test_sackgasse, test_see, test_klippe, test_revier, test_dauerlauf,
-         test_nie_falsch_gelernt]
+         test_nie_falsch_gelernt, test_grosse_raeder]
 
 if __name__ == "__main__":
     wahl = sys.argv[1:]

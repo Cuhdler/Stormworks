@@ -121,7 +121,7 @@ function onTick()
 		VT,VV,VK,ZR,RV=P('Tempo m/s'),Z(P('Vollgas m/s'),1),P('Kriech m/s'),P('Ziel Radius m'),P('Revier m')
 		HD,NS,SM,KM=P('Hindernis m'),P('Notstopp m'),m.rad(P('Steigung max Grad')),P('Kipp max Grad')/360
 		WH,WS,AB=P('Wasser Hoehe m'),P('Wasser Stopp m'),P('Absturz m')
-		BB,LG,LH,BQ,SH=P('Breite m'),P('Laenge m')/2,P('Laser Hoehe m'),P('Boden Laser Hoehe m'),P('Sensor Hoehe m')
+		BB,LG,LQ,BQ,SQ=P('Breite m'),P('Laenge m')/2,P('Laser Hoehe m'),P('Boden Laser Hoehe m'),P('Sensor Hoehe m')
 		KA,KV,KW,MA=P('Kampf Abstand m'),P('Kampf Tempo m/s'),P('Kampf Winkel Grad')/360,P('Mindestabstand m')
 		BM,KR,NR,RR=P('Batterie min'),P('Kompass Richtung'),P('Nick Richtung'),P('Roll Richtung')
 		RP,LK,DG=1/60/Z(P('Rampe s'),.02),P('Lenk Staerke'),P('Dreh Gas')
@@ -185,6 +185,9 @@ function onTick()
 	-- KI-Start still steht (die Raeder waehlt Andre spaeter, je nach Rad misst er auf ebenem Boden 0,4-1 m); hat er
 	-- dafuer keine Zeit, gilt die erste Messung.
 	if BQ>0 then BH=BQ elseif dn>0 and dn<9 and (not kon and A(vf)<.1 or bn<1) then bn,bs=bn+1,bs+dn BH=bs/bn end
+	-- Front-Laser und Physik-Sensor sitzen 3,2 bzw. 2,2 Bloecke ueber dem Bug-Laser: ihre Hoehe ueber dem Boden folgt
+	-- aus BH (0 = Automatik, passt dann zu jeder Radgroesse)
+	LH,SH=LQ>0 and LQ or BH+.8,SQ>0 and SQ or BH+.55
 	-- Bodenhoehe unter dem Bug (ga); 0 = kein Wert. Kante (kb): der Boden unter dem Bug liegt mehr als
 	-- 'Absturz m' unter der Ebene des Rumpfes (dp) UND ist ploetzlich weggefallen: dp im Verhaeltnis zur Strecke, die
 	-- er vorwaerts fuhr, seit der Boden normal war (od-c0), steiler als SM. Eine Kuppe (oben auf einer Rampe, Anfang
