@@ -65,7 +65,7 @@ Was an Land anders sein muss, ist in die Chips eingebaut:
 - Bodenziele sind Ziele für die Kanonen. Auf dem Schiff waren „Landziele“ gesperrt.
 - Die Kanonen zielen auf die gemessene Zielhöhe. Auf dem Schiff war sie fest 1,5 m über dem Meer.
 - Zielgröße für den Kamera-Zoom ist 10 m statt 40 m (Fahrzeuge statt Schiffe).
-- Auto-Chaff ist an, solange die Waffen frei sind. Es gibt keinen eigenen Schalter mehr.
+- Auto-Chaff ist an, solange die Waffen frei sind **und** eine Waffe ein Ziel hat. Es gibt keinen eigenen Schalter mehr.
 - Der Waffen-Schreiber ist aus (Port 0). Baut man mit `--schreiber`, ist er an (Port 8768).
 
 **Geprüft am Rechner, mit den Prüfständen deines Schiffs:**
@@ -124,7 +124,7 @@ haben denselben KI-Chip; die Lenk-Ausgänge sind in der einfachen Variante nur n
 ## 3. Bedienung
 
 **Ganz ohne Bedienung:** 10 s nach dem Spawnen fährt er los, nach 60 s sind die Waffen frei. Dann schießt er selbst
-und wirft Chaff, wenn ihn ein Radar erfasst. Er patrouilliert in 400 m um den Spawn-Punkt.
+und wirft Chaff, wenn ihn ein Radar erfasst (und seine Radare einen Gegner sehen). Er patrouilliert in 400 m um den Spawn-Punkt.
 
 > **Achtung, kein Freund-Feind:** Die KI kennt keine Freunde (nur die Schutzzone, siehe unten). Mit freien Waffen
 > beschießt sie **alles, was sich bewegt** und in Reichweite ist (BC bis 6 km). Das gilt auch für dich in Auto, Hubschrauber oder auf dem Schiff.
@@ -216,8 +216,9 @@ In dieser Reihenfolge. Anfangen jeweils mit **KI Pause an** und **Waffen sperren
    freiem Gelände. Fährt er los, weicht er aus, hält er vor Wasser? Die genaue Prüfliste (Kompass, Rad-Richtung,
    Nick/Roll, Bug-Laser, Bremsweg, Karte) steht in `KI_FAHREN.md`, Abschnitt 6.
 8. **Waffen:** Waffen sperren aus, mit Gegnern.
-9. **Chaff:** Auf dem Schiff war offen, ob der Radarwarner die **eigenen** Radare meldet. Wenn ja, wirft der Panzer
-   dauernd Chaff, bis die 60 Salven leer sind. Dann bitte melden; ich baue dann eine Sperre ein.
+9. **Chaff:** Auf dem Schiff war offen, ob der Radarwarner die **eigenen** Radare meldet. Damit das nicht alle Werfer
+   leert, wirft der Panzer Chaff nur, wenn seine Radare auch einen Gegner sehen. Wirft er trotzdem ständig (sobald
+   irgendein Ziel da ist), bitte melden.
 
 ### Bekannte Schwachstellen
 - **Strom:** Es gibt nur Batterien (24 große), keinen Generator. Den Schiffs-Diesel kann man nicht einfach übernehmen,

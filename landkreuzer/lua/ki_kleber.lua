@@ -14,8 +14,10 @@
 -- Eingang (Composite): Zahl 1-3 Physik x/Hoehe/z (ganzes Physik-Composite), ueberschrieben: 21-23 BC-Ziel Ost/Nord/Hoehe,
 --  24-26 AC-Ziel, 27 Batterie (0..1, 0 = unbekannt), 28-30 Flak-L-Ziel, 31-33 Flak-R-Ziel; Bool 1-4 Instrumente,
 --  5-8 BC/AC/Flak L/Flak R hat Ziel
+-- Auto-Chaff (an den Schutz-Chip) nur, wenn die Waffen frei sind UND eine Waffe ein Ziel hat: meldet der Radarwarner
+-- auch die eigenen Radare (auf dem Schiff noch offen), verschiesst er so nicht alle Werfer ins Leere.
 -- Ausgang: Zahl 20-22 Ziel Welt x/z/Hoehe; Bool 1 KI an, 4 Ziel gueltig, 6 Nach Hause, 10 Master Arm (Waffen frei),
---  11 Schutzzone sperrt die Waffen
+--  11 Schutzzone sperrt die Waffen, 12 Auto-Chaff
 N=input.getNumber
 B=input.getBool
 S=output.setNumber
@@ -53,6 +55,8 @@ function onTick()
 	local b=N(27)
 	if b>0 and b<hb then hl=true elseif b>hb+.1 or b<=0 then hl=false end
 	O(6,B(4) or hl)
-	O(10,tk>wv and not B(1) and not sp)
+	local wf=tk>wv and not B(1)
+	O(10,wf and not sp)
 	O(11,sp)
+	O(12,wf and (B(5) or B(6) or B(7) or B(8)))
 end

@@ -65,8 +65,8 @@ def test_kleber():
                   o.get(104) and abs(o[20] + 260) < 1e-6 and abs(o[21] - 680) < 1e-6 and abs(o[22] - 30) < 1e-6))
     # Schutzzone 300 m um den Startpunkt (100/200): Flak-L-Ziel 50/50 daneben -> kein Master Arm, Bool 11
     o = tick(g, io, {1: 100.0, 3: 200.0, 28: 50.0, 29: 50.0, 30: 60.0, 31: 2000.0, 32: 0.0}, {7: True, 8: True})
-    rueck.append(("Schutzzone: Flak-Ziel 70 m vom Startpunkt -> Waffen schweigen (%s), Anzeige (%s)"
-                  % (o.get(110), o.get(111)), o.get(110) is False and o.get(111) is True))
+    rueck.append(("Schutzzone: Flak-Ziel 70 m vom Startpunkt -> Waffen schweigen (%s), Anzeige (%s), Chaff erlaubt (%s)"
+                  % (o.get(110), o.get(111), o.get(112)), o.get(110) is False and o.get(111) is True and o.get(112) is True))
     o = tick(g, io, {1: 100.0, 3: 200.0, 31: 2000.0, 32: 0.0}, {8: True})
     rueck.append(("Schutzzone: nur Flak-R-Ziel 2 km weg -> Waffen frei (%s)" % o.get(110), o.get(110) is True))
     o = tick(g, io, {1: 900.0, 3: 200.0, 21: -700.0, 22: 100.0, 23: 50.0}, {5: True})
@@ -75,7 +75,7 @@ def test_kleber():
     o = tick(g, io, {1: 100.0, 3: 200.0, 21: 300.0, 22: 400.0, 23: 50.0}, {5: True})
     rueck.append(("nur BC-Ziel: dieses", o.get(104) and abs(o[20] - 400) < 1e-6 and abs(o[21] - 600) < 1e-6))
     o = tick(g, io, {1: 100.0, 3: 200.0})
-    rueck.append(("kein Ziel: ungueltig", not o.get(104)))
+    rueck.append(("kein Ziel: ungueltig, kein Auto-Chaff (%s)" % o.get(112), not o.get(104) and o.get(112) is False))
     hb = pr["Heim Batterie"]
     o = tick(g, io, {1: 100.0, 3: 200.0, 27: hb - 0.05})
     o2 = tick(g, io, {1: 100.0, 3: 200.0, 27: hb + 0.05})

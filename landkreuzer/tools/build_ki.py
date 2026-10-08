@@ -130,13 +130,13 @@ def build(src=None, eigen=None):
     wahl = mc.comp(41, (5, 3), {"count": 1}, [(rd(kleber, 9, (3, 3), 29), 0)])
     mc.node("Wahl", 0, 5, "an den Bildschirm-Chip (Eingang 'Wahl'): Bool 1 Master Arm", 3, 3, (8, 3), (wahl, 0))
     mc.node("Zustand", 0, 5, "Ausgang der Fahr-KI (Zustand, Wegpunkte) - frei fuer Anzeigen", 4, 3, (8, 2), (fahren, 0))
-    # Schutz-Chip (Auto-Chaff): Bool 3 'Auto-Chaff' = Waffen frei, Bool 4 'Pumpen' aus
-    schutz = mc.comp(41, (5, 1), {"count": 1, "offset": 2}, [(rd(kleber, 9, (3, 1), 29), 0)])
+    # Schutz-Chip (Auto-Chaff): Bool 3 'Auto-Chaff' = Waffen frei und ein Ziel da (Kleber Bool 12), Bool 4 'Pumpen' aus
+    schutz = mc.comp(41, (5, 1), {"count": 1, "offset": 2}, [(rd(kleber, 11, (3, 1), 29), 0)])
     mc.node("Status", 0, 6, "Monitor 2x3 rechts am Sitz: Video (KI-Zustand, Tempo, Batterie, Laser)", 4, 2, (8, 0),
             (status, 1))
     aus("Lenkung vorn", lenkung, 0, 1, "Lenk-Variante: Robotic Pivots der vorderen Achsen: Rotation Target", 0, -6, fz=4)
     aus("Lenkung hinten", lenkung, 1, 1, "Lenk-Variante: Robotic Pivots der hinteren Achsen: Rotation Target", 1, -7, fz=4)
-    mc.node("Schutz", 0, 5, "an den Schutz-Chip (Eingang 'Instrumente'): Bool 3 Auto-Chaff = Waffen frei", 3, 2, (8, 1),
+    mc.node("Schutz", 0, 5, "an den Schutz-Chip (Eingang 'Instrumente'): Bool 3 Auto-Chaff = Waffen frei + Ziel", 3, 2, (8, 1),
             (schutz, 0))
     assert len(mc.desc) <= 128, len(mc.desc)
     return mc

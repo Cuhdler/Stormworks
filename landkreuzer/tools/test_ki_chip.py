@@ -63,7 +63,11 @@ def main():
     r = lauf(65)
     w = r[-1][1].get("Wahl") or ({}, {})
     s = r[-1][1].get("Schutz") or ({}, {})
-    rueck.append(("nach 65 s: Master Arm %s, Auto-Chaff %s" % (w[1].get(1), s[1].get(3)), w[1].get(1) and s[1].get(3)))
+    rueck.append(("nach 65 s ohne Gegner: Master Arm %s, Auto-Chaff %s (erst mit Ziel)" % (w[1].get(1), s[1].get(3)),
+                  w[1].get(1) and not s[1].get(3)))
+    r = lauf(65, ziel=(0.0, 3000.0))
+    s = r[-1][1].get("Schutz") or ({}, {})
+    rueck.append(("nach 65 s mit Ziel in 3 km: Auto-Chaff %s" % s[1].get(3), s[1].get(3)))
     r = lauf(65, schalter=(True, False, True, False))
     w = r[-1][1].get("Wahl") or ({}, {})
     rueck.append(("Schalter 'Waffen sperren' + 'KI Pause': kein Master Arm, steht (%.1f m)" % math.hypot(*r[-1][0]),
