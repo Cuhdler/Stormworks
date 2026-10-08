@@ -1,8 +1,8 @@
 -- KI KARTE v1.0 - KI Landkreuzer (08.10.2026): Touch-Karte im Cockpit (Monitor 3x3 = 96x96 Pixel oder 5x3 = 160x96).
 -- Zeigt die Karte um den eigenen Ort (Norden oben), den Panzer als Pfeil in Fahrtrichtung, die Wegpunkte mit Nummer
 -- (der aktuelle gelb), die Route (im Revier-Modus zurueck zum ersten), den Revier-Kreis um die Heimat (nur im
--- Revier-Modus), das aktuelle Ziel (Strich vom Panzer; Revier-Punkt lila Kreis; im Kampf der Feind als rotes Kreuz)
--- und oben den Zustand der KI mit Tempo.
+-- Revier-Modus), die Schutzzone um die Heimat (rot gestrichelt: Ziele darin beschiesst er nicht), das aktuelle Ziel
+-- (Strich vom Panzer; Revier-Punkt lila Kreis; im Kampf der Feind als rotes Kreuz) und oben den Zustand der KI mit Tempo.
 -- Bedienung (ein Finger, nur die Beruehrung zaehlt, nicht das Halten):
 --  - Karte antippen = Wegpunkt an dieser Stelle (ki_fahren nimmt hoechstens 8)
 --  - Knoepfe unten: 'Loeschen' (zweimal tippen binnen 3 s: alle Wegpunkte weg - einmal ist zu leicht aus Versehen),
@@ -28,10 +28,10 @@ NA={'AUS','HAND','WEGPUNKT','REVIER','AUSWEICHEN','ZURUECK','KAMPF','BATTERIE','
 W={}
 x,z,hd,zs,gx,gz,hx,hz,rv,nw,wi,vf=0,0,0,0,0,0,0,0,0,0,1,0
 w,h,bh=96,96,13
-tl,lz,pm,zm=false,0,false,1
+tl,lz,pm,zm,zr=false,0,false,1,0
 
 function onTick()
-	if not ini then ini=1 zm=cl(property.getNumber('Zoom Start'),.1,50) end
+	if not ini then ini=1 zm,zr=cl(property.getNumber('Zoom Start'),.1,50),property.getNumber('Schutzzone m') end
 	local tx,ty=N(1),N(2)
 	zs,gx,gz,hx,hz,rv=m.floor(N(3)+.5),N(4),N(5),N(7),N(8),N(9)
 	nw,wi=m.floor(cl(N(10),0,8)),m.floor(N(11)+.5)
@@ -69,11 +69,17 @@ function onDraw()
 		ta,tb=map.screenToMap(x,z,zm,w,h,tq[1],tq[2])
 		tq=nil
 	end
-	-- Revier-Kreis
+	-- Revier-Kreis, Schutzzone (gestrichelt)
 	local a,b=M(hx,hz)
 	if pm then
 		C(0,200,0)
 		st.drawCircle(a,b,M(hx+rv,hz)-a)
+	end
+	local r=M(hx+zr,hz)-a
+	C(255,60,60)
+	for i=0,zr>0 and 23 or -1,2 do
+		local p,q=i*pi2/24,(i+1)*pi2/24
+		st.drawLine(a+r*m.cos(p),b+r*m.sin(p),a+r*m.cos(q),b+r*m.sin(q))
 	end
 	-- Route
 	for i=1,nw do

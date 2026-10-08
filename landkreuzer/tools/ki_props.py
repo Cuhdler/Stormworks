@@ -50,6 +50,8 @@ PROPS_FAHREN = [
 
 PROPS_KARTE = [
     ("Zoom Start", 1, "Karten-Zoom beim Einschalten (kleiner = naeher dran; die Knoepfe +/- halbieren bzw. verdoppeln)"),
+    # dieselbe Eigenschaft wie im Klebe-Skript (build_ki.PROPS_KLEBER) - der Chip hat sie nur einmal
+    ("Schutzzone m", 300, "Ziele so nah am Startpunkt (Werkbank, eigene Basis): keine Waffe schiesst (0 = aus)"),
 ]
 
 PROPS = PROPS_FAHREN + PROPS_KARTE

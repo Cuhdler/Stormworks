@@ -5,7 +5,7 @@
 --  - Wegpunkte (bis 8, auf der Karte angetippt, ki_karte.lua) der Reihe nach; im Revier-Modus danach wieder von vorn,
 --    sonst bleibt er am letzten stehen (Zustand 9).
 --  - ohne Wegpunkte im Revier-Modus: Zufallspunkte hoechstens 'Revier m' um die Heimat (nicht nahe gemerkter Gefahr,
---    nicht nahe besuchter tiefer Orte); am Punkt 'Patrouille Pause s' stehen (Antrieb aus, Strom sparen).
+--    nicht nahe besuchter tiefer Orte); am Punkt 'Patrouille Pause s' stehen (haelt die Stelle).
 --  - Schalter 'Nach Hause': zur Heimat und dort warten; aus = weiter wie vorher.
 --  - W/S/A/D am Sitz: sofort Handbetrieb (auch bei KI aus); 2 s nach dem Loslassen faehrt die KI weiter.
 -- Tempo vorwaerts rechnet die KI selbst aus der Ortsaenderung in Kursrichtung (Kanal 7/8 werden nicht gebraucht).
@@ -270,8 +270,9 @@ function onTick()
 		end
 		w=cl(w,-DG,DG)
 	elseif pw>0 and #W<1 and pm and not B(6) then
-		-- Patrouillen-Pause am Revier-Punkt: anhalten, dann Antrieb aus (Strom sparen); die Tuerme arbeiten weiter
-		pw,zs,up=pw-1,9,A(vf)>.3
+		-- Patrouillen-Pause am Revier-Punkt: anhalten und die Stelle halten (am Hang rollt er sonst weg; auf ebenem
+		-- Boden kostet das Halten keinen Strom); die Tuerme arbeiten weiter
+		pw,zs=pw-1,9
 	else
 		-- Fahren: Ziel = Heimat (Schalter 'Nach Hause'), Wegpunkt oder Revier-Punkt
 		n,nh=#W,B(6)
@@ -398,17 +399,20 @@ function onTick()
 
 	-- Batterie unter 30 % (wenn bekannt): Soll-Tempo nur 60 %
 	if ba>0 and ba<.3 then vs=vs*.6 end
-	-- Tempo-Regler (Vorsteuerung + PI auf das gemessene Tempo vorwaerts), Lenkung hat Vorrang
+	-- Tempo-Regler (Vorsteuerung + PI auf das gemessene Tempo vorwaerts), Lenkung hat Vorrang. Soll 0: beim Bremsen
+	-- kein I-Anteil (sonst setzt er danach zurueck); ist er einmal fast still (hm), haelt der I-Anteil (Summe des
+	-- Tempos = Weg) die Stelle - Elektromotoren ohne Gas bremsen nicht, am Hang rollte er sonst weg
 	if up then
 		e=vs-vf
-		if vs==0 and A(vf)<.5 then si=si*.9 end
-		si=cl(si+e*.01,-.7,.7)
+		if vs~=0 then hm=nil elseif A(vf)<.3 then hm=1 end
+		if vs==0 and not hm then si=si*.9 end
+		si=cl(si+e*(vs~=0 and .01 or hm and .03 or 0),-1,1)
 		u=cl(vs/VV+.3*e+si,-1,1)
 		w=cl(w,-1,1)
 		if A(u)+A(w)>1 then u=sg(u)*(1-A(w)) end
 	end
 	-- festgefahren? Befehl gross, aber weder Fahrt noch Drehung (3 s)
-	if kon and hn<1 and mt<1 and (A(u)>.3 or A(w)>.3) and A(vf)<.3 and A(yr)<.005 then sk=sk+1 else sk=0 end
+	if kon and hn<1 and mt<1 and (vs~=0 and A(u)>.3 or A(w)>.3) and A(vf)<.3 and A(yr)<.005 then sk=sk+1 else sk=0 end
 	lu=u
 	RX=zs==8 and 4 or 1
 	lo,ro=RA(lo,cl(u+w,-1,1)),RA(ro,cl(u-w,-1,1))

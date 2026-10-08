@@ -815,9 +815,11 @@ def test_pause():
     halt = []
     s.lauf(60, bis=lambda s: halt.append((s.zs, s.chip.on[1], s.chip.on[2], abs(s.pz.v))) or s.zs != 9)
     dauer = (s.t - t0) / 60
-    ruhig = all(z == 9 and l == 0 and r == 0 for z, l, r, _ in halt[240:-1]) and max(v for *_, v in halt[240:]) < 0.1
+    # auf ebenem Boden haelt der Regler die Stelle praktisch ohne Gas (am Hang mit Gas: test_hang)
+    ruhig = all(z == 9 and abs(l) < 0.15 and abs(r) < 0.15 for z, l, r, _ in halt[240:-1]) and \
+        max(v for *_, v in halt[240:]) < 0.1
     s.lauf(30)
-    pruefe("Patrouille: am Revier-Punkt %.1f s Pause (soll 45), bremst, dann Zustand 9, Ausgaenge 0, steht: %s; danach "
+    pruefe("Patrouille: am Revier-Punkt %.1f s Pause (soll 45), bremst, dann Zustand 9, Ausgaenge ~0, steht: %s; danach "
            "weiter "
            "(Zustand %d, %.1f m/s)" % (dauer, ruhig, s.zs, s.pz.v), 44 < dauer < 47 and ruhig and s.zs == 3 and s.pz.v > 2)
 
@@ -1063,6 +1065,21 @@ def test_nie_falsch_gelernt():
         sorted(FALSCH_GELERNT) or ""), not FALSCH_GELERNT)
 
 
+def test_hang():
+    """Steht er am Hang (Kampf), haelt der Tempo-Regler die Stelle - Elektromotoren ohne Gas bremsen nicht."""
+    for grad in (8, 15):
+        k = math.tan(math.radians(grad))
+        s = Sim(Welt(lambda x, z, k=k: 20.0 + k * z, 20.0 + k * 3000, name="Hang"))
+        s.tippe(0, 1500)
+        s.lauf(14)
+        s.ziel = (s.pz.x, s.pz.z + 800)
+        s.lauf(4)
+        p0 = (s.pz.x, s.pz.z)
+        s.lauf(30)
+        d = math.hypot(s.pz.x - p0[0], s.pz.z - p0[1])
+        pruefe("Hang %d Grad, Kampf (steht): in 30 s %.1f m bewegt (Zustand %d)" % (grad, d, s.zs), d < 1.0 and s.zs == 6)
+
+
 def test_grosse_raeder():
     """Andre waehlt die Raeder erst im Spiel: mit 12er-Raedern steht der Panzer 0,6 m hoeher. Mit den Standard-
     Eigenschaften (Hoehen 0 = Automatik aus dem Bug-Laser) muss die KI genauso Wand, Huegel, Klippe und See schaffen."""
@@ -1088,7 +1105,7 @@ def test_grosse_raeder():
 TESTS = [test_groesse, test_karte, test_aus, test_bodenlaser, test_hand, test_batterie, test_pause, test_heim, test_lernen, test_kampf,
          test_wegpunkte, test_wand,
          test_huegel, test_fest, test_sackgasse, test_see, test_klippe, test_revier, test_dauerlauf,
-         test_nie_falsch_gelernt, test_grosse_raeder]
+         test_nie_falsch_gelernt, test_hang, test_grosse_raeder]
 
 if __name__ == "__main__":
     wahl = sys.argv[1:]

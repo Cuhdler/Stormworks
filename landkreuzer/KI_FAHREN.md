@@ -8,7 +8,7 @@ Prüfstand im Rechner. Im Spiel noch **nicht** erprobt – alles unten unter „
 | `lua/ki_fahren.lua` | das Fahr-Gehirn (Antrieb links/rechts) |
 | `lua/ki_karte.lua` | Touch-Karte im Cockpit (Monitor 3×3 oder 5×3) |
 | `tools/ki_props.py` | alle Properties mit Standardwert und Erklärung (`PROPS_FAHREN`, `PROPS_KARTE`, `PROPS`) |
-| `tools/test_ki.py` | Prüfstand: Simulator + 43 Prüfungen (auch mit 0,6 m höheren Rädern), am Ende „ALLES OK“ |
+| `tools/test_ki.py` | Prüfstand: Simulator + 45 Prüfungen (auch mit 0,6 m höheren Rädern und am Hang), am Ende „ALLES OK“ |
 
 ---
 
@@ -19,7 +19,7 @@ Prüfstand im Rechner. Im Spiel noch **nicht** erprobt – alles unten unter „
 - **Wegpunkte** (bis 8) tippt Andre auf der Karte an. Die KI fährt sie der Reihe nach ab. Im **Revier-Modus** (Knopf
   „Revier“, grün = an, beim Start an) geht es danach wieder von vorn los, sonst bleibt er am letzten stehen.
 - **Ohne Wegpunkte** im Revier-Modus: Zufallspunkte höchstens „Revier m“ um die Heimat. Am Punkt bleibt er
-  „Patrouille Pause s“ stehen (Antrieb aus, Strom sparen, die Türme arbeiten weiter), dann der nächste Punkt.
+  „Patrouille Pause s“ stehen (die Türme arbeiten weiter), dann der nächste Punkt.
 - **Schalter „Nach Hause“**: zurück zur Heimat und dort warten; Schalter aus = weiter wie vorher.
 - **W/S/A/D am Sitz** = sofort Handbetrieb (auch bei KI aus). 2 s nach dem Loslassen fährt die KI weiter.
 - **Kampf**: meldet das Waffensystem ein Ziel näher als „Kampf Abstand m“, hält er an (stabile Plattform) und dreht
@@ -50,6 +50,9 @@ Prüfstand im Rechner. Im Spiel noch **nicht** erprobt – alles unten unter „
 - **Gefährliche Stellen** (8, die ältesten fallen raus) stoßen den Kurs ab und lenken um sie herum. Revier-Punkte
   meiden sie und Orte, an denen er schon tief (unter „Wasser Hoehe m“) war.
 - **Festgefahren** (Befehl groß, weder Fahrt noch Drehung, 3 s): 3 s in Gegenrichtung mit Drehung.
+- **Stehen am Hang**: Elektromotoren ohne Gas bremsen nicht. Soll er stehen (Kampf, Pause, am Ziel), hält der
+  Tempo-Regler die Stelle mit den Motoren (im Simulator am 15°-Hang 30 s lang auf 0,1 m genau; vorher rollte er
+  16 m zurück). Auf ebenem Boden kostet das fast keinen Strom.
 - Ein Ziel, das **3 Fehlschläge** bringt (festgefahren 1, Gefahr 2, 60 s ohne 5 m näher 1), wird übersprungen –
   z. B. ein Wegpunkt im See oder unter einer Klippe.
 

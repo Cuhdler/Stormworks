@@ -3875,7 +3875,7 @@ end
 end
 w=cl(w,-DG,DG)
 elseif pw&gt;0 and #W&lt;1 and pm and not B(6) then
-pw,zs,up=pw-1,9,A(vf)&gt;.3
+pw,zs=pw-1,9
 else
 n,nh=#W,B(6)
 if nh then
@@ -3974,13 +3974,14 @@ end
 if ba&gt;0 and ba&lt;.3 then vs=vs*.6 end
 if up then
 e=vs-vf
-if vs==0 and A(vf)&lt;.5 then si=si*.9 end
-si=cl(si+e*.01,-.7,.7)
+if vs~=0 then hm=nil elseif A(vf)&lt;.3 then hm=1 end
+if vs==0 and not hm then si=si*.9 end
+si=cl(si+e*(vs~=0 and .01 or hm and .03 or 0),-1,1)
 u=cl(vs/VV+.3*e+si,-1,1)
 w=cl(w,-1,1)
 if A(u)+A(w)&gt;1 then u=sg(u)*(1-A(w)) end
 end
-if kon and hn&lt;1 and mt&lt;1 and (A(u)&gt;.3 or A(w)&gt;.3) and A(vf)&lt;.3 and A(yr)&lt;.005 then sk=sk+1 else sk=0 end
+if kon and hn&lt;1 and mt&lt;1 and (vs~=0 and A(u)&gt;.3 or A(w)&gt;.3) and A(vf)&lt;.3 and A(yr)&lt;.005 then sk=sk+1 else sk=0 end
 lu=u
 RX=zs==8 and 4 or 1
 lo,ro=RA(lo,cl(u+w,-1,1)),RA(ro,cl(u-w,-1,1))
@@ -4018,9 +4019,9 @@ NA={'AUS','HAND','WEGPUNKT','REVIER','AUSWEICHEN','ZURUECK','KAMPF','BATTERIE','
 W={}
 x,z,hd,zs,gx,gz,hx,hz,rv,nw,wi,vf=0,0,0,0,0,0,0,0,0,0,1,0
 w,h,bh=96,96,13
-tl,lz,pm,zm=false,0,false,1
+tl,lz,pm,zm,zr=false,0,false,1,0
 function onTick()
-if not ini then ini=1 zm=cl(property.getNumber('Zoom Start'),.1,50) end
+if not ini then ini=1 zm,zr=cl(property.getNumber('Zoom Start'),.1,50),property.getNumber('Schutzzone m') end
 local tx,ty=N(1),N(2)
 zs,gx,gz,hx,hz,rv=m.floor(N(3)+.5),N(4),N(5),N(7),N(8),N(9)
 nw,wi=m.floor(cl(N(10),0,8)),m.floor(N(11)+.5)
@@ -4058,6 +4059,12 @@ local a,b=M(hx,hz)
 if pm then
 C(0,200,0)
 st.drawCircle(a,b,M(hx+rv,hz)-a)
+end
+local r=M(hx+zr,hz)-a
+C(255,60,60)
+for i=0,zr&gt;0 and 23 or -1,2 do
+local p,q=i*pi2/24,(i+1)*pi2/24
+st.drawLine(a+r*m.cos(p),b+r*m.sin(p),a+r*m.cos(q),b+r*m.sin(q))
 end
 for i=1,nw do
 local j=i%nw+1
