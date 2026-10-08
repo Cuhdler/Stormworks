@@ -12,7 +12,7 @@ import build_ki  # noqa: E402
 from chip_sim import ChipSim  # noqa: E402
 
 
-def lauf(sek, schalter=(False, False, False, False), tipp=None, sitz=None, ziel=None, batterie=0.0):
+def lauf(sek, schalter=(False, False, False, False), tipp=None, sitz=None, ziel=None, batterie=0.0, laser=4000.0):
     """Panzer auf flachem Land (Hoehe 50 m), Kurs Nord. tipp = (Tick, Pixel x, y[, Ticks gehalten]) auf dem Kartenmonitor.
     -> Liste je Tick (Ort, Ausgaenge)"""
     sim = ChipSim(build_ki.build())
@@ -26,8 +26,8 @@ def lauf(sek, schalter=(False, False, False, False), tipp=None, sitz=None, ziel=
         x += v * math.sin(hd * 2 * math.pi) / 60
         z += v * math.cos(hd * 2 * math.pi) / 60
         phys = ({1: x, 2: 50.0, 3: z, 9: v, 13: abs(v), 15: 0.0, 16: 0.0, 17: -hd}, {})
-        laser = {n: 4000.0 for n in build_ki.LASER_NAMEN}
-        laser["Laser unten"] = 0.6
+        las = {n: laser for n in build_ki.LASER_NAMEN}
+        las["Laser unten"] = 0.6 if laser else 0.0
         tn = {1: 96.0, 2: 96.0}
         tb = {}
         if tipp and tipp[0] <= t < tipp[0] + (tipp[3] if len(tipp) > 3 else 3):
@@ -43,7 +43,7 @@ def lauf(sek, schalter=(False, False, False, False), tipp=None, sitz=None, ziel=
             bed_b[9] = True
         e = {"Physik-Sensor": phys, "Sitz": (sn, sb), "Instrumente": ({}, dict(enumerate(schalter, 1))),
              "Bedienung": (bed_n, bed_b), "Karte Touch": (tn, tb), "Batterie": batterie}
-        e.update(laser)
+        e.update(las)
         a = sim.tick(e)
         rl, rr = a.get("Links") or 0.0, a.get("Rechts") or 0.0
         out.append(((x, z), a))
@@ -93,6 +93,13 @@ def main():
     r = lauf(3, schalter=(True, False, True, False), sitz=(1.0, 0.5))
     lv, lh = r[-1][1].get("Lenkung vorn") or 0, r[-1][1].get("Lenkung hinten") or 0
     rueck.append(("Lenkung (D): vorn %.3f, hinten %.3f" % (lv, lh), lv > 0.1 and lh < -0.1))
+    # Laser melden 0 (nicht eingeschaltet / kein Strom): die KI faehrt nicht, Zustand 10 (LASER?)
+    r = lauf(20, laser=0.0)
+    rueck.append(("Laser melden 0: Zustand %d (10 = LASER?), %.1f m gefahren" % (zustand(r[-1][1]), math.hypot(*r[-1][0])),
+                  zustand(r[-1][1]) == 10 and math.hypot(*r[-1][0]) < 0.5))
+    r = lauf(1)
+    la = (r[-1][1].get("Laser an"))
+    rueck.append(("Ausgang 'Laser an' ist an (%s)" % la, la is True))
     # Ziel in 600 m: Kampf (Zustand 6)
     r = lauf(20, ziel=(0.0, 600.0))
     rueck.append(("Ziel der Kanonen 600 m voraus: Zustand %d (6 = Kampf)" % zustand(r[-1][1]), zustand(r[-1][1]) == 6))

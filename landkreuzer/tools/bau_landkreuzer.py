@@ -763,6 +763,9 @@ class Bau:
         for name, t in self.laser_teile:
             neu.append((4, bat, t.vp))
             neu.append((1, t.vp, self.knoten("KI", name)))
+            # Einschalten: die Turm-Kamera des Schiffs hat fuer ihren Laser einen Eingang 'Laser an' - der einzelne
+            # Laser-Sensor sehr wahrscheinlich auch. Hat er keinen, findet das Kabel keinen Anschluss (schadet nicht).
+            neu.append((0, self.knoten("KI", "Laser an"), t.vp))
         # Ladestand der ersten Batterie (Annahme: am Strom-Anschluss oben; fehlt er, liest die KI 0 = unbekannt)
         neu.append((1, bat, self.knoten("KI", "Batterie")))
         # KI-Chip

@@ -81,6 +81,7 @@ Das Tempo vorwärts rechnet die KI selbst aus der Ortsänderung (Kanal 7/8 des P
 | 7 | BATTERIE | Batterie leer: steht |
 | 8 | GEFAHR | Wasser, Kante oder Schräglage |
 | 9 | WARTET | am Ziel, zu Hause, Patrouillen-Pause |
+| 10 | LASER? | Laser vorn Mitte (Zahl 10) oder Bug-Laser (14) meldet 0: blind – steht (hält die Stelle) |
 
 ---
 

@@ -14,7 +14,7 @@
 N=input.getNumber
 B=input.getBool
 st=screen
-ZN={'AUS','HAND','WEGPUNKT','REVIER','AUSWEICHEN','ZURUECK','KAMPF','BATTERIE','GEFAHR','WARTET'}
+ZN={'AUS','HAND','WEGPUNKT','REVIER','AUSWEICHEN','ZURUECK','KAMPF','BATTERIE','GEFAHR','WARTET','LASER?'}
 L={'VL','VM','VR','LI','RE','UN','HI'}
 W={}
 function onTick()
@@ -50,7 +50,7 @@ function onDraw()
 	end
 	st.setColor(0,0,0)
 	st.drawClear()
-	local c=z==8 and {255,60,60} or z==6 and {255,160,0} or z==0 and {120,120,120} or {80,255,80}
+	local c=(z==8 or z==10) and {255,60,60} or z==6 and {255,160,0} or z==0 and {120,120,120} or {80,255,80}
 	st.setColor(c[1],c[2],c[3])
 	st.drawText(1,1,ZN[z+1] or ('Z'..z))
 	st.setColor(200,200,200)

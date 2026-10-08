@@ -176,6 +176,7 @@ Der Monitor zeigt:
   | BATTERIE | Batterie fast leer: steht |
   | GEFAHR | Wasser, Kante oder zu schräg: zurück, die Stelle wird gemieden |
   | WARTET | am Ziel, zu Hause oder Pause im Revier |
+  | LASER? | Laser vorn Mitte oder Bug-Laser meldet 0 (kein Strom, kein Kabel, nicht eingeschaltet): die KI ist blind und fährt nicht |
 
 - das Tempo (ist/soll), den Wegpunkt, die Batterie, ob die Waffen frei sind
 - die **7 Laser-Entfernungen**: VL, VM, VR = vorn links/Mitte/rechts, LI, RE = Seiten, UN = unten, HI = hinten.
@@ -212,7 +213,11 @@ In dieser Reihenfolge. Anfangen jeweils mit **KI Pause an** und **Waffen sperren
    - Fährt er bei W vorwärts? Die Richtung je Seite stellen die Eigenschaften „Rad Richtung links/rechts“ im
      KI-Chip ein. Die KI lernt das auch selbst, solange „Richtung lernen“ 1 ist.
 4. **Laser:** Auf dem KI-Status-Monitor stehen alle 7 Entfernungen. Bei „--“ hängt ein Laser nicht richtig.
-   Annahme: Strom und Ausgang sitzen am Laser-Block selbst, der Strahl zeigt wie bei der Turm-Kamera.
+   Annahme: Strom, Ausgang und Einschalten sitzen am Laser-Block selbst, der Strahl zeigt wie bei der Turm-Kamera.
+   Die Turm-Kamera hat für ihren Laser einen Eingang „Laser an“; darum bekommt jeder Laser vom KI-Chip
+   (Ausgang „Laser an“, immer an) ein Einschalt-Kabel. Zeigen trotzdem alle „--“: im Editor an einem Laser nachsehen,
+   welche Anschlüsse er hat, und mir sagen. Solange der mittlere Front-Laser oder der Bug-Laser 0 meldet, fährt die
+   KI nicht (Zustand LASER?) – sie fährt also nie blind los.
 5. **Türme:** wie auf dem Schiff (Test Rohre usw.). Die Richtungs-Eigenschaften sind die vom Schiff, weil die Türme
    genauso eingebaut sind.
 6. **Lenk-Variante:** Hinsetzen, D drücken. Lenken die vorderen Räder nach rechts und die hinteren nach links?

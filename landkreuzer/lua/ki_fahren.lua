@@ -216,6 +216,9 @@ function onTick()
 		up=false
 	elseif bl then
 		zs=7
+	elseif N(10)*N(14)==0 then
+		-- Laser vorn Mitte oder Bug-Laser meldet 0 (kein Strom, kein Kabel, nicht eingeschaltet): blind - nicht fahren
+		zs=10
 	elseif mt>0 then
 		-- Manoever laeuft: Tempo/Lenkung fest; hinten zu nah -> nur drehen; tief (Wasser nah) -> nur kriechen
 		mt=mt-1

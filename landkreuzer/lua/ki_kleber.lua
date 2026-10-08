@@ -18,7 +18,7 @@
 -- Auto-Chaff (an den Schutz-Chip) nur, wenn die Waffen frei sind UND eine Waffe ein Ziel hat: meldet der Radarwarner
 -- auch die eigenen Radare (auf dem Schiff noch offen), verschiesst er so nicht alle Werfer ins Leere.
 -- Ausgang: Zahl 20-22 Ziel Welt x/z/Hoehe; Bool 1 KI an, 4 Ziel gueltig, 6 Nach Hause, 10 Master Arm (Waffen frei),
---  11 Schutzzone sperrt die Waffen, 12 Auto-Chaff
+--  11 Schutzzone sperrt die Waffen, 12 Auto-Chaff, 13 immer an (schaltet die Laser ein)
 N=input.getNumber
 B=input.getBool
 S=output.setNumber
@@ -69,4 +69,5 @@ function onTick()
 	O(10,wf and not sp)
 	O(11,sp)
 	O(12,wf and (B(5) or B(6) or B(7) or B(8)))
+	O(13,true)
 end
