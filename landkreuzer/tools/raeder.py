@@ -24,8 +24,19 @@ BEKANNT = ("multibody", "gun_", "radar", "camera", "laser", "microprocessor", "m
            "ladder", "flare", "rocket", "solid_", "warhead", "connector", "inventory", "sign", "control_fin")
 
 
-def stummel():
-    return [("L", (-X1, ACHSE_Y, z)) for z in RAD_Z] + [("R", (X1, ACHSE_Y, z)) for z in RAD_Z]
+def stummel(F=None):
+    """Wellen-Stummel (Seite, Position des aeussersten Wellen-Teils). Feste Achsen: Welle in der Seitenwand (x +-15);
+    lenkbare Achsen (Variante mit Lenkung): Winkel-Welle aussen auf dem Gelenk-Koerper - gefunden ueber die
+    Teile: aeusserstes trans_*-Teil je Achse und Seite auf Achs-Hoehe."""
+    if F is None:
+        return [("L", (-X1, ACHSE_Y, z)) for z in RAD_Z] + [("R", (X1, ACHSE_Y, z)) for z in RAD_Z]
+    out = []
+    for seite, sx in (("L", -1), ("R", 1)):
+        for z in RAD_Z:
+            kand = [t.vp for _, ts in F.koerper for t in ts
+                    if t.d.startswith("trans_") and t.vp[1] == ACHSE_Y and t.vp[2] == z and t.vp[0] * sx >= X1]
+            out.append((seite, max(kand, key=lambda p: p[0] * sx) if kand else (sx * X1, ACHSE_Y, z)))
+    return out
 
 
 def ist_neu(t):
@@ -53,7 +64,12 @@ def main():
     txt = open(pfad, encoding="utf-8", newline="").read()
     F = fz.Fahrzeug(txt)
     rumpf = max(range(len(F.koerper)), key=lambda k: len(F.koerper[k][1]))
-    st = stummel()
+    st = stummel(F)
+    # Koerper je Stummel (bei lenkbaren Achsen sitzt der Stummel auf dem Gelenk-Koerper - das Rad muss dorthin)
+    koerper_von = {}
+    for bi, (_, ts) in enumerate(F.koerper):
+        for t in ts:
+            koerper_von.setdefault(t.vp, bi)
     vorlagen = {}
     for bi, (_, ts) in enumerate(F.koerper):
         for t in ts:
@@ -68,16 +84,17 @@ def main():
         sys.exit("Kein Rad am linken Stummel gefunden. Bitte ein Rad an die vorderste linke Welle setzen und speichern.")
     neue = []
     for seite, s in st:
+        ziel_k = koerper_von.get(s, rumpf)
         if seite in vorlagen:
             t, s0, bi = vorlagen[seite]
             if s == s0:
                 continue
-            neue.append((bi, t.verschoben(fz.sub(s, s0))))
+            neue.append((ziel_k, t.verschoben(fz.sub(s, s0))))
         else:
             t, s0, bi = vorlagen["L"]
             off = fz.sub(t.vp, s0)
             ziel = (s[0] - off[0], s[1] + off[1], s[2] + off[2])
-            neue.append((bi, gespiegelt(t, ziel)))
+            neue.append((ziel_k, gespiegelt(t, ziel)))
     belegt = {t.vp for t in F.koerper[rumpf][1]}
     for bi, t in neue:
         if bi == rumpf and t.vp in belegt:
