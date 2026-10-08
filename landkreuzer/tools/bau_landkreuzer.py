@@ -644,6 +644,8 @@ class Bau:
         neu.append((5, self.neu["karte"].vp, self.knoten("KI", "Karte Touch")))
         neu.append((6, self.knoten("KI", "Karte"), self.neu["karte"].vp))
         neu.append((6, self.knoten("KI", "Status"), self.neu["wahlmonitor"].vp))
+        # Helm (Headset Video des Sitzes; im Schiff kam dort die Schiffsfuehrung an, Sitz (0,17,-10) + (1,4,0))
+        neu.append((6, self.knoten("KI", "Status"), fz.add(self.neu["sitz"].vp, (1, 4, 0))))
         neu.append((5, self.knoten("KI", "Wahl"), self.knoten("Bildschirm", "Wahl")))
         neu.append((5, self.knoten("KI", "Schutz"), self.knoten("Schutz", "Instrumente")))
         # Lage: Radar 6 (im Schiff an den Raketen-Chip vergeben) wieder an den Lage-Chip
