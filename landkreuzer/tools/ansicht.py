@@ -134,8 +134,8 @@ BESCHRIFTUNG = [
     ("Dachkamera + Radarwarner", (0, 33, -15), (-40, 110)),
     ("Chaff-Werfer (links und rechts)", (-10, 12, -30), (200, 120)),
     ("Flak L und Flak R (je 2 Rohre)", (-10, 13, -57), (90, 110)),
-    ("Laser vorn (3 Stueck, + unten)", (-13, 3, 41), (-120, -60)),
-    ("Laser Seite (je einer)", (-16, 6, -8), (-100, -90)),
+    ("Laser vorn (3 Stueck, + unten)", (-14, 3, 41), (-120, -60)),
+    ("Laser Seite (je einer, auf Ausleger)", (-19, 6, -8), (-100, -90)),
     ("Wellen fuer die Raeder (7 je Seite)", (-15, -3, 5), (60, -100)),
     ("Kennung KL-1", (-15, 5, -16), (160, -90)),
 ]
