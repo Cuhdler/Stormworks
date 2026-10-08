@@ -135,7 +135,10 @@ und wirft Chaff, wenn ihn ein Radar erfasst (und seine Radare einen Gegner sehen
 > - **Schutzzone:** Ist ein Ziel irgendeiner Waffe näher als **300 m** am Startpunkt (dort, wo du ihn gespawnt hast,
 >   also an deiner Werkbank), schweigen **alle** Waffen, solange es aufgeschaltet ist; die KI fährt so ein Ziel auch
 >   nicht an. Der KI-Status zeigt dann „SCHUTZZONE“. Deine Fahrzeuge an der Basis sind so sicher – unterwegs nicht.
->   Eigenschaft „Schutzzone m“ im KI-Chip (0 = aus).
+>   Eigenschaft „Schutzzone m“ im KI-Chip (0 = aus). Auf der Karte: rot gestrichelter Kreis.
+> - **Freund-Punkte:** Weitere Schutzzonen setzt du auf der Karte: **Finger 1,5 s auf eine Stelle halten** (ein blauer
+>   Kreis wächst), z. B. auf deinen Hafen. Blau gestrichelt mit „F“. Nochmal dort halten = wieder weg. Höchstens 4;
+>   nach einem Neuspawn sind sie weg.
 > - Idee für später: Freund-Kennung per Funk. Deine Fahrzeuge senden ihren Ort, der Panzer schießt dort nicht hin.
 
 ### Schalter im Instrumentenblock (Brücke, links vom Sitz)
@@ -149,7 +152,9 @@ Die Schalter sind andersherum als auf dem Schiff. **Aus heißt: Die KI darf.**
 | **Nach Hause** | an = fährt zum Spawn-Punkt zurück und bleibt dort stehen |
 
 ### Karte (Monitor 3×3 links vom Sitz)
-- Auf die Karte tippen: Dort kommt ein **Wegpunkt** hin. Bis zu 8 Wegpunkte, die KI fährt sie der Reihe nach im Kreis ab.
+- Auf die Karte **kurz** tippen: Dort kommt ein **Wegpunkt** hin. Bis zu 8 Wegpunkte, die KI fährt sie der Reihe nach
+  im Kreis ab.
+- Finger **1,5 s halten**: **Freund-Punkt** (Schutzzone, siehe oben), nochmal halten = weg.
 - Knopf **Loeschen** zweimal binnen 3 s tippen: alle Wegpunkte weg (einmal wäre zu leicht aus Versehen). Ohne
   Wegpunkte patrouilliert die KI im Revier (Zufallspunkte bis 400 m um den Startpunkt, an jedem 45 s Pause).
 - **+ / −**: Zoom. **Revier** (grün = an): nach dem letzten Wegpunkt wieder von vorn; aus = am letzten stehen bleiben.

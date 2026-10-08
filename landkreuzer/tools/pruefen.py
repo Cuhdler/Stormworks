@@ -7,7 +7,8 @@ Prueft:
 3. je Koerper keine zwei Teile auf demselben Platz (ausser Gelenk-Paaren)
 4. Rumpf zusammenhaengend (Nachbar-Bloecke; Bauteile zaehlen mit 2 Bloecken Reichweite, weil sie groesser sind)
 5. Kabel: kein Eingang doppelt belegt (ausser Strom), jedes Kabel verbindet zwei verschiedene Orte
-6. Chips: Lua-Skripte hoechstens 8192 Zeichen, je Anschluss genau ein <slot/>
+6. Chips: Lua-Skripte hoechstens 8192 Zeichen, je Anschluss genau ein <slot/>, Composite-Kanaele nur 1-32
+   (Schreiben: Versatz + Anzahl <= 32, Lesen: Kanal-Index < 32)
 7. Kabel-Enden: keines auf einem Bau-Block (dort ist kein Anschluss), keines weit weg von jedem Bauteil;
    Chip-Anschluesse ohne Kabel werden als Hinweis genannt (erwartet: die im Schiff auch offenen und die Ausgaenge
    'Zustand', 'Pumpen' sowie in der einfachen Variante 'Lenkung vorn/hinten')
@@ -87,6 +88,12 @@ def pruefe(txt, schiff=None, laut=True):
     # 6. Chips
     for mp in root.iter("microprocessor_definition"):
         for c in mp.iter("c"):
+            o = c.find("object")
+            if c.get("type") in ("40", "41") and int(o.get("offset", 0)) + int(o.get("count", 1)) > 32:
+                fehler.append("Chip %s: Composite schreiben ueber Kanal 32 (Versatz %s, Anzahl %s)"
+                              % (mp.get("name"), o.get("offset", 0), o.get("count", 1)))
+            if c.get("type") in ("29", "31") and int(o.get("i", 0)) > 31:
+                fehler.append("Chip %s: Composite lesen Kanal %d (> 32)" % (mp.get("name"), int(o.get("i")) + 1))
             if c.get("type") == "56":
                 n = len(c.find("object").get("script"))
                 if n > 8192:

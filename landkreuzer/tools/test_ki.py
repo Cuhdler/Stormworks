@@ -909,6 +909,14 @@ def test_karte():
         t1 += t1b
         soll = screen_to_map(100.0, 200.0, z0, 96, 96, 40, 40)
         tipp_ok = len(t1) == 1 and abs(t1[0][0] - soll[0]) < 0.01 and abs(t1[0][1] - soll[1]) < 0.01 and not b1
+        # Freund-Punkt: 100 Ticks (1,7 s) gehalten -> kein Wegpunkt, Zahl 34 = 1, Ort 26/27; nochmal gehalten -> weg
+        t6, _, _ = bild(40, 40, True, 100)
+        t6b, _, _ = bild(ticks=5)
+        f1 = (k.on[9], k.on[1], k.on[2])
+        bild(40, 40, True, 100)
+        bild(ticks=5)
+        freund_ok = not (t6 + t6b) and f1[0] == 1 and abs(f1[1] - soll[0]) < 0.01 and abs(f1[2] - soll[1]) < 0.01 \
+            and k.on[9] == 0
         # Zoom: '+' (60 % Breite) halbiert, '-' (40 %) verdoppelt
         bild(ticks=2)
         bild(58, 90, True, 3)
@@ -935,10 +943,11 @@ def test_karte():
         t5, _, _ = bild(85, 90, True, 3)
     except Exception as e:  # noqa: BLE001
         fehler.append(str(e))
-        tipp_ok = zoom_ok = revier_ok = loesch_ok = False
+        tipp_ok = zoom_ok = revier_ok = loesch_ok = freund_ok = False
         t5 = []
     pruefe("Karte: keine Lua-Fehler (4 Bildgroessen, viele Zustaende) %s" % (fehler or ""), not fehler)
     pruefe("Karte: Tipp 30 Ticks gehalten = genau 1 Wegpunkt-Puls an der richtigen Stelle", tipp_ok)
+    pruefe("Karte: Finger 1,7 s gehalten = Freund-Punkt (kein Wegpunkt), nochmal = weg", freund_ok)
     pruefe("Karte: Zoom +/- halbiert/verdoppelt", zoom_ok)
     pruefe("Karte: Revier-Knopf = genau 1 Befehl 2; Knoepfe setzen keinen Wegpunkt", revier_ok and not t5)
     pruefe("Karte: Loeschen erst beim 2. Tippen binnen 3 s (Befehl 1), sonst nichts", loesch_ok)

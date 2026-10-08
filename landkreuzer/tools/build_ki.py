@@ -76,13 +76,15 @@ def build(src=None, eigen=None):
         return mc.comp(typ, pos, {"i": ch} if ch else {}, [(q, 0)])
 
     # --- KI_KLEBER: Physik-Composite + Bedienung (Ziele von BC, AC, Flak L/R) + Instrumente + 'Ziel da'
-    w = mc.comp(40, (-10, 8), {"count": 13, "offset": 20}, [("inc", (phys, 0))] + [
+    #     (Composite: nur Kanal 1-32! Flak-Ziele ohne Hoehe: 28/29 Flak L, 30/31 Flak R)
+    w = mc.comp(40, (-10, 8), {"count": 11, "offset": 20}, [("inc", (phys, 0))] + [
         (rd(bed, ch, (-12, 8 - .5 * j)), 0) for j, ch in enumerate((7, 8, 9, 11, 12, 13))] + [(bat, 0)] + [
-        (rd(bed, ch, (-12, 1 - .5 * j)), 0) for j, ch in enumerate((15, 16, 17, 19, 20, 21))])
+        (rd(bed, ch, (-12, 1 - .5 * j)), 0) for j, ch in enumerate((15, 16, 19, 20))])
     w = mc.comp(41, (-10, 6), {"count": 8}, [("inc", (w, 0))] + [(rd(inst, ch, (-12, 5 - .5 * j), 29), 0)
                                                               for j, ch in enumerate((0, 1, 2, 3))] +
                 [(rd(bed, ch, (-12, 3 - .5 * j), 29), 0) for j, ch in enumerate((8, 9, 10, 11))])
-    kleber = mc.comp(56, (-8, 6), {"script": src["ki_kleber"]}, [(w, 0)])
+    kleber_in = w                                  # Freund-Punkte der Karte kommen unten dazu (Kreis ueber KI_KARTE)
+    kleber = mc.comp(56, (-8, 6), {"script": src["ki_kleber"]}, [])
 
     # --- KI_FAHREN: Kleber-Ausgang + Physik, Laser, Sitz, Karten-Befehle
     werte = [rd(phys, ch, (-8, 3 - .5 * j)) for j, ch in enumerate((0, 1, 2, 16, 14, 15, 12, 8))]
@@ -106,6 +108,10 @@ def build(src=None, eigen=None):
     w = mc.comp(41, (-3, 2), {"count": 1, "offset": 2}, [("inc", (w, 0)), (rd(karte, 2, (-4, -1), 29), 0)])
     w = mc.comp(41, (-3, 1.5), {"count": 1, "offset": 4}, [("inc", (w, 0)), (rd(karte, 4, (-4, -1.5), 29), 0)])
     next(c for c in mc.comps if c[1] == fahren)[3].append((w, 0))
+    # Freund-Punkte der Karte (Zahl 1-8, 9 = Zahl der Punkte) -> Kleber Zahl 4-12 (dort ungenutzte Physik-Kanaele)
+    kf = mc.comp(40, (-10, 7), {"count": 9, "offset": 3}, [("inc", (kleber_in, 0))] + [
+        (rd(karte, ch, (-11, 7 - .5 * j)), 0) for j, ch in enumerate(range(9))])
+    next(c for c in mc.comps if c[1] == kleber)[3].append((kf, 0))
 
     # --- KI_STATUS: Eingang von KI_FAHREN + dessen Ausgang (Zahl 26-32: Zustand, Zahl Wegpunkte, Soll-Tempo,
     #     aktueller Wegpunkt, Lenk- und Fahrbefehl roh, Tempo; Bool 7-9) -> Monitor 2x3 und Helm

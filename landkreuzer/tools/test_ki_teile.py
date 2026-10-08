@@ -64,11 +64,14 @@ def test_kleber():
     rueck.append(("Ziel = naeheres (AC), Welt %.0f/%.0f, Hoehe %.0f" % (o.get(20, 0), o.get(21, 0), o.get(22, 0)),
                   o.get(104) and abs(o[20] + 260) < 1e-6 and abs(o[21] - 680) < 1e-6 and abs(o[22] - 30) < 1e-6))
     # Schutzzone 300 m um den Startpunkt (100/200): Flak-L-Ziel 50/50 daneben -> kein Master Arm, Bool 11
-    o = tick(g, io, {1: 100.0, 3: 200.0, 28: 50.0, 29: 50.0, 30: 60.0, 31: 2000.0, 32: 0.0}, {7: True, 8: True})
+    o = tick(g, io, {1: 100.0, 3: 200.0, 28: 50.0, 29: 50.0, 30: 2000.0, 31: 0.0}, {7: True, 8: True})
     rueck.append(("Schutzzone: Flak-Ziel 70 m vom Startpunkt -> Waffen schweigen (%s), Anzeige (%s), Chaff erlaubt (%s)"
                   % (o.get(110), o.get(111), o.get(112)), o.get(110) is False and o.get(111) is True and o.get(112) is True))
-    o = tick(g, io, {1: 100.0, 3: 200.0, 31: 2000.0, 32: 0.0}, {8: True})
+    o = tick(g, io, {1: 100.0, 3: 200.0, 30: 2000.0, 31: 0.0}, {8: True})
     rueck.append(("Schutzzone: nur Flak-R-Ziel 2 km weg -> Waffen frei (%s)" % o.get(110), o.get(110) is True))
+    # Freund-Punkt der Karte bei Ost 2100 / Nord 200 (Zahl 4/5, Zahl 12 = 1): dasselbe Ziel -> Waffen schweigen
+    o = tick(g, io, {1: 100.0, 3: 200.0, 30: 2000.0, 31: 0.0, 4: 2100.0, 5: 200.0, 12: 1.0}, {8: True})
+    rueck.append(("Freund-Punkt der Karte: Ziel dort -> Waffen schweigen (%s)" % o.get(110), o.get(110) is False))
     o = tick(g, io, {1: 900.0, 3: 200.0, 21: -700.0, 22: 100.0, 23: 50.0}, {5: True})
     rueck.append(("Schutzzone: Panzer 800 m weg, BC-Ziel bei der Basis -> kein Schuss, KI faehrt nicht hin (%s/%s)"
                   % (o.get(110), o.get(104)), o.get(110) is False and not o.get(104)))

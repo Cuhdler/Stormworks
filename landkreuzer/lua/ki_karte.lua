@@ -3,8 +3,10 @@
 -- (der aktuelle gelb), die Route (im Revier-Modus zurueck zum ersten), den Revier-Kreis um die Heimat (nur im
 -- Revier-Modus), die Schutzzone um die Heimat (rot gestrichelt: Ziele darin beschiesst er nicht), das aktuelle Ziel
 -- (Strich vom Panzer; Revier-Punkt lila Kreis; im Kampf der Feind als rotes Kreuz) und oben den Zustand der KI mit Tempo.
--- Bedienung (ein Finger, nur die Beruehrung zaehlt, nicht das Halten):
---  - Karte antippen = Wegpunkt an dieser Stelle (ki_fahren nimmt hoechstens 8)
+-- Bedienung (ein Finger):
+--  - Karte kurz antippen = Wegpunkt an dieser Stelle (ki_fahren nimmt hoechstens 8; zaehlt beim Loslassen)
+--  - Finger 1,5 s auf der Karte halten (der blaue Kreis waechst) = Freund-Punkt: dort ist eine weitere Schutzzone wie
+--    um die Heimat (z. B. Hafen, Basis); dasselbe an einem Freund-Punkt = wieder weg. Hoechstens 4, blau gestrichelt.
 --  - Knoepfe unten: 'Loeschen' (zweimal tippen binnen 3 s: alle Wegpunkte weg - einmal ist zu leicht aus Versehen),
 --    '-' weiter weg, '+' naeher dran, 'Revier' (Revier-Modus an/aus; gruen = an)
 -- Die Umrechnung Pixel -> Welt (map.screenToMap) passiert in onDraw (dort gehoeren die Karten-Befehle sicher hin);
@@ -13,7 +15,8 @@
 --  x/y (Monitor-Zahl 3/4; statt Antrieb L/R), 29/30 eigener Ort Ost/Nord (Physik-Sensor Zahl 1/3; statt der
 --  Rohbefehle), Bool 32 Touch gedrueckt (Monitor-Bool 1). Die Monitor-Groesse kommt aus screen.getWidth/getHeight.
 -- Ausgang: Zahl 23/24 Tipp Ost/Nord, 25 Befehl (1 Wegpunkte loeschen, 2 Revier-Modus um); Bool 3 Tipp-Puls,
---  5 Befehl-Puls (je 1 Tick; gleiche Kanaele wie die Eingaenge von ki_fahren)
+--  5 Befehl-Puls (je 1 Tick; gleiche Kanaele wie die Eingaenge von ki_fahren); Zahl 1-8 Freund-Punkte Ost/Nord,
+--  9 ihre Zahl (an das Klebe-Skript)
 N=input.getNumber
 B=input.getBool
 S=output.setNumber
@@ -26,6 +29,7 @@ function C(r,g,b,a) st.setColor(r,g,b,a or 255) end
 function M(a,b) return map.mapToScreen(x,z,zm,w,h,a,b) end
 NA={'AUS','HAND','WEGPUNKT','REVIER','AUSWEICHEN','ZURUECK','KAMPF','BATTERIE','GEFAHR','WARTET'}
 W={}
+F={}
 x,z,hd,zs,gx,gz,hx,hz,rv,nw,wi,vf=0,0,0,0,0,0,0,0,0,0,1,0
 w,h,bh=96,96,13
 tl,lz,pm,zm,zr=false,0,false,1,0
@@ -50,7 +54,14 @@ function onTick()
 			elseif f<.7 then zm=m.max(zm/2,.1)
 			else c=2 end
 		elseif ty>7 then
-			tq={tx,ty}
+			tp,th={tx,ty},0
+		end
+	end
+	-- Finger auf der Karte: beim Loslassen kurz = Wegpunkt, ab 1,5 s = Freund-Punkt
+	if tp then
+		if t then th=th+1 else
+			if th<90 then tq=tp else fq=tp end
+			tp=nil
 		end
 	end
 	tl=t
@@ -59,6 +70,25 @@ function onTick()
 	S(23,ta or 0) S(24,tb or 0) O(3,ta~=nil)
 	ta=nil
 	S(25,c) O(5,c>0)
+	-- Freund-Punkt umschalten (aus onDraw, schon in Weltkoordinaten): einer in 150 m = weg, sonst neu
+	if fa then
+		local k
+		for i,p in ipairs(F) do if (p[1]-fa)^2+(p[2]-fb)^2<22500 then k=i end end
+		if k then table.remove(F,k) elseif #F<4 then F[#F+1]={fa,fb} end
+		fa=nil
+	end
+	for i=1,4 do
+		local p=F[i] or {0,0}
+		S(2*i-1,p[1]) S(2*i,p[2])
+	end
+	S(9,#F)
+end
+-- gestrichelter Kreis
+function DK(a,b,r)
+	for i=0,r>0 and 23 or -1,2 do
+		local p,q=i*pi2/24,(i+1)*pi2/24
+		st.drawLine(a+r*m.cos(p),b+r*m.sin(p),a+r*m.cos(q),b+r*m.sin(q))
+	end
 end
 
 function onDraw()
@@ -69,6 +99,10 @@ function onDraw()
 		ta,tb=map.screenToMap(x,z,zm,w,h,tq[1],tq[2])
 		tq=nil
 	end
+	if fq then
+		fa,fb=map.screenToMap(x,z,zm,w,h,fq[1],fq[2])
+		fq=nil
+	end
 	-- Revier-Kreis, Schutzzone (gestrichelt)
 	local a,b=M(hx,hz)
 	if pm then
@@ -77,10 +111,14 @@ function onDraw()
 	end
 	local r=M(hx+zr,hz)-a
 	C(255,60,60)
-	for i=0,zr>0 and 23 or -1,2 do
-		local p,q=i*pi2/24,(i+1)*pi2/24
-		st.drawLine(a+r*m.cos(p),b+r*m.sin(p),a+r*m.cos(q),b+r*m.sin(q))
+	DK(a,b,r)
+	C(80,160,255)
+	for _,p in ipairs(F) do
+		local c,d=M(p[1],p[2])
+		DK(c,d,r)
+		st.drawText(c-2,d-2,'F')
 	end
+	if tp then st.drawCircle(tp[1],tp[2],2+th/9) end
 	-- Route
 	for i=1,nw do
 		local j=i%nw+1

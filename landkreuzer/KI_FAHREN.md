@@ -106,10 +106,12 @@ Bools: 1 Antrieb aktiv, 2 Waffen frei (KI an, kein Handbetrieb), 3 Revier-Modus,
 Zahl 1/2 = Touch x/y (Monitor-Zahl 3/4), **Zahl 29/30 = eigener Ort Ost/Nord vom Physik-Sensor (Zahl 1/3)**,
 Bool 32 = Touch gedrückt (Monitor-Bool 1). Die Monitorgröße liest das Skript selbst.
 **Ausgang**: Zahl 23/24 Tipp Ost/Nord, 25 Befehl; Bool 3 Tipp-Puls, 5 Befehl-Puls (je 1 Tick, gleiche Kanäle wie
-die Eingänge von ki_fahren – der Chip kann sie direkt durchreichen).
+die Eingänge von ki_fahren – der Chip kann sie direkt durchreichen); Zahl 1–8 Freund-Punkte Ost/Nord, 9 ihre Zahl
+(an das Klebe-Skript, Zahl 4–12).
 
-**Bedienung**: Karte antippen = Wegpunkt. Knöpfe unten: „Loeschen“ (zweimal binnen 3 s tippen – einmal wäre zu
-leicht aus Versehen), „−“ weiter weg, „+“ näher dran, „Revier“ (an/aus). Nur das Aufsetzen des Fingers zählt.
+**Bedienung**: Karte kurz antippen = Wegpunkt (zählt beim Loslassen). Finger 1,5 s halten = Freund-Punkt (weitere
+Schutzzone, höchstens 4; nochmal halten = weg). Knöpfe unten: „Loeschen“ (zweimal binnen 3 s tippen – einmal wäre zu
+leicht aus Versehen), „−“ weiter weg, „+“ näher dran, „Revier“ (an/aus); bei den Knöpfen zählt das Aufsetzen.
 
 ---
 

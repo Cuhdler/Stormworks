@@ -13,7 +13,7 @@ from chip_sim import ChipSim  # noqa: E402
 
 
 def lauf(sek, schalter=(False, False, False, False), tipp=None, sitz=None, ziel=None, batterie=0.0):
-    """Panzer auf flachem Land (Hoehe 50 m), Kurs Nord. tipp = (Tick, Pixel x, y) auf dem Kartenmonitor.
+    """Panzer auf flachem Land (Hoehe 50 m), Kurs Nord. tipp = (Tick, Pixel x, y[, Ticks gehalten]) auf dem Kartenmonitor.
     -> Liste je Tick (Ort, Ausgaenge)"""
     sim = ChipSim(build_ki.build())
     x, z, hd, v = 0.0, 0.0, 0.0, 0.0                     # hd Kurs im Uhrzeigersinn (U)
@@ -30,7 +30,7 @@ def lauf(sek, schalter=(False, False, False, False), tipp=None, sitz=None, ziel=
         laser["Laser unten"] = 0.6
         tn = {1: 96.0, 2: 96.0}
         tb = {}
-        if tipp and t in (tipp[0], tipp[0] + 1, tipp[0] + 2):
+        if tipp and tipp[0] <= t < tipp[0] + (tipp[3] if len(tipp) > 3 else 3):
             tn.update({3: float(tipp[1]), 4: float(tipp[2])})
             tb[1] = True
         sn, sb = {}, {}
@@ -77,6 +77,14 @@ def main():
     z = r[-1][1].get("Zustand") or ({}, {})
     rueck.append(("Karten-Tipp: %d Wegpunkt(e) bei %.0f/%.0f, Zustand %d" % (z[0].get(10, 0), z[0].get(12, 0), z[0].get(13, 0),
                                                                           z[0].get(3, -1)), z[0].get(10, 0) >= 1))
+    # Freund-Punkt: KI Pause, Finger 2 s auf der Karte (Pixel 80/20 = Ost 333 / Nord 292 m beim Zoom 1, wie beim
+    # Karten-Tipp oben), dann ein Ziel der Kanonen genau dort -> kein Master Arm; ohne Freund-Punkt -> Master Arm
+    r = lauf(66, schalter=(False, False, True, False), tipp=(700, 80, 20, 120), ziel=(333.3, 291.7))
+    w1 = (r[-1][1].get("Wahl") or ({}, {}))[1].get(1)
+    r = lauf(66, schalter=(False, False, True, False), ziel=(333.3, 291.7))
+    w2 = (r[-1][1].get("Wahl") or ({}, {}))[1].get(1)
+    rueck.append(("Freund-Punkt (Finger 2 s auf der Karte): Ziel dort -> Master Arm %s, ohne Freund-Punkt %s" % (w1, w2),
+                  w1 is False and w2 is True))
     # Sitz: W gedrueckt (KI Pause) -> faehrt von Hand vorwaerts
     r = lauf(5, schalter=(True, False, True, False), sitz=(0.0, 1.0))
     rueck.append(("Selbst fahren (W): Links %.2f, Rechts %.2f, %.1f m gefahren" % (
