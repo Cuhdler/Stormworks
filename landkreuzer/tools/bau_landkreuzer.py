@@ -493,6 +493,28 @@ class Bau:
         self.rumpf = [neu(t) for t in self.rumpf]
         self.koerper = [[neu(t) for t in k] for k in self.koerper]
         # self.neu zeigt auf Bauteile (keine Bloecke) - bleibt gueltig
+        self.kennung()
+
+    def kennung(self, text="KL-1", z0=-12, y0=7, farbe="E6E6E6"):
+        """Kennung in Blockschrift (3 x 5) auf beide Seitenwaende, von aussen lesbar."""
+        schrift = {"K": ["X.X", "XX.", "X..", "XX.", "X.X"], "L": ["X..", "X..", "X..", "X..", "XXX"],
+                   "-": ["...", "...", "XXX", "...", "..."], "1": [".X.", "XX.", ".X.", ".X.", "XXX"]}
+        punkte = set()
+        for i, ch in enumerate(text):
+            for zeile, muster in enumerate(schrift[ch]):
+                for sp, c in enumerate(muster):
+                    if c == "X":
+                        punkte.add((4 * i + sp, y0 - zeile))      # (Spalte von links, y)
+        breite = 4 * len(text) - 1
+        ziele = set()
+        for spalte, y in punkte:
+            ziele.add((X0, y, z0 - spalte))                        # links: von vorn nach hinten lesen
+            ziele.add((X1, y, z0 - breite + 1 + spalte))           # rechts: von hinten nach vorn lesen
+        for k, t in enumerate(self.rumpf):
+            if t.vp in ziele and t.d == "block":
+                x = re.sub(r' (bc|ac)="[0-9A-Fa-f]*"', "", t.xml, count=2)
+                x = re.sub(r'<o( r="[^"]*")?', lambda m: m.group(0) + ' bc="%s" ac="%s"' % (farbe, farbe), x, count=1)
+                self.rumpf[k] = fz.Teil(x)
 
     # ---------------- Chips ----------------
     def koerper_liste(self):
