@@ -68,7 +68,7 @@ if __name__ == "__main__":
     zeichnen(pf, au)
 
 
-def schraeg(pfad, aus, rechts=True):
+def schraeg(pfad, aus, rechts=True, markiert=(), titel=None, ausschnitt=None):
     """Schraegbild (isometrisch, von vorn rechts oben): jedes Teil als Wuerfel, hinten zuerst gezeichnet."""
     import matplotlib
     matplotlib.use("Agg")
@@ -86,9 +86,13 @@ def schraeg(pfad, aus, rechts=True):
         return ((sx * x - z) * cx, y - (sx * x + z) * cz)
     belegt = {t.vp for t in teile}
     polys, farben = [], []
+    if ausschnitt:
+        lo, hi = ausschnitt
+        teile = [t for t in teile if all(lo[i] <= t.vp[i] <= hi[i] for i in range(3))]
+        belegt = {t.vp for t in teile}
     for t in sorted(teile, key=lambda t: t.vp[2] + sx * t.vp[0] + t.vp[1]):
         x, y, z = t.vp
-        f = mc.to_rgb(farbe(t))
+        f = mc.to_rgb("#ff00ff" if t.vp in markiert else farbe(t))
         flaechen = []
         if (x, y + 1, z) not in belegt:     # oben
             flaechen.append(([p(x - .5, y + .5, z - .5), p(x + .5, y + .5, z - .5), p(x + .5, y + .5, z + .5),
@@ -109,7 +113,7 @@ def schraeg(pfad, aus, rechts=True):
     ax.autoscale()
     ax.set_aspect("equal")
     ax.axis("off")
-    fig.suptitle("KI Landkreuzer - Schraegbild von vorn %s oben (Raeder fehlen noch: setzt Andre, siehe LANDKREUZER.md)"
+    fig.suptitle(titel or "KI Landkreuzer - Schraegbild von vorn %s oben (Raeder fehlen noch: setzt Andre, siehe LANDKREUZER.md)"
                  % ("rechts" if rechts else "links"))
     fig.tight_layout()
     fig.savefig(aus, dpi=90)

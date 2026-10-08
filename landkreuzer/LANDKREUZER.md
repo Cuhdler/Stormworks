@@ -80,7 +80,8 @@ haben denselben KI-Chip; die Lenk-Ausgänge sind in der einfachen Variante nur n
 3. **Räder:** Die Spiel-Dateien der Räder liegen nur auf deinem PC, darum fehlen sie noch.
    - Im Editor den Landkreuzer laden.
    - **Ein** Rad an die **vorderste linke Welle** setzen. Das ist der Stummel, der links unten vorn aus der
-     Seitenwand kommt. Das Rad muss an der Welle hängen. Speichern.
+     Seitenwand kommt; das Bild `landkreuzer/bilder/rad_stummel.png` zeigt ihn pink. Das Rad muss an der Welle
+     hängen. Speichern.
      - Tipp aus dem Netz für schwere Fahrzeuge: große Räder (7×7). Federung (Steifigkeit, Dämpfung) hoch, sonst schlägt
        sie durch. Mehr und größere Räder sind besser als wenige.
      - Platz: bis ca. 12 Blöcke Durchmesser passen zwischen die Achsen (Abstand 15 Blöcke).
