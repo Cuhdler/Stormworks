@@ -1,11 +1,11 @@
-"""Baut den Chip "Landkreuzer KI" (5 x 4): KI_KLEBER (Schalter, Start-Verzoegerung, Ziel) -> KI_FAHREN (Fahr-KI, Skid-
+"""Baut den Chip "Landkreuzer KI" (5 x 5): KI_KLEBER (Schalter, Start-Verzoegerung, Ziel) -> KI_FAHREN (Fahr-KI, Skid-
 Steuerung) -> KI_KARTE (Karten-Monitor 3x3 mit Touch: Wegpunkte setzen).
 
 Anschluesse (Feld x, z):
   Eingaenge  (0,0) Physik-Sensor  (1,0) Sitz  (2,0) Instrumente  (3,0) Bedienung (Bildschirm-Chip)  (4,0) Karte Touch
              (0..4,1) Laser vorn links / vorn Mitte / vorn rechts / links / rechts   (0,2) Laser unten  (1,2) Laser hinten
              (2,2) Batterie (Ladestand, darf fehlen)   Ausgaenge (3,2) Schutz (an den Schutz-Chip: Auto-Chaff),
-             (4,2) Status (Video an den Monitor 2x3)
+             (4,2) Status (Video an den Monitor 2x3)   (0,4) Lenkung vorn, (1,4) Lenkung hinten (nur Lenk-Variante)
   Ausgaenge  (0,3) Links (alle linken Motoren)  (1,3) Rechts  (2,3) Karte (Video)  (3,3) Wahl (an den Bildschirm-Chip:
              Bool 1 Master Arm)  (4,3) Zustand (Ausgang von KI_FAHREN)
 """
@@ -24,6 +24,13 @@ LASER_NAMEN = ["Laser vorn links", "Laser vorn Mitte", "Laser vorn rechts", "Las
 PROPS_KLEBER = [
     ("Start Verzoegerung s", 10, "Nach dem Spawnen so lange warten, bis die KI faehrt und die Waffen frei sind"),
 ]
+PROPS_LENKUNG = [
+    ("Lenk Faktor", 1, "Lenk-Variante: Lenkwinkel je Kurven-Befehl (1 = voller Befehl gibt 'Lenk max Grad')"),
+    ("Lenk max Grad", 25, "Lenk-Variante: groesster Lenkwinkel der Gelenke vorn/hinten"),
+    ("Lenk Richtung", 1, "Lenk-Variante: 1 oder -1, wenn er bei 'rechts' nach links lenkt"),
+    ("Lenk Tempo m/s", 10, "Lenk-Variante: ab diesem Tempo wird der Lenkwinkel kleiner (doppeltes Tempo = halber Winkel)"),
+    ("Lenk Tempo Grad/s", 30, "Lenk-Variante: so schnell schwenken die Gelenke hoechstens"),
+]
 
 
 def lua(name):
@@ -33,7 +40,7 @@ def lua(name):
 
 def props():
     """Eigenschaften aller drei Skripte (ki_props.py vom Fahr-KI-Teil, falls vorhanden)."""
-    out = list(PROPS_KLEBER)
+    out = list(PROPS_KLEBER) + list(PROPS_LENKUNG)
     try:
         import ki_props
         for liste in (getattr(ki_props, "PROPS_FAHREN", []), getattr(ki_props, "PROPS_KARTE", [])):
@@ -46,11 +53,11 @@ def props():
 
 
 def build(src=None, eigen=None):
-    src = src or {n: lua(n) for n in ("ki_kleber", "ki_fahren", "ki_karte", "ki_status")}
+    src = src or {n: lua(n) for n in ("ki_kleber", "ki_fahren", "ki_karte", "ki_status", "ki_lenkung")}
     for n, s in src.items():
         assert len(s) <= LUA_LIMIT, (n, len(s))
     mc = MC("Landkreuzer KI", "KI %s: faehrt selbst (Wegpunkte, Revier, Ausweichen, nach Hause), Karte mit Touch, Waffen frei"
-            % VERSION, 5, 4)
+            % VERSION, 5, 5)
     phys = mc.node("Physik-Sensor", 1, 5, "Physics Sensor (derselbe wie an allen Waffen-Chips)", 0, 0, (-14, 8))
     sitz = mc.node("Sitz", 1, 5, "Steuersitz: Seat data (W/S, A/D zum Selberfahren, besetzt)", 1, 0, (-14, 7))
     inst = mc.node("Instrumente", 1, 5, "Instrumentenblock: Out Signal (1 Waffen sperren, 3 KI Pause, 4 Nach Hause)", 2, 0,
@@ -98,12 +105,15 @@ def build(src=None, eigen=None):
     st = mc.comp(41, (1, -3), {"count": 3, "offset": 6}, [("inc", (st, 0))] + [
         (rd(fahren, ch, (-1, -4 - .5 * j), 29), 0) for j, ch in enumerate((0, 1, 2))])
     status = mc.comp(56, (3, -2), {"script": src["ki_status"]}, [(st, 0)])
+    # --- KI_LENKUNG (nur Lenk-Variante): Ausgang von KI_FAHREN + Tempo (Physik 13) auf Zahl 32
+    lk = mc.comp(40, (1, -5), {"count": 1, "offset": 31}, [("inc", (fahren, 0)), (rd(phys, 12, (-1, -6)), 0)])
+    lenkung = mc.comp(56, (3, -5), {"script": src["ki_lenkung"]}, [(lk, 0)])
 
     for j, (name, val, desc) in enumerate(eigen or props()):
         mc.comp(34, (-18 - 2 * (j // 12), 8 - (j % 12)), {"n": name}, extra='<v text="%s" value="%s"/>' % (fmt(val), fmt(val)))
 
-    def aus(label, q, ch, ntype, desc, x, y, typ=31):
-        mc.node(label, 0, ntype, desc, x, 3, (8, y), (rd(q, ch, (5, y), typ), 0))
+    def aus(label, q, ch, ntype, desc, x, y, typ=31, fz=3):
+        mc.node(label, 0, ntype, desc, x, fz, (8, y), (rd(q, ch, (5, y), typ), 0))
 
     aus("Links", fahren, 0, 1, "alle Elektromotoren der linken Raeder: Throttle", 0, 6)
     aus("Rechts", fahren, 1, 1, "alle Elektromotoren der rechten Raeder: Throttle", 1, 5)
@@ -115,6 +125,8 @@ def build(src=None, eigen=None):
     schutz = mc.comp(41, (5, 1), {"count": 1, "offset": 2}, [(rd(kleber, 9, (3, 1), 29), 0)])
     mc.node("Status", 0, 6, "Monitor 2x3 rechts am Sitz: Video (KI-Zustand, Tempo, Batterie, Laser)", 4, 2, (8, 0),
             (status, 1))
+    aus("Lenkung vorn", lenkung, 0, 1, "Lenk-Variante: Robotic Pivots der vorderen Achsen: Rotation Target", 0, -6, fz=4)
+    aus("Lenkung hinten", lenkung, 1, 1, "Lenk-Variante: Robotic Pivots der hinteren Achsen: Rotation Target", 1, -7, fz=4)
     mc.node("Schutz", 0, 5, "an den Schutz-Chip (Eingang 'Instrumente'): Bool 3 Auto-Chaff = Waffen frei", 3, 2, (8, 1),
             (schutz, 0))
     assert len(mc.desc) <= 128, len(mc.desc)

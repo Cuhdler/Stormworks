@@ -59,6 +59,15 @@ R_SCHRAEGE = (-1, 0, 0, 0, 1, 0, 0, 0, -1)       # 02_wedge so gedreht: offene S
 
 # Fahrwerk: Rad-Achsen je Seite (z), Achs-Hoehe y, Motor-Spalte x
 RAD_Z = [35, 20, 5, -10, -25, -40, -55]          # Mitte -10 = Schwerpunkt (grob geschaetzt)
+# Lenk-Variante (--lenkung): diese Achsen sitzen auf senkrechten Gelenken (vorn 2, hinten 2), gebaut wie die Ruder der
+# Figet Marena: Robotic Pivot (Teil a am Rumpf, Teil b am Rad-Koerper), daneben ein kleiner E-Motor mit Winkel-Welle, der
+# das Gelenk antreibt (Gas fest 1 ueber eine Konstante, wie im Schiff); am Rad-Koerper haengt der Rad-Motor.
+LENK_VORN, LENK_HINTEN = [35, 20], [-40, -55]
+LENK_X = 17                                       # Gelenk-Spalte (aussen neben der Seitenwand x +-15)
+LENK_Y = 3                                        # Hoehe von Gelenk-Teil b (a eins darueber)
+# Ruder-Gelenk im Schiff je Seite: Teil b, Teil a, Gelenk-Motor, Winkel-Welle (x -9 links, +9 rechts)
+RUDER = {"L": {"b": (-9, -12, -144), "a": (-9, -11, -144), "m": (-9, -10, -142), "w": (-9, -11, -142), "k": 1},
+         "R": {"b": (9, -12, -144), "a": (9, -11, -144), "m": (9, -10, -142), "w": (9, -11, -142), "k": 3}}
 ACHSE_Y = -3
 MOTOR_X = 13
 
@@ -71,6 +80,7 @@ EINZEL = {
     "k_monitor": ((-5, 6, -59), "gate_bool_constant", (12, 2, -25)),
     "k_chaff": ((5, 6, -59), "gate_float_constant", (12, 2, -23)),        # Winkel der 8 Chaff-Gelenke
 }
+EINZEL_LENKUNG = {"k_lenkmotor": ((0, -12, -99), "gate_float_constant", (12, 2, -21))}   # Gas 1 fuer die Gelenk-Motoren
 # Chaff: 8 Werfer-Ketten (je 15 Flare Launcher auf einem Compact Pivot) wie an Deck der Figet Marena, auf dem Mitteldeck
 CHAFF_KOERPER = list(range(18, 26))
 CHAFF_GELENKE = [(sx, 16, z) for sx in (-9, 9) for z in (-39, -44, -49, -54)]
@@ -190,9 +200,11 @@ def chip_sc(w, l):
 
 
 class Bau:
-    def __init__(self, schreiber=False):
+    def __init__(self, schreiber=False, lenkung=False):
         self.F = fz.Fahrzeug.lesen()
         self.schreiber = schreiber
+        self.lenkung = lenkung
+        self.lenk = []             # (vorn/hinten, Gelenk-Teil a, Gelenk-Motor)
         self.rumpf = []            # Teile des Rumpf-Koerpers
         self.koerper = []          # weitere Koerper: Listen von Teilen
         self.teil_voxel = set()    # Positionen der Rumpf-Teile
@@ -248,7 +260,8 @@ class Bau:
     # ---------------- Einzelteile ----------------
     def einzel(self):
         F = self.F
-        for name, (alt, d, neu) in EINZEL.items():
+        einzel = dict(EINZEL, **(EINZEL_LENKUNG if self.lenkung else {}))
+        for name, (alt, d, neu) in einzel.items():
             t = vorlage(F, d, alt)
             n = t.verschoben(fz.sub(neu, alt))
             self.plus(n)
@@ -285,6 +298,9 @@ class Bau:
             # Winkel-Welle wie am Bugstrahlruder: verbindet lokal +y (Motor darueber) und lokal -x (nach aussen)
             rw = (1, 0, 0, 0, 1, 0, 0, 0, 1) if sx < 0 else (-1, 0, 0, 0, 1, 0, 0, 0, -1)
             for z in RAD_Z:
+                if self.lenkung and z in LENK_VORN + LENK_HINTEN:
+                    self.lenkachse(seite, sx, z, motor, rw)
+                    continue
                 mx = sx * MOTOR_X
                 m = motor.verschoben(fz.sub((mx, ACHSE_Y + 2, z), motor.vp))
                 self.plus(m)
@@ -303,6 +319,33 @@ class Bau:
             self.plus(b)
             self.batterien.append(b)
             self.reserviere(p, (-1, 0, -1), (1, 2, 1))
+
+    def lenkachse(self, seite, sx, z, motor, rw):
+        """Lenkbare Achse: Gelenk wie das Ruder im Schiff, Rad-Motor und Stummel auf dem Gelenk-Koerper."""
+        F = self.F
+        R = RUDER[seite]
+        xs = sx * LENK_X
+        d = fz.sub((xs, LENK_Y, z - 1), R["b"])            # Teil b -> (xs, 3, z-1); Rad-Spalte bei z (wie Ruderblatt)
+        a = vorlage(F, "multibody_robotic_pivot_01_a", R["a"]).verschoben(d)
+        self.plus(a)
+        gm = vorlage(F, "motor_small", R["m"]).verschoben(d)
+        self.plus(gm)
+        self.plus(vorlage(F, "trans_block_angle", R["w"]).verschoben(d))
+        self.lenk.append(("vorn" if z in LENK_VORN else "hinten", a, gm))
+        # Ausleger vom Rumpf zum Gelenk, zum Gelenk-Motor und zu seiner Welle
+        for p in ((sx * 16, LENK_Y + 1, z - 1), (sx * 16, LENK_Y + 1, z), (sx * 16, LENK_Y + 1, z + 1),
+                  (sx * 16, LENK_Y + 2, z + 1)):
+            self.plus(block(p))
+        # Rad-Koerper: Teil b, Saeule bis zum Rad-Motor, Rad-Motor (Kraft unten), Winkel-Welle = Stummel
+        b = vorlage(F, "multibody_robotic_pivot_01_b", R["b"]).verschoben(d)
+        k = [b] + [block((xs, y, z)) for y in range(ACHSE_Y + 4, LENK_Y + 1)]
+        m = motor.verschoben(fz.sub((xs, ACHSE_Y + 2, z), motor.vp))
+        k.append(m)
+        k.append(fz.Teil('<c d="trans_block_angle"><o r="%s" sc="6">%s</o></c>' % (rstr(rw), fz.vox("vp", (xs, ACHSE_Y, z)))))
+        self.koerper.append(k)
+        self.motoren[seite].append(m)
+        self.stummel.append((seite, (xs, ACHSE_Y, z)))
+        self.reserviere((xs, ACHSE_Y, z), (-1, 0, -2), (1, LENK_Y + 2 - ACHSE_Y, 2))
 
     def batterie_knoten(self, k=0):
         return fz.add(self.batterien[k].vp, (0, 2, 0))
@@ -631,6 +674,12 @@ class Bau:
             for m in self.motoren[seite]:
                 neu.append((4, bat, fz.add(m.vp, (0, 1, 0))))
                 neu.append((1, self.knoten("KI", label), m.vp))
+        # Lenk-Variante: Gelenke (Strom, Winkel vom KI-Chip), Gelenk-Motoren (Strom, Gas fest 1)
+        for wo, a, gm in self.lenk:
+            neu.append((4, bat, a.vp))
+            neu.append((1, self.knoten("KI", "Lenkung " + wo), a.vp))
+            neu.append((4, bat, gm.vp))
+            neu.append((1, self.neu["k_lenkmotor"].vp, gm.vp))
         # Laser: Strom und Entfernung (alle Anschluesse am einzigen Block des Lasers)
         for name, t in self.laser_teile:
             neu.append((4, bat, t.vp))
@@ -695,7 +744,8 @@ class Bau:
 
 
 def main():
-    b = Bau(schreiber="--schreiber" in sys.argv)
+    lenkung = "--lenkung" in sys.argv
+    b = Bau(schreiber="--schreiber" in sys.argv, lenkung=lenkung)
     b.module()
     b.einzel()
     b.chaff()
@@ -710,14 +760,15 @@ def main():
     G = b.pruefen(txt)
     import pruefen
     fehler, _ = pruefen.pruefe(txt, b.F)
-    os.makedirs(os.path.dirname(AUS_DATEI), exist_ok=True)
-    with open(AUS_DATEI, "w", encoding="utf-8", newline="") as f:
+    aus_datei = AUS_DATEI.replace(".xml", " Lenkung.xml") if lenkung else AUS_DATEI
+    os.makedirs(os.path.dirname(aus_datei), exist_ok=True)
+    with open(aus_datei, "w", encoding="utf-8", newline="") as f:
         f.write(txt)
     teile = sum(len(ts) for _, ts in G.koerper)
     print("KI Landkreuzer %s: %d Koerper, %d Teile (davon %d neue Rumpf-Bloecke), %d Kabel (%d aus dem Schiff, %d neu)"
           % (VERSION, len(G.koerper), teile, n, len(G.kabel), alt, neu))
     print("Chips:", ", ".join("%s %dx%d" % (k, m.width, m.length) for k, (m, _) in b.chips.items()))
-    print("Rad-Stummel:", len(b.stummel), " Datei:", AUS_DATEI, "(%d KB)" % (len(txt) // 1024))
+    print("Rad-Stummel:", len(b.stummel), "(davon %d gelenkt)" % (len(b.lenk)), " Datei:", aus_datei, "(%d KB)" % (len(txt) // 1024))
     for m in b.meldungen:
         print("HINWEIS:", m)
     if fehler:
