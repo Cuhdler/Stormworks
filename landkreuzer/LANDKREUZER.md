@@ -42,7 +42,7 @@ Eigenschaft man im KI-Chip umstellt, wenn z. B. eine Seite falsch herum dreht.
 | Ortung | **6 Phalanx-Radare** am Mast (wie auf der Figet Marena), dazu ein Radar auf jedem Turm, Dachkamera |
 | Brücke | die Brücke der Figet Marena: Steuersitz, Hauptmonitor 9×5 (Radar, Kamera, Zielliste), Monitor 3×3 = **Karte der KI**, Monitor 2×3 = **KI-Status**, Instrumentenblock; Aufstieg über Leitern hinten und hinter der Brücke |
 | Antrieb | 14 Elektromotoren (Medium), je einer pro Rad, 24 große Batterien im Fahrwerksraum; gelenkt wird wie bei einem Kettenfahrzeug (links und rechts verschieden schnell) |
-| KI | fährt Wegpunkte ab oder patrouilliert im Revier, weicht Hindernissen aus (7 Laser), meidet Wasser und Abhänge, befreit sich, wenn sie feststeckt, bleibt im Gefecht stehen, fährt auf Wunsch nach Hause |
+| KI | fährt Wegpunkte ab oder patrouilliert im Revier, weicht Hindernissen aus (7 Laser), meidet Wasser und Abhänge, befreit sich, wenn sie feststeckt, bleibt im Gefecht stehen (hält auch am Hang die Stelle), fährt auf Wunsch oder bei 40 % Batterie nach Hause, schießt nicht in die Schutzzone um ihre Basis |
 | Aussehen | Tarnanstrich (Wald: Oliv, Dunkelgrün, Braun, Schwarz) auf allen Blöcken, unten Schlamm-Spritzer, Bug als Keil (oben und unten 45°), Heck unten abgeschrägt, Kennung „KL-1“ weiß an beiden Seiten |
 
 ### Woher die Teile kommen
@@ -102,8 +102,9 @@ haben denselben KI-Chip; die Lenk-Ausgänge sind in der einfachen Variante nur n
    - **Ein** Rad an die **vorderste linke Welle** setzen. Das ist der Stummel, der links unten vorn aus der
      Seitenwand kommt; das Bild `landkreuzer/bilder/rad_stummel.png` zeigt ihn pink. Das Rad muss an der Welle
      hängen. Speichern.
-     - Tipp aus dem Netz für schwere Fahrzeuge: große Räder (7×7). Federung (Steifigkeit, Dämpfung) hoch, sonst schlägt
-       sie durch. Mehr und größere Räder sind besser als wenige.
+     - Tipp aus dem Netz für schwere Fahrzeuge: große Räder, Federung (Steifigkeit, Dämpfung) hoch, sonst schlägt
+       sie durch. Je größer das Rad, desto mehr Bodenfreiheit (bei 7er-Rädern nur 0,5 m). Die KI stellt sich selbst
+       auf die Radgröße ein (sie misst im Stand, wie hoch sie steht).
      - Platz: bis ca. 12 Blöcke Durchmesser passen zwischen die Achsen (Abstand 15 Blöcke).
    - Im Repo-Ordner: `python landkreuzer/tools/raeder.py`. Das ist ein Probelauf: Er zeigt, welche 13 Räder
      dazukommen. Für die Lenk-Variante: `--datei "%APPDATA%\Stormworks\data\vehicles\KI Landkreuzer Lenkung.xml"`
@@ -114,9 +115,9 @@ haben denselben KI-Chip; die Lenk-Ausgänge sind in der einfachen Variante nur n
    - Im Spiel das Fahrzeug **neu laden, ohne vorher zu speichern**.
    - Wenn du rechts ein anderes Rad willst: auch rechts vorn eines setzen, dann nimmt das Programm dieses für rechts.
 4. Spawnen. Er ist groß und braucht eine große Werkbank bzw. einen großen Platz.
-5. **Einsteigen:** Leiter hinten (links der Mitte) aufs Deck. Die unterste Sprosse hängt je nach Rad etwa
-   1 m über dem Boden (das Heck ist unten abgeschrägt): hinlaufen und hochspringen. Nach vorn zur Plattform hinter der Brücke, dort die
-   Leiter hoch, dann durch die Tür in der Rückwand der Brücke.
+5. **Einsteigen:** Leiter hinten (links der Mitte) aufs Deck. Die unterste Sprosse hängt je nach Rad etwa 1 m über
+   dem Boden (das Heck ist unten abgeschrägt): hinlaufen und hochspringen. Nach vorn zur Plattform hinter der Brücke,
+   dort die Leiter hoch, dann durch die Tür in der Rückwand der Brücke.
 
 ---
 
@@ -125,8 +126,8 @@ haben denselben KI-Chip; die Lenk-Ausgänge sind in der einfachen Variante nur n
 **Ganz ohne Bedienung:** 10 s nach dem Spawnen fährt er los, nach 60 s sind die Waffen frei. Dann schießt er selbst
 und wirft Chaff, wenn ihn ein Radar erfasst. Er patrouilliert in 400 m um den Spawn-Punkt.
 
-> **Achtung, kein Freund-Feind:** Die KI kennt keine Freunde. Mit freien Waffen beschießt sie **alles, was sich
-> bewegt** und in Reichweite ist (BC bis 6 km). Das gilt auch für dich in Auto, Hubschrauber oder auf dem Schiff.
+> **Achtung, kein Freund-Feind:** Die KI kennt keine Freunde (nur die Schutzzone, siehe unten). Mit freien Waffen
+> beschießt sie **alles, was sich bewegt** und in Reichweite ist (BC bis 6 km). Das gilt auch für dich in Auto, Hubschrauber oder auf dem Schiff.
 > Das Schiff macht es mit Master Arm genauso. Darum gilt:
 > - Zum Testen vorher **„Waffen sperren“ an**.
 > - Nach dem Spawnen hast du 60 s, um wegzukommen.
@@ -211,8 +212,9 @@ In dieser Reihenfolge. Anfangen jeweils mit **KI Pause an** und **Waffen sperren
    Bekommen die kleinen Gelenk-Motoren Strom und Gas (Konstante 1)? Beides ist wie beim Schiffs-Ruder verkabelt.
    Anders als beim Ruder trägt hier jedes Gelenk das Gewicht seines Rades. Knickt ein Rad weg oder wackelt es stark,
    ist das Gelenk zu schwach; dann bleibt nur die einfache Variante.
-7. **KI:** KI Pause aus, auf freiem Gelände. Fährt er los, weicht er aus, hält er vor Wasser? Die genaue Prüfliste
-   (Kompass, Rad-Richtung, Nick/Roll, Bug-Laser, Bremsweg, Karte) steht in `KI_FAHREN.md`, Abschnitt 6.
+7. **KI:** Erst die Vorzeichen auf dem Status-Monitor prüfen (N, R, K – siehe „KI-Status“). Dann KI Pause aus, auf
+   freiem Gelände. Fährt er los, weicht er aus, hält er vor Wasser? Die genaue Prüfliste (Kompass, Rad-Richtung,
+   Nick/Roll, Bug-Laser, Bremsweg, Karte) steht in `KI_FAHREN.md`, Abschnitt 6.
 8. **Waffen:** Waffen sperren aus, mit Gegnern.
 9. **Chaff:** Auf dem Schiff war offen, ob der Radarwarner die **eigenen** Radare meldet. Wenn ja, wirft der Panzer
    dauernd Chaff, bis die 60 Salven leer sind. Dann bitte melden; ich baue dann eine Sperre ein.
@@ -226,7 +228,10 @@ In dieser Reihenfolge. Anfangen jeweils mit **KI Pause an** und **Waffen sperren
   Laut Forum werden Elektromotoren mit sinkender Ladung schwächer (schon ab etwa 80 % merkbar). Darum fährt die KI
   schon bei **40 %** Ladung nach Hause (Eigenschaft „Heim Batterie“ im KI-Chip), damit sie es noch den Hang hoch
   schafft. Ab 50 % fährt sie wieder normal.
-- **Größe:** Der Panzer ist sehr groß (≈ 28 × 10 m). Eine kleinere Werkbank reicht nicht.
+- **Größe:** Der Panzer ist sehr groß (≈ 27 × 10 m). Eine kleinere Werkbank reicht nicht.
+- **Wackeln/Zittern:** Laut Forum hilft bei großen Fahrzeugen mit Gelenken eine höhere Physik-Stufe in den
+  Einstellungen (Allgemein). Räder berühren den Boden nur an einem Punkt (dem untersten beim Bauen); darum sind die
+  Lenk-Gelenke senkrecht, so bleibt dieser Punkt beim Lenken unten.
 - **Räder:** Welches Rad am besten passt, musst du ausprobieren (siehe oben).
 - **Licht:** Er hat keine Scheinwerfer, weil es im Schiff keine Licht-Teile gibt (siehe „Woher die Teile kommen“).
   Die KI fährt nachts trotzdem, denn die Laser sehen im Dunkeln. Willst du ihn nachts sehen: im Editor 2–4
