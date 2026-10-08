@@ -20,10 +20,13 @@ def lade(name, props):
     g = rt.globals()
     io = {"n": {}, "b": {}, "on": {}, "draw": []}
     rt.execute("input={} output={} property={} screen={}")
-    g.input.getNumber = lambda i: float(io["n"].get(i, 0.0))
-    g.input.getBool = lambda i: bool(io["b"].get(i, False))
-    g.output.setNumber = lambda i, v: io["on"].__setitem__(i, v)
-    g.output.setBool = lambda i, v: io["on"].__setitem__(100 + i, v)
+    def kanal(i):
+        assert 1 <= int(i) <= 32 and int(i) == i, "Composite-Kanal %r gibt es nicht (nur 1-32)" % (i,)
+        return int(i)
+    g.input.getNumber = lambda i: float(io["n"].get(kanal(i), 0.0))
+    g.input.getBool = lambda i: bool(io["b"].get(kanal(i), False))
+    g.output.setNumber = lambda i, v: io["on"].__setitem__(kanal(i), v)
+    g.output.setBool = lambda i, v: io["on"].__setitem__(100 + kanal(i), v)
     g.property.getNumber = lambda s: props[s]
     for f in ("setColor", "drawClear", "drawText", "drawRectF", "drawLine", "drawRect"):
         setattr(g.screen, f, (lambda n: (lambda *a: io["draw"].append((n,) + tuple(a))))(f))

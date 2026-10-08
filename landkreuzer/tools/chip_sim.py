@@ -36,10 +36,15 @@ class ChipSim:
         g = rt.globals()
         io = {"n": {}, "b": {}, "on": {}, "ob": {}}
         rt.execute("input={} output={} property={} screen={} map={} async={} debug={}")
-        g.input.getNumber = lambda i: float(io["n"].get(i, 0.0))
-        g.input.getBool = lambda i: bool(io["b"].get(i, False))
-        g.output.setNumber = lambda i, v: io["on"].__setitem__(i, float(v))
-        g.output.setBool = lambda i, v: io["ob"].__setitem__(i, bool(v))
+        def kanal(i):
+            # ein Composite hat nur die Kanaele 1-32 - alles andere ist ein Fehler im Skript
+            if not 1 <= int(i) <= 32 or int(i) != i:
+                raise RuntimeError("Composite-Kanal %r gibt es nicht (nur 1-32)" % (i,))
+            return int(i)
+        g.input.getNumber = lambda i: float(io["n"].get(kanal(i), 0.0))
+        g.input.getBool = lambda i: bool(io["b"].get(kanal(i), False))
+        g.output.setNumber = lambda i, v: io["on"].__setitem__(kanal(i), float(v))
+        g.output.setBool = lambda i, v: io["ob"].__setitem__(kanal(i), bool(v))
         g.property.getNumber = lambda s: self.props[s]
         g.property.getBool = lambda s: bool(self.props[s])
         g.debug.log = lambda s: None
