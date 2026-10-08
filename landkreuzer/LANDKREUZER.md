@@ -162,6 +162,8 @@ In dieser Reihenfolge. Anfangen jeweils mit **KI Pause an** und **Waffen sperren
 6. **Lenk-Variante:** Hinsetzen, D drücken. Lenken die vorderen Räder nach rechts und die hinteren nach links?
    Wenn es andersherum ist: Eigenschaft „Lenk Richtung“ im KI-Chip auf −1. Drehen sich die Gelenke gar nicht:
    Bekommen die kleinen Gelenk-Motoren Strom und Gas (Konstante 1)? Beides ist wie beim Schiffs-Ruder verkabelt.
+   Anders als beim Ruder trägt hier jedes Gelenk das Gewicht seines Rades. Knickt ein Rad weg oder wackelt es stark,
+   ist das Gelenk zu schwach; dann bleibt nur die einfache Variante.
 7. **KI:** KI Pause aus, auf freiem Gelände. Fährt er los, weicht er aus, hält er vor Wasser?
 8. **Waffen:** Waffen sperren aus, mit Gegnern.
 9. **Chaff:** Auf dem Schiff war offen, ob der Radarwarner die **eigenen** Radare meldet. Wenn ja, wirft der Panzer
