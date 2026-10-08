@@ -33,7 +33,8 @@ Eigenschaft man im KI-Chip umstellt, wenn z. B. eine Seite falsch herum dreht.
 (oder den Panzer mit `python landkreuzer/tools/bau_landkreuzer.py --schreiber` bauen, dann schreiben auch die
 Waffen-Chips mit). Auf dem PC `python tools/waffen_logger.py` starten (wie beim Schiff). Dann landet jede Fahrt in
 `logs/waffen_<Datum>_<Zeit>/ki.csv`: je Tick Zustand, Ort, Kurs, Tempo, Befehle, alle Laser, Batterie, Nick/Roll.
-Mit `git add -f logs/...` hochladen – dann sehe ich genau, was die KI gesehen und entschieden hat.
+Mit `git add -f logs/...` hochladen – dann sehe ich genau, was die KI gesehen und entschieden hat. Selbst
+anschauen: `python landkreuzer/tools/ki_log.py logs/waffen_<Datum>_<Zeit>` (Zusammenfassung und Bild der Fahrspur).
 
 ---
 
@@ -316,6 +317,7 @@ In dieser Reihenfolge. Anfangen jeweils mit **KI Pause an** und **Waffen sperren
 | `tools/build_ki.py` | KI-Chip (5×5) |
 | `tools/raeder.py` | Räder kopieren |
 | `tools/pruefen.py` | Prüfungen der Datei (läuft nach jedem Bau) |
+| `tools/ki_log.py` | wertet einen Fahrtenschreiber-Log aus (`python landkreuzer/tools/ki_log.py logs/waffen_...`): Zusammenfassung und Bild der Fahrt |
 | `tools/kabel_vergleich.py` | jedes Kabel des Schiffs, dessen Quelle im Panzer fehlt (fand den dunklen Monitor 2×3) |
 | `tools/alles_pruefen.py` | baut beide Varianten und lässt alle Prüfstände laufen (`--schnell` ohne die langen) |
 | `tools/ansicht.py` | Bilder zeichnen (braucht matplotlib) |
