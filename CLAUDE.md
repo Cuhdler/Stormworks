@@ -9,3 +9,5 @@
   `select`, `print`, `pcall`, `error`, `setmetatable`, `unpack`, `load`, `os`; `table.unpack` geht. Eingänge nicht in
   `onDraw` lesen.
 - Raketensystem ist fertig (Andre): Raketen-Chip, seine Kabel und Teile bei eigenen Änderungen unverändert lassen.
+- Zweites Projekt: **KI-Landkreuzer** (autonomer Panzer) in `landkreuzer/`, Stand und Regeln in `landkreuzer/LANDKREUZER.md`.
+  Er wird komplett per `landkreuzer/tools/bau_landkreuzer.py` erzeugt (Teile/Chips aus der Schiffsdatei kopiert).

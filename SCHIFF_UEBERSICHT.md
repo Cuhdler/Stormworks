@@ -284,7 +284,8 @@ Keine Schrift (stünde quer).
 
 ## 8. Erkenntnisse aus dem Spiel (bestätigt)
 
-- Lua: 8192 Zeichen je Skript; **kein `select`**, kein `table.unpack`; Eingänge in `onDraw` lesen = „draw error 202“.
+- Lua: 8192 Zeichen je Skript; **kein `select`**, kein `unpack` (aber `table.unpack` geht, gemessen 05.10., siehe
+  `LUA_STORMWORKS.md`); Eingänge in `onDraw` lesen = „draw error 202“.
 - HTTP: höchstens eine Anfrage je Tick; Antwort braucht Content-Length; Ports ohne Lauscher blockieren 2–4 s.
 - Spiel lief im Gefecht mit ca. 21–37 Ticks/s.
 - Gespiegelte Teile (t-Attribut): Radare zählen gespiegelt; Drehkränze drehen andersherum; Steuerflossen: + =
@@ -355,7 +356,10 @@ Keine Schrift (stünde quer).
 - **Höchsttempo:** seit dem Umbau am 02.10. ca. 25 % mehr Widerstand (Ballast, Türme); Gang 8 ungetestet.
 - **Links/rechts-Unterschied** im Tempo der Seiten (seit 02.10.) – Ursache offen.
 - **Getriebe C** (z −100, beide Seiten): kein Wert in der Datei (Standard) – im Editor prüfen, ob 2:1.
-- **Werkzeuge:** `build_mc.py` (aus `stormworks_flugpanzer\tools`) fehlt im Repo – ohne kann Claude keine Chips bauen.
+- **Werkzeuge:** `build_mc.py` (aus `stormworks_flugpanzer\tools`) fehlt im Repo. Seit 08.10. gibt es einen Nachbau in
+  `landkreuzer/tools/build_mc.py`: Mit ihm bauen die Schiffs-Bauskripte alle Waffen-Chips **byte-gleich** so nach, wie sie
+  in `fahrzeug/Figet Marena.xml` stecken (Prüfung: `python landkreuzer/tools/test_build_mc.py`). Damit kann Claude auch in
+  der Cloud Chips bauen (für die Bibliothek bleibt das Original auf dem PC maßgeblich).
 
 ## 11. Ideen für später
 

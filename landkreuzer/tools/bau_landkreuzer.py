@@ -87,8 +87,8 @@ LASER = [
     ("Laser vorn links", (-13, 3, VORN + 1), R_VORN),
     ("Laser vorn Mitte", (0, 3, VORN + 1), R_VORN),
     ("Laser vorn rechts", (13, 3, VORN + 1), R_VORN),
-    ("Laser links", (X0 - 1, 3, -8), R_LINKS),
-    ("Laser rechts", (X1 + 1, 3, -8), R_RECHTS),
+    ("Laser links", (X0 - 1, 6, -8), R_LINKS),          # ueber den Raedern (Rad-Radius bis 6 Bloecke frei)
+    ("Laser rechts", (X1 + 1, 6, -8), R_RECHTS),
     ("Laser unten", (0, BODEN, VORN + 1), R_UNTEN),
     ("Laser hinten", (0, 3, HINTEN - 1), R_HINTEN),
 ]
@@ -565,6 +565,8 @@ class Bau:
         for name, t in self.laser_teile:
             neu.append((4, bat, t.vp))
             neu.append((1, t.vp, self.knoten("KI", name)))
+        # Ladestand der ersten Batterie (Annahme: am Strom-Anschluss oben; fehlt er, liest die KI 0 = unbekannt)
+        neu.append((1, bat, self.knoten("KI", "Batterie")))
         # KI-Chip
         phys = self.neu["phys"].vp
         neu.append((5, phys, self.knoten("KI", "Physik-Sensor")))
