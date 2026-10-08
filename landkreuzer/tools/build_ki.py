@@ -4,7 +4,8 @@ Steuerung) -> KI_KARTE (Karten-Monitor 3x3 mit Touch: Wegpunkte setzen).
 Anschluesse (Feld x, z):
   Eingaenge  (0,0) Physik-Sensor  (1,0) Sitz  (2,0) Instrumente  (3,0) Bedienung (Bildschirm-Chip)  (4,0) Karte Touch
              (0..4,1) Laser vorn links / vorn Mitte / vorn rechts / links / rechts   (0,2) Laser unten  (1,2) Laser hinten
-             (2,2) Batterie (Ladestand, darf fehlen)
+             (2,2) Batterie (Ladestand, darf fehlen)   Ausgaenge (3,2) Schutz (an den Schutz-Chip: Auto-Chaff),
+             (4,2) Status (Video an den Monitor 2x3)
   Ausgaenge  (0,3) Links (alle linken Motoren)  (1,3) Rechts  (2,3) Karte (Video)  (3,3) Wahl (an den Bildschirm-Chip:
              Bool 1 Master Arm)  (4,3) Zustand (Ausgang von KI_FAHREN)
 """
@@ -45,7 +46,7 @@ def props():
 
 
 def build(src=None, eigen=None):
-    src = src or {n: lua(n) for n in ("ki_kleber", "ki_fahren", "ki_karte")}
+    src = src or {n: lua(n) for n in ("ki_kleber", "ki_fahren", "ki_karte", "ki_status")}
     for n, s in src.items():
         assert len(s) <= LUA_LIMIT, (n, len(s))
     mc = MC("Landkreuzer KI", "KI %s: faehrt selbst (Wegpunkte, Revier, Ausweichen, nach Hause), Karte mit Touch, Waffen frei"
@@ -91,6 +92,13 @@ def build(src=None, eigen=None):
     w = mc.comp(41, (-3, 1.5), {"count": 1, "offset": 4}, [("inc", (w, 0)), (rd(karte, 4, (-4, -1.5), 29), 0)])
     next(c for c in mc.comps if c[1] == fahren)[3].append((w, 0))
 
+    # --- KI_STATUS: Eingang von KI_FAHREN + dessen Ausgang (Zahl 26-31, Bool 7-9) -> Monitor 2x3
+    st = mc.comp(40, (1, -2), {"count": 6, "offset": 25}, [("inc", (w, 0))] + [
+        (rd(fahren, ch, (-1, -1 - .5 * j)), 0) for j, ch in enumerate((2, 9, 27, 10, 0, 1))])
+    st = mc.comp(41, (1, -3), {"count": 3, "offset": 6}, [("inc", (st, 0))] + [
+        (rd(fahren, ch, (-1, -4 - .5 * j), 29), 0) for j, ch in enumerate((0, 1, 2))])
+    status = mc.comp(56, (3, -2), {"script": src["ki_status"]}, [(st, 0)])
+
     for j, (name, val, desc) in enumerate(eigen or props()):
         mc.comp(34, (-18 - 2 * (j // 12), 8 - (j % 12)), {"n": name}, extra='<v text="%s" value="%s"/>' % (fmt(val), fmt(val)))
 
@@ -103,6 +111,12 @@ def build(src=None, eigen=None):
     wahl = mc.comp(41, (5, 3), {"count": 1}, [(rd(kleber, 9, (3, 3), 29), 0)])
     mc.node("Wahl", 0, 5, "an den Bildschirm-Chip (Eingang 'Wahl'): Bool 1 Master Arm", 3, 3, (8, 3), (wahl, 0))
     mc.node("Zustand", 0, 5, "Ausgang der Fahr-KI (Zustand, Wegpunkte) - frei fuer Anzeigen", 4, 3, (8, 2), (fahren, 0))
+    # Schutz-Chip (Auto-Chaff): Bool 3 'Auto-Chaff' = Waffen frei, Bool 4 'Pumpen' aus
+    schutz = mc.comp(41, (5, 1), {"count": 1, "offset": 2}, [(rd(kleber, 9, (3, 1), 29), 0)])
+    mc.node("Status", 0, 6, "Monitor 2x3 rechts am Sitz: Video (KI-Zustand, Tempo, Batterie, Laser)", 4, 2, (8, 0),
+            (status, 1))
+    mc.node("Schutz", 0, 5, "an den Schutz-Chip (Eingang 'Instrumente'): Bool 3 Auto-Chaff = Waffen frei", 3, 2, (8, 1),
+            (schutz, 0))
     assert len(mc.desc) <= 128, len(mc.desc)
     return mc
 

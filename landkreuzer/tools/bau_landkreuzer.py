@@ -67,7 +67,12 @@ EINZEL = {
     "k_wahl": ((5, 7, -59), "gate_float_constant", (12, 2, -29)),
     "k_karte": ((5, 5, -59), "gate_float_constant", (12, 2, -27)),
     "k_monitor": ((-5, 6, -59), "gate_bool_constant", (12, 2, -25)),
+    "k_chaff": ((5, 6, -59), "gate_float_constant", (12, 2, -23)),        # Winkel der 8 Chaff-Gelenke
 }
+# Chaff: 8 Werfer-Ketten (je 15 Flare Launcher auf einem Compact Pivot) wie an Deck der Figet Marena, auf dem Mitteldeck
+CHAFF_KOERPER = list(range(18, 26))
+CHAFF_GELENKE = [(sx, 16, z) for sx in (-9, 9) for z in (-39, -44, -49, -54)]
+CHAFF_WEG = (0, -5, 18)
 # Teile der Bruecke, die der Bau braucht (Position im Schiff = im Panzer, Verschiebung 0)
 BRUECKE_TEILE = {"sitz": ("seat_compact", (0, 17, -10)), "monitor": ("monitor_9", (0, 22, -6)),
                  "instrumente": ("instrument_display", (-2, 19, -8)), "karte": ("monitor_3", (-3, 20, -10)),
@@ -102,12 +107,14 @@ SCHIFF_STROM = {(8, -18, -64), (-8, -18, -64), (4, -11, -39), (-4, -11, -39), (4
 CHIP_Y = 2
 CHIP_PLATZ = {
     "Lage": (-14, -29), "Bildschirm": (-9, -29), "Flak L": (-4, -29), "Flak R": (1, -29), "Kamera": (6, -29),
-    "Kanone BC": (-14, -22), "Kanone AC": (-9, -22), "KI": (-4, -22),
+    "Kanone BC": (-14, -22), "Kanone AC": (-9, -22), "KI": (-4, -22), "Schutz": (6, -22),
 }
 # Schiffs-Chip -> Chip im Landkreuzer (gleiche Anschluesse)
 CHIP_NAMEN = {"Figet Marena Lage": "Lage", "Figet Marena Bildschirm": "Bildschirm", "Figet Marena Flak L": "Flak L",
               "Figet Marena Flak R": "Flak R", "Figet Marena Kanone BC": "Kanone BC",
-              "Figet Marena Kanone AC": "Kanone AC", "Figet Marena Kamera": "Kamera"}
+              "Figet Marena Kanone AC": "Kanone AC", "Figet Marena Kamera": "Kamera", "Figet Marena Schutz": "Schutz"}
+# Chip-Eingaenge, die im Landkreuzer anders verkabelt sind als im Schiff (Schiffs-Kabel dorthin entfallen)
+NEU_VERKABELT = {("Figet Marena Schutz", "Instrumente")}
 
 FARBE_RUMPF = "4B5320"      # Oliv
 FARBE_DECK = "3E4419"
@@ -144,6 +151,34 @@ def vorlage(F, d, vp):
     raise KeyError((d, vp))
 
 
+
+
+def schiff_lua(n):
+    return build_mc.minify(open(os.path.join(SCHIFF_LUA, n + ".lua"), encoding="utf-8").read())
+
+
+def land_lua():
+    """Schiffs-Skripte (verkleinert) mit den Land-Aenderungen: Hoehen gegen die eigene Hoehe statt gegen das Meer
+    (an Land liegt der Boden nicht bei 0 m)."""
+    def patch(s, alt, neu):
+        assert s.count(alt) == 1, ("Land-Aenderung passt nicht mehr", alt)
+        return s.replace(alt, neu)
+
+    src = {n: schiff_lua(n) for n in ("flakradar", "flak", "mastradar", "lage", "bild", "kamera")}
+    src["flakradar"] = patch(src["flakradar"], "if cp and hg>ahm and", "if cp and hg-agl>ahm and")
+    src["flakradar"] = patch(src["flakradar"], "cq.a<120 and cq.g>ahm then", "cq.a<120 and cq.g-agl>ahm then")
+    src["lage"] = patch(src["lage"], "local U,R=t.p[3]+t.v[3]*t.a/60,dist(t)", "local U,R=t.p[3]+t.v[3]*t.a/60-AH,dist(t)")
+    src["lage"] = patch(src["lage"], "local x,z,al=N(19),N(20),N(21)", "local x,z,al=N(19),N(20),N(21)\nAH=al")
+    src["lage"] = patch(src["lage"], "t.air==true and U>sz)", "t.air==true and U-al>sz)")
+    return src
+
+
+# Land-Eigenschaften (ueberschreiben die Werte der Schiffs-Chips)
+LAGE_LAND = {"See Hoehe max m": 100000, "Luft sicher ab m": 40, "Luft ab m": 20, "See Tempo max m/s": 35,
+             "See Ziel bis Grad": 180, "Radar Reichweite m": 6000}
+FLAK_LAND = {"AA Mindesthoehe m": 10}
+KANONE_LAND = {"Ziel Hoehe fest m": -999, "Ziel Tempo max m/s": 35, "AA Mindesthoehe m": -200,
+               "AA tiefster Winkel Grad": -10}
 
 
 def chip_sc(w, l):
@@ -224,6 +259,20 @@ class Bau:
             self.neu["radar%d" % (k + 1)] = n
             self.weg[(0, alt)] = MAST
             self.reserviere(n.vp, (-1, 0, -1), (1, 3, 1))
+
+    def chaff(self):
+        F = self.F
+        d = CHAFF_WEG
+        for p in CHAFF_GELENKE:
+            t = vorlage(F, "multibody_compact_pivot_robotic_a", p)
+            self.plus(t.verschoben(d))
+            self.weg[(0, p)] = d
+            self.reserviere(fz.add(p, d), (-1, 0, -2), (1, 1, 2))
+        for bi in CHAFF_KOERPER:
+            self.koerper.append([t.verschoben(d) for t in F.koerper[bi][1]])
+            for t in F.koerper[bi][1]:
+                self.weg[(bi, t.vp)] = d
+                self.kasten.add(fz.add(t.vp, d))
 
     # ---------------- Fahrwerk ----------------
     def fahrwerk(self):
@@ -321,10 +370,18 @@ class Bau:
         # Aufstieg zur Bruecke: Plattform hinter den beiden Bruecken-Tueren (Tueren in der Rueckwand bei x +-14, z -16;
         # Bruecken-Boden y 15), von hinten ueber eine Leiter (ab Deck y 10) zu erreichen
         for sx in (-1, 1):
-            for x in range(10, 15):
+            for x in range(11, 15):
                 for z in range(-19, -16):
                     for y in range(11, 16):
                         setze((sx * x, y, z), aussen=True)
+        # Stuetzen unter Chaff-Gelenken, die ueber dem tieferen Heck-Deck stehen
+        for p in CHAFF_GELENKE:
+            q = fz.add(p, CHAFF_WEG)
+            h = self.deck(q[2])
+            for y in range(h + 1, q[1]):
+                if (q[0], y, q[2]) not in self.teil_voxel:
+                    self.teil_voxel.add((q[0], y, q[2]))
+                    neu.append(block((q[0], y, q[2])))
         # Mast-Turm
         lo, hi = MAST_TURM
         for x in range(lo[0], hi[0] + 1):
@@ -405,19 +462,8 @@ class Bau:
                                 ("A", "AC", 2, 0, 31, 9, "Heavy Autocannon", "AC-Turm vorn", False)]
         port = 8768 if self.schreiber else 0
         build_lage.SCHREIBER_PROPS = [(n, port if n == "Schreiber Port" else v, d) for n, v, d in build_lage.SCHREIBER_PROPS]
-        mini = lambda n: build_mc.minify(open(os.path.join(SCHIFF_LUA, n + ".lua"), encoding="utf-8").read())
-
-        def patch(s, alt, neu):
-            assert s.count(alt) == 1, ("Land-Aenderung passt nicht mehr", alt)
-            return s.replace(alt, neu)
-
-        # Land-Aenderungen: Hoehen gegen die eigene Hoehe statt gegen das Meer (an Land liegt der Boden nicht bei 0)
-        src = {n: mini(n) for n in ("flakradar", "flak", "mastradar", "lage", "bild", "kamera")}
-        src["flakradar"] = patch(src["flakradar"], "if cp and hg>ahm and", "if cp and hg-agl>ahm and")
-        src["flakradar"] = patch(src["flakradar"], "cq.a<120 and cq.g>ahm then", "cq.a<120 and cq.g-agl>ahm then")
-        src["lage"] = patch(src["lage"], "local U,R=t.p[3]+t.v[3]*t.a/60,dist(t)", "local U,R=t.p[3]+t.v[3]*t.a/60-AH,dist(t)")
-        src["lage"] = patch(src["lage"], "local x,z,al=N(19),N(20),N(21)", "local x,z,al=N(19),N(20),N(21)\nAH=al")
-        src["lage"] = patch(src["lage"], "t.air==true and U>sz)", "t.air==true and U-al>sz)")
+        mini = schiff_lua
+        src = land_lua()
 
         def mit(props, werte, land):
             out = []
@@ -428,7 +474,7 @@ class Bau:
             return out
 
         # Flak
-        flak_land = {"AA Mindesthoehe m": 10}
+        flak_land = FLAK_LAND
         for seite, cx, cz, gy in build_flak.TUERME:
             prf = sperrprofil.profil(cx, cz, gy, kp)
             fl = src["flak"].replace("PRF='0'", "PRF='%s'" % ",".join(build_mc.fmt(float(v)) for v in prf))
@@ -440,8 +486,7 @@ class Bau:
                                   % (seite, VERSION), props=pr)
             self.chip("Flak %s" % seite, mc)
         # Kanonen
-        kan_land = {"Ziel Hoehe fest m": -999, "Ziel Tempo max m/s": 35, "AA Mindesthoehe m": -200,
-                    "AA tiefster Winkel Grad": -10}
+        kan_land = KANONE_LAND
         for k, name, waffe, cx, cz, gy, gname, turm, verschluss in build_kanone.KANONEN:
             prf = sperrprofil.profil(cx, cz, gy, kp)
             fl = src["flak"].replace("PRF='0'", "PRF='%s'" % ",".join(build_mc.fmt(float(v)) for v in prf))
@@ -454,8 +499,7 @@ class Bau:
                                   rechts=verschluss, verschluss=verschluss, zwilling=verschluss)
             self.chip("Kanone %s" % name, mc)
         # Lage (Mast-Radare): Bodenziele sind Ziele ('See Hoehe max' aus), Luft relativ zur eigenen Hoehe
-        lage_land = {"See Hoehe max m": 100000, "Luft sicher ab m": 40, "Luft ab m": 20, "See Tempo max m/s": 35,
-                     "See Ziel bis Grad": 180, "Radar Reichweite m": 6000}
+        lage_land = LAGE_LAND
         build_lage.PROPS = mit(build_lage.PROPS, self.schiff_werte(F, "Figet Marena Lage"), lage_land)
         ls = {"mastradar": src["mastradar"], "lage": build_lage.kopf(src["lage"], "la"),
               "bild": build_lage.kopf(build_lage.bild_flak(src["bild"]), "ba")}
@@ -476,6 +520,12 @@ class Bau:
         mc.name = "Landkreuzer Kamera"
         mc.desc = "Kamera (Landkreuzer %s): Dachkamera schaut auf das Ziel der gewaehlten Waffe, Zoom" % VERSION
         self.chip("Kamera", mc)
+        # Schutz (Auto-Chaff; Pumpen gibt es an Land nicht): Schalter kommen vom KI-Chip ('Schutz': Bool 3 = Waffen frei)
+        import build_schutz
+        src["schutz"] = mini("schutz")
+        mc = build_schutz.build(build_lage.kopf(src["schutz"], "sc"))
+        mc.name, mc.desc = "Landkreuzer Schutz", "Schutz (Landkreuzer %s): Auto-Chaff, wenn die Waffen frei sind" % VERSION
+        self.chip("Schutz", mc)
         # KI
         self.chip("KI", build_ki.build())
         for name, (mc, t) in self.chips.items():
@@ -547,6 +597,8 @@ class Bau:
 
         alt = 0
         for typ, a, b in F.kabel:
+            if sch.get((b, typ, 1)) in NEU_VERKABELT:
+                continue
             na, nb = abbilden(a, typ, 0), abbilden(b, typ, 1)
             if na is not None and nb is not None and na != nb:
                 self.kabel.append((typ, na, nb))
@@ -575,7 +627,9 @@ class Bau:
         neu.append((5, self.knoten("Bildschirm", "Bedienung"), self.knoten("KI", "Bedienung")))
         neu.append((5, self.neu["karte"].vp, self.knoten("KI", "Karte Touch")))
         neu.append((6, self.knoten("KI", "Karte"), self.neu["karte"].vp))
+        neu.append((6, self.knoten("KI", "Status"), self.neu["wahlmonitor"].vp))
         neu.append((5, self.knoten("KI", "Wahl"), self.knoten("Bildschirm", "Wahl")))
+        neu.append((5, self.knoten("KI", "Schutz"), self.knoten("Schutz", "Instrumente")))
         # Lage: Radar 6 (im Schiff an den Raketen-Chip vergeben) wieder an den Lage-Chip
         neu.append((5, self.neu["radar6"].vp, self.knoten("Lage", "Radar 6")))
         for k in neu:
@@ -624,6 +678,7 @@ def main():
     b = Bau(schreiber="--schreiber" in sys.argv)
     b.module()
     b.einzel()
+    b.chaff()
     b.fahrwerk()
     b.laser()
     n = b.rumpf_bauen()
