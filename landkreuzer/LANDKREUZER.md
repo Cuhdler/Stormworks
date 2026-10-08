@@ -1,6 +1,6 @@
 # KI-Landkreuzer – ein Panzer, der selbst fährt und kämpft
 
-**Stand:** 08.10.2026 (Nacht), Version v1.0, gebaut von Claude, **noch nie im Spiel gewesen**.
+**Stand:** 09.10.2026 früh, Version v1.0, gebaut von Claude in der Nacht, **noch nie im Spiel gewesen**.
 **Dateien:** `landkreuzer/fahrzeug/KI Landkreuzer.xml` und `KI Landkreuzer Lenkung.xml` (zwei Varianten, siehe
 Abschnitt 2). Beide sind fertig, nur die Räder fehlen.
 **Bilder:** `landkreuzer/bilder/beschriftet.png` (was wo ist), `schraeg.png` und `schraeg_links.png` (schräg von
@@ -34,9 +34,10 @@ Eigenschaft man im KI-Chip umstellt, wenn z. B. eine Seite falsch herum dreht.
 
 **Fahrtenschreiber (sehr hilfreich für mich):** Im KI-Chip die Eigenschaft „Schreiber Port“ auf **8768** stellen
 (oder den Panzer mit `python landkreuzer/tools/bau_landkreuzer.py --schreiber` bauen, dann schreiben auch die
-Waffen-Chips mit). Auf dem PC `python tools/waffen_logger.py` starten (wie beim Schiff). **Nur mit laufendem Logger einschalten**:
-Anfragen an einen Port ohne Lauscher blockieren die HTTP-Warteschlange des Spiels (siehe Schiffs-Übersicht). Dann landet jede Fahrt in
-`logs/waffen_<Datum>_<Zeit>/ki.csv`: je Tick Zustand, Ort, Kurs, Tempo, Befehle, alle Laser, Batterie, Nick/Roll.
+Waffen-Chips mit). Auf dem PC `python tools/waffen_logger.py` starten (wie beim Schiff). **Nur mit laufendem
+Logger einschalten**: Anfragen an einen Port ohne Lauscher blockieren die HTTP-Warteschlange des Spiels (siehe
+Schiffs-Übersicht). Dann landet jede Fahrt in `logs/waffen_<Datum>_<Zeit>/ki.csv`: je Tick Zustand, Ort, Kurs,
+Tempo, Befehle, alle Laser, Batterie, Nick/Roll.
 Mit `git add -f logs/...` hochladen – dann sehe ich genau, was die KI gesehen und entschieden hat. Selbst
 anschauen: `python landkreuzer/tools/ki_log.py logs/waffen_<Datum>_<Zeit>` (Zusammenfassung und Bild der Fahrspur).
 
@@ -84,7 +85,7 @@ Diesel-Generator aus Schiffsteilen geht nicht sicher (im Schiff fehlen Kraftstof
 | | |
 |---|---|
 | Größe | Rumpf 27 m lang, mit AC-Rohr 29 m; 7,75 m breit + Räder ≈ 9–10 m; Mast ≈ 9 m über dem Boden des Rumpfs |
-| Teile | ca. 17 000 (ein Drittel der Figet Marena mit ≈ 56 000), 25 Körper, ca. 410 Kabel, 9 Chips |
+| Teile | ca. 17 000 (ein Drittel der Figet Marena mit ≈ 56 000), 25 Körper, ca. 420 Kabel, 9 Chips |
 | Waffen | vorn **Heavy-Autocannon-Turm** (AP), dahinter erhöht **Battle-Cannon-Turm mit 2 Rohren** (HE), hinten **2 Flak-Türme** mit je 2 Heavy Autocannons (Splitter, Zeitzünder) |
 | Schutz | **Auto-Chaff**: 8 Werfer-Ketten mit je 15 Werfern (wie auf dem Schiff), Radarwarner auf dem Brückendach |
 | Ortung | **6 Phalanx-Radare** am Mast (wie auf der Figet Marena), dazu ein Radar auf jedem Turm, Dachkamera |
