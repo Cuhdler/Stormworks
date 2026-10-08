@@ -366,7 +366,9 @@ Keine Schrift (stünde quer).
   Offen: welche Gegner/Raketen, Flaks oder eigener Turm (wo, welche Kanone), Log einer anfliegenden Rakete (Tempo, Höhe).
 - **Ferngesteuerte Fahrzeuge** (Drohne/Boot vom Schiff): Sitz → Chip → Radio (Frequenz) → Radio → Chip im Fahrzeug,
   Rückkanal auf zweiter Frequenz. Allein bedienbar nur, wenn das Schiff solange selbst Kurs hält oder stoppt. Grenzen:
-  Funkreichweite, ferne Fahrzeuge werden nicht simuliert, Video per Funk unklar.
+  Ferne Fahrzeuge werden nicht simuliert (s. u.). Funk (Wiki/Forum, ungeprüft): Antenne klein ~100 m, mittel ~1 km,
+  groß ~4 km, Video ~10–20 km, riesig ~20 km; Reichweite = Sender + Empfänger, mal Batteriestand (riesig+riesig ~40 km).
+  Zahlen/An-Aus bis zur Grenze sicher, Ton/Video werden vorher schlechter. Video per Funk geht (Video-Antenne).
   Gegen Anhalten/Verschwinden in der Ferne: Bauteil **„Keep Active Block“** (seit v0.7.1; Karriere: über Blaupause
   „Radio RX“) ins Flugzeug, evtl. auch ins Schiff. Laut Forum: zusammen gespawnte Teile trennen sich ab ca. 1,5–3 km →
   Flugzeug besser getrennt spawnen und an Deck stellen. Kostet Leistung. Ungeprüft – im Spiel 3–5 km wegfliegen und testen.
