@@ -147,7 +147,9 @@ def bild_flak(s):
     import build_flak
     import sperrprofil
     kp = sperrprofil.koerper()
-    ps = [p for teile in kp for d, p in teile if d == "physics_sensor"]
+    # nur der Physik-Sensor im Rumpf (Koerper mit den meisten Teilen) - seit 05.10. hat jede Rakete einen eigenen
+    rum = max(range(len(kp)), key=lambda k: len(kp[k]))
+    ps = [p for d, p in kp[rum] if d == "physics_sensor"]
     assert len(ps) == 1, ("Physik-Sensor", ps)
     px, py, pz = ps[0]
     for (seite, cx, cz, gy), ph in zip(build_flak.TUERME, ("PL", "PR")):
