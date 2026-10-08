@@ -24,7 +24,7 @@ pi2=m.pi*2
 function cl(v,a,b) return m.max(a,m.min(b,v)) end
 function C(r,g,b,a) st.setColor(r,g,b,a or 255) end
 function M(a,b) return map.mapToScreen(x,z,zm,w,h,a,b) end
-NA={'AUS','HAND','WEG','REVIER','AUSWEICH','ZURUECK','KAMPF','BATTERIE','GEFAHR','WARTET'}
+NA={'AUS','HAND','WEGPUNKT','REVIER','AUSWEICHEN','ZURUECK','KAMPF','BATTERIE','GEFAHR','WARTET'}
 W={}
 x,z,hd,zs,gx,gz,hx,hz,rv,nw,wi,vf=0,0,0,0,0,0,0,0,0,0,1,0
 w,h,bh=96,96,13

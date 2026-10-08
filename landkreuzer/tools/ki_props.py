@@ -30,7 +30,7 @@ PROPS_FAHREN = [
     ("Absturz m", 2.5, "Misst der Bug-Laser so viel mehr als normal und kam das ploetzlich (steiler als 'Steigung max'), ist vorn eine Kante: zurueck"),
     # Fahrzeug-Masse und Laser
     ("Breite m", 9.5, "Breite des Panzers mit Raedern (fuer Sicherheitsabstand und enge Gassen)"),
-    ("Laenge m", 28, "Laenge des Panzers (der Physik-Sensor sitzt etwa in der Mitte, der Bug-Laser ganz vorn)"),
+    ("Laenge m", 27.5, "Laenge des Panzers (der Physik-Sensor sitzt etwa in der Mitte, der Bug-Laser ganz vorn)"),
     ("Laser Hoehe m", 2.4, "Hoehe der drei Front-Laser ueber dem Boden"),
     ("Boden Laser Hoehe m", 0, "Normale Messung des Bug-Lasers (senkrecht nach unten) auf ebenem Boden; 0 = Automatik: lernt sie, solange der Panzer vor dem KI-Start still steht"),
     ("Sensor Hoehe m", 2.1, "Hoehe des Physik-Sensors ueber dem Boden"),

@@ -112,6 +112,10 @@ und wirft Chaff, wenn ihn ein Radar erfasst. Er patrouilliert in 400 m um den Sp
 > - Zum Testen vorher **„Waffen sperren“ an**.
 > - Nach dem Spawnen hast du 60 s, um wegzukommen.
 > - Willst du zu ihm hin, nähere dich zu Fuß. Ob Radare Menschen sehen, ist ungeprüft.
+> - **Schutzzone:** Ist ein Ziel irgendeiner Waffe näher als **300 m** am Startpunkt (dort, wo du ihn gespawnt hast,
+>   also an deiner Werkbank), schweigen **alle** Waffen, solange es aufgeschaltet ist; die KI fährt so ein Ziel auch
+>   nicht an. Der KI-Status zeigt dann „SCHUTZZONE“. Deine Fahrzeuge an der Basis sind so sicher – unterwegs nicht.
+>   Eigenschaft „Schutzzone m“ im KI-Chip (0 = aus).
 > - Idee für später: Freund-Kennung per Funk. Deine Fahrzeuge senden ihren Ort, der Panzer schießt dort nicht hin.
 
 ### Schalter im Instrumentenblock (Brücke, links vom Sitz)
@@ -119,7 +123,7 @@ Die Schalter sind andersherum als auf dem Schiff. **Aus heißt: Die KI darf.**
 
 | Schalter | Wirkung |
 |---|---|
-| **Waffen sperren** | an = kein Schuss, kein Chaff (Master Arm aus); aus = alle Waffen schießen selbst |
+| **Waffen sperren** | an = kein Schuss, kein Chaff (Master Arm aus); aus = alle Waffen schießen selbst (außer auf Ziele in der Schutzzone) |
 | **Aim correction** | Knopf, wie auf dem Schiff (Zielkorrektur per Blick) |
 | **KI Pause** | an = KI fährt nicht (steht); aus = KI fährt |
 | **Nach Hause** | an = fährt zum Spawn-Punkt zurück und bleibt dort stehen |

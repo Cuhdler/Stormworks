@@ -26,6 +26,7 @@ PROPS_KLEBER = [
     ("Waffen Verzoegerung s", 60, "Nach dem Spawnen so lange warten, bis die Waffen frei sind (die KI kennt keinen Freund)"),
     # 0,4: Elektromotoren werden mit sinkender Ladung schwaecher (Forum) - bei 20 % kaeme er nicht mehr den Hang hoch
     ("Heim Batterie", 0.4, "Batterie darunter (0 bis 1): die KI faehrt von selbst nach Hause (0 = aus)"),
+    ("Schutzzone m", 300, "Ziele so nah am Startpunkt (Werkbank, eigene Basis): keine Waffe schiesst (0 = aus)"),
 ]
 PROPS_LENKUNG = [
     ("Lenk Faktor", 1, "Lenk-Variante: Lenkwinkel je Kurven-Befehl (1 = voller Befehl gibt 'Lenk max Grad')"),
@@ -74,12 +75,13 @@ def build(src=None, eigen=None):
     def rd(q, ch, pos, typ=31):
         return mc.comp(typ, pos, {"i": ch} if ch else {}, [(q, 0)])
 
-    # --- KI_KLEBER: Physik-Composite + Bedienung (BC/AC-Ziel) + Instrumente + 'Ziel da'
-    w = mc.comp(40, (-10, 8), {"count": 7, "offset": 20}, [("inc", (phys, 0))] + [
-        (rd(bed, ch, (-12, 8 - .5 * j)), 0) for j, ch in enumerate((7, 8, 9, 11, 12, 13))] + [(bat, 0)])
-    w = mc.comp(41, (-10, 6), {"count": 6}, [("inc", (w, 0))] + [(rd(inst, ch, (-12, 5 - .5 * j), 29), 0)
+    # --- KI_KLEBER: Physik-Composite + Bedienung (Ziele von BC, AC, Flak L/R) + Instrumente + 'Ziel da'
+    w = mc.comp(40, (-10, 8), {"count": 13, "offset": 20}, [("inc", (phys, 0))] + [
+        (rd(bed, ch, (-12, 8 - .5 * j)), 0) for j, ch in enumerate((7, 8, 9, 11, 12, 13))] + [(bat, 0)] + [
+        (rd(bed, ch, (-12, 1 - .5 * j)), 0) for j, ch in enumerate((15, 16, 17, 19, 20, 21))])
+    w = mc.comp(41, (-10, 6), {"count": 8}, [("inc", (w, 0))] + [(rd(inst, ch, (-12, 5 - .5 * j), 29), 0)
                                                               for j, ch in enumerate((0, 1, 2, 3))] +
-                [(rd(bed, ch, (-12, 3 - .5 * j), 29), 0) for j, ch in enumerate((8, 9))])
+                [(rd(bed, ch, (-12, 3 - .5 * j), 29), 0) for j, ch in enumerate((8, 9, 10, 11))])
     kleber = mc.comp(56, (-8, 6), {"script": src["ki_kleber"]}, [(w, 0)])
 
     # --- KI_FAHREN: Kleber-Ausgang + Physik, Laser, Sitz, Karten-Befehle
@@ -109,7 +111,7 @@ def build(src=None, eigen=None):
     st = mc.comp(40, (1, -2), {"count": 7, "offset": 25}, [("inc", (w, 0))] + [
         (rd(fahren, ch, (-1, -1 - .5 * j)), 0) for j, ch in enumerate((2, 9, 27, 10, 0, 1, 31))])
     st = mc.comp(41, (1, -3), {"count": 3, "offset": 6}, [("inc", (st, 0))] + [
-        (rd(fahren, ch, (-1, -4 - .5 * j), 29), 0) for j, ch in enumerate((0, 1, 2))])
+        (rd(fahren, ch, (-1, -4.5 - .5 * j), 29), 0) for j, ch in enumerate((0, 1, 2))])
     status = mc.comp(56, (3, -2), {"script": src["ki_status"]}, [(st, 0)])
     # --- KI_LENKUNG (nur Lenk-Variante): Ausgang von KI_FAHREN + Tempo (Physik 13) auf Zahl 32
     lk = mc.comp(40, (1, -5), {"count": 1, "offset": 31}, [("inc", (fahren, 0)), (rd(phys, 12, (-1, -6)), 0)])

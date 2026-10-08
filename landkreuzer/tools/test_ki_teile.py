@@ -58,10 +58,20 @@ def test_kleber():
     rueck.append(("Schalter 'Waffen sperren' und 'KI Pause' an: beides aus", not o.get(101) and not o.get(110)))
     o = tick(g, io, {1: 100.0, 3: 200.0}, {4: True})
     rueck.append(("'Nach Hause' wird durchgereicht", o.get(106) is True))
-    # Ziel: BC-Ziel 300 m Ost / 400 m Nord (500 m), AC-Ziel -60/80 (100 m): das naehere (AC), in Weltkoordinaten
-    o = tick(g, io, {1: 100.0, 3: 200.0, 21: 300.0, 22: 400.0, 23: 50.0, 24: -60.0, 25: 80.0, 26: 30.0}, {5: True, 6: True})
+    # Ziel: BC-Ziel 900 m Ost / 1200 m Nord (1500 m), AC-Ziel -360/480 (600 m): das naehere (AC), in Weltkoordinaten
+    o = tick(g, io, {1: 100.0, 3: 200.0, 21: 900.0, 22: 1200.0, 23: 50.0, 24: -360.0, 25: 480.0, 26: 30.0},
+             {5: True, 6: True})
     rueck.append(("Ziel = naeheres (AC), Welt %.0f/%.0f, Hoehe %.0f" % (o.get(20, 0), o.get(21, 0), o.get(22, 0)),
-                  o.get(104) and abs(o[20] - 40) < 1e-6 and abs(o[21] - 280) < 1e-6 and abs(o[22] - 30) < 1e-6))
+                  o.get(104) and abs(o[20] + 260) < 1e-6 and abs(o[21] - 680) < 1e-6 and abs(o[22] - 30) < 1e-6))
+    # Schutzzone 300 m um den Startpunkt (100/200): Flak-L-Ziel 50/50 daneben -> kein Master Arm, Bool 11
+    o = tick(g, io, {1: 100.0, 3: 200.0, 28: 50.0, 29: 50.0, 30: 60.0, 31: 2000.0, 32: 0.0}, {7: True, 8: True})
+    rueck.append(("Schutzzone: Flak-Ziel 70 m vom Startpunkt -> Waffen schweigen (%s), Anzeige (%s)"
+                  % (o.get(110), o.get(111)), o.get(110) is False and o.get(111) is True))
+    o = tick(g, io, {1: 100.0, 3: 200.0, 31: 2000.0, 32: 0.0}, {8: True})
+    rueck.append(("Schutzzone: nur Flak-R-Ziel 2 km weg -> Waffen frei (%s)" % o.get(110), o.get(110) is True))
+    o = tick(g, io, {1: 900.0, 3: 200.0, 21: -700.0, 22: 100.0, 23: 50.0}, {5: True})
+    rueck.append(("Schutzzone: Panzer 800 m weg, BC-Ziel bei der Basis -> kein Schuss, KI faehrt nicht hin (%s/%s)"
+                  % (o.get(110), o.get(104)), o.get(110) is False and not o.get(104)))
     o = tick(g, io, {1: 100.0, 3: 200.0, 21: 300.0, 22: 400.0, 23: 50.0}, {5: True})
     rueck.append(("nur BC-Ziel: dieses", o.get(104) and abs(o[20] - 400) < 1e-6 and abs(o[21] - 600) < 1e-6))
     o = tick(g, io, {1: 100.0, 3: 200.0})

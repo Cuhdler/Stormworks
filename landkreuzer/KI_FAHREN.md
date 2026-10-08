@@ -1,6 +1,6 @@
 # KI Landkreuzer – Fahr-KI und Karte
 
-**Stand:** 08.10.2026. Zwei Lua-Skripte für den Radpanzer (28 × 9,5 m, 7 Räder je Seite, Panzerlenkung) und ein
+**Stand:** 08.10.2026. Zwei Lua-Skripte für den Radpanzer (27,5 × 9,5 m, 7 Räder je Seite, Panzerlenkung) und ein
 Prüfstand im Rechner. Im Spiel noch **nicht** erprobt – alles unten unter „Im Spiel prüfen“ ist offen.
 
 | Datei | Was |
@@ -37,7 +37,7 @@ Prüfstand im Rechner. Im Spiel noch **nicht** erprobt – alles unten unter „
 - Ein Außenstrahl deutlich kürzer als der andere = schmales Hindernis → zur freien Seite lenken.
 - **Treffer-Gedächtnis**: die Strahlen decken nur ±3,5 m ab, der Panzer ist ±4,75 m breit, die Seiten-Laser sitzen
   in der Mitte. Darum merkt sich die KI Treffer als Ort und dreht nicht zu Punkten hin, die neben dem Rumpf oder
-  voraus liegen; an Wänden hält sie früh und sanft Abstand (beim Wegdrehen schwenkt das 28-m-Heck zur Wand).
+  voraus liegen; an Wänden hält sie früh und sanft Abstand (beim Wegdrehen schwenkt das lange Heck zur Wand).
 - **Sackgasse** (vorn zu, beide Seiten enger als „Breite m“): gerade zurück, bis der ganze Rumpf draußen ist; die
   ganze Sackgasse wird gemerkt und künftig umfahren.
 - **Bug-Laser** (senkrecht nach unten): Grundwert lernt er beim Stehen vor dem KI-Start („Boden Laser Hoehe m“ = 0).
@@ -69,9 +69,9 @@ Das Tempo vorwärts rechnet die KI selbst aus der Ortsänderung (Kanal 7/8 des P
 |---|---|---|
 | 0 | AUS | KI aus, kein Handbetrieb |
 | 1 | HAND | Handbetrieb (W/S/A/D) oder 2 s Pause danach |
-| 2 | WEG | fährt zum Wegpunkt (oder nach Hause) |
+| 2 | WEGPUNKT | fährt zum Wegpunkt (oder nach Hause) |
 | 3 | REVIER | fährt zum Revier-Punkt |
-| 4 | AUSWEICH | Hindernis vorn: kriechen, ausweichen |
+| 4 | AUSWEICHEN | Hindernis vorn: kriechen, ausweichen |
 | 5 | ZURUECK | zurücksetzen / freifahren / aus der Sackgasse |
 | 6 | KAMPF | Ziel in Reichweite: steht, Bug zum Ziel |
 | 7 | BATTERIE | Batterie leer: steht |
@@ -133,7 +133,7 @@ leicht aus Versehen), „−“ weiter weg, „+“ näher dran, „Revier“ (a
 | Wasser Stopp m | 1.5 | eigene Höhe darunter: sofort zurück |
 | Absturz m | 2.5 | so viel tiefer und plötzlich = Kante |
 | Breite m | 9.5 | Breite mit Rädern |
-| Laenge m | 28 | Länge (Physik-Sensor in der Mitte, Bug-Laser vorn) |
+| Laenge m | 27.5 | Länge (Physik-Sensor in der Mitte, Bug-Laser vorn) |
 | Laser Hoehe m | 2.4 | Höhe der Front-Laser über dem Boden |
 | Boden Laser Hoehe m | 0 | Grundwert des Bug-Lasers; 0 = beim Stehen vor dem Start lernen |
 | Sensor Hoehe m | 2.1 | Höhe des Physik-Sensors über dem Boden |
@@ -194,7 +194,7 @@ python landkreuzer/tools/test_ki.py wand see   # nur einzelne (Teil des Namens)
 Braucht Python mit `lupa`. Der Prüfstand lädt die Skripte wie im Spiel (nur die dort vorhandenen Lua-Namen, Eingänge
 nur in `onTick`, Bildschirm/Karte nur in `onDraw`) und prüft die Größe nach dem Verkleinern (≤ 8000 Zeichen, auch mit
 `tools/build_mc.py`). Der Simulator: Welt mit Ebene, Hügel, See mit Strand, Klippe, Wänden, Häusern, flachem Fels;
-Panzer 28 × 9,5 m mit Panzerlenkung, 7 Radpaaren (kippt über eine Kante erst, wenn die Mitte drüber ist) und allen
+Panzer 27,5 × 9,5 m mit Panzerlenkung (Laser an den Stellen wie im gebauten Fahrzeug), 7 Radpaaren (kippt über eine Kante erst, wenn die Mitte drüber ist) und allen
 Lasern wie im Fahrzeug. Szenarien: Wegpunkte, Wand, Hügel, Sackgasse (zu eng zum Drehen), See, Klippe, flacher Fels
 (festgefahren), Revier, Dauerläufe 10 min in gemischter Welt, Hand, KI aus, Kampf, Batterie, Pause, Nach Hause,
 Richtung lernen, Karte.

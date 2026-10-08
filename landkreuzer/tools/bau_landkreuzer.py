@@ -107,12 +107,15 @@ R_LINKS = (0, 0, 1, -1, 0, 0, 0, -1, 0)
 R_RECHTS = (0, 0, -1, 1, 0, 0, 0, -1, 0)
 R_HINTEN = (-1, 0, 0, 0, 0, -1, 0, -1, 0)
 R_UNTEN = (1, 0, 0, 0, -1, 0, 0, 0, -1)
+SEITEN_LASER_X = 19
 LASER = [
-    ("Laser vorn links", (-13, 3, VORN + 4), R_VORN),          # auf der Bug-Schraege (dort liegt sie bei y 2)
+    # Lage wie die Fahr-KI rechnet: aeussere Front-Laser 3,5 m seitlich, Seiten-Laser 4,75 m (= 'Breite m' / 2, aussen
+    # ueber den Raedern auf einem kurzen Ausleger)
+    ("Laser vorn links", (-14, 3, VORN + 4), R_VORN),          # auf der Bug-Schraege (dort liegt sie bei y 2)
     ("Laser vorn Mitte", (0, 3, VORN + 4), R_VORN),
-    ("Laser vorn rechts", (13, 3, VORN + 4), R_VORN),
-    ("Laser links", (X0 - 1, 6, -8), R_LINKS),          # ueber den Raedern (Rad-Radius bis 6 Bloecke frei)
-    ("Laser rechts", (X1 + 1, 6, -8), R_RECHTS),
+    ("Laser vorn rechts", (14, 3, VORN + 4), R_VORN),
+    ("Laser links", (-SEITEN_LASER_X, 6, -8), R_LINKS),      # ueber den Raedern (Rad-Radius bis 6 Bloecke frei)
+    ("Laser rechts", (SEITEN_LASER_X, 6, -8), R_RECHTS),
     ("Laser unten", (0, BODEN + BUG_SCHRITTE - 2, VORN + BUG_SCHRITTE - 1), R_UNTEN),  # in der Bugspitze, nach unten
     ("Laser hinten", (0, 3, HINTEN - 1), R_HINTEN),
 ]
@@ -457,6 +460,10 @@ class Bau:
                 if (q[0], y, q[2]) not in self.teil_voxel:
                     self.teil_voxel.add((q[0], y, q[2]))
                     neu.append(block((q[0], y, q[2])))
+        # Ausleger fuer die Seiten-Laser (von der Bordwand bis zum Laser)
+        for sx in (-1, 1):
+            for x in range(X1 + 1, SEITEN_LASER_X):
+                setze((sx * x, 6, -8), aussen=True)
         # Mast-Turm
         lo, hi = MAST_TURM
         for x in range(lo[0], hi[0] + 1):

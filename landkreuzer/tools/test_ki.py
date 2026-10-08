@@ -7,12 +7,12 @@ Was nachgebildet wird:
   screen/map nur in onDraw (sonst Fehler wie im Spiel); jeder Lua-Fehler = Test verloren.
 - Welt (x Ost, z Nord, Hoehe ueber dem Meer): Hoehenfeld (Ebene 20 m, Huegel, See mit Strand, Klippe) und Hindernisse
   (Kreise/Kaesten = Felsen/Gebaeude, Hoehe ueber dem Boden).
-- Panzer 28 x 9,5 m, Panzerlenkung: Vortrieb aus (L+R)/2 (leistungsbegrenzt, ca. 12 m/s Spitze, Hang bremst),
+- Panzer 27,5 x 9,5 m, Panzerlenkung: Vortrieb aus (L+R)/2 (leistungsbegrenzt, ca. 12 m/s Spitze, Hang bremst),
   Drehen aus (L-R)/2 (links schneller = Rechtsdrehung). Er liegt auf 7 Radpaaren (obere Huelle des Bodens laengs):
   ueber eine Kante kippt er erst, wenn die Mitte drueber ist. Hindernis = Stoss (Tempo 0, bleibt davor).
-- Laser wie im Fahrzeug (alles 90-Grad-Richtungen): drei Front-Laser 2,4 m hoch (3,5 m auseinander), Seiten-Laser an
-  der Bordwand, Bug-Laser 0,6 m hoch senkrecht nach unten (knapp unter dem Rumpf), Heck-Laser. Laser gehen durchs
-  Wasser (treffen den Grund).
+- Laser an denselben Stellen wie im gebauten Fahrzeug (Tabelle LASER, alles 90-Grad-Richtungen): drei Front-Laser
+  2,4 m hoch (3,5 m auseinander), Seiten-Laser 3,1 m hoch auf Auslegern ueber den Raedern, Bug-Laser 1,6 m hoch in
+  der Bugspitze senkrecht nach unten, Heck-Laser. Laser gehen durchs Wasser (treffen den Grund).
 - Physik-Sensor in der Mitte, 2,1 m ueber dem Boden; Kompass gegen den Uhrzeigersinn ('Kompass Richtung' -1);
   Kanal 8 (Tempo vorwaerts) absichtlich mit falschem Vorzeichen - die KI rechnet ihr Tempo selbst.
 60 Ticks je Sekunde. Jede Pruefung druckt eine Zeile (OK/FEHLER), am Ende 'ALLES OK'.
@@ -319,13 +319,16 @@ def eben():
 # ---------------------------------------------------------------------------------------------------------------
 # Panzer
 # ---------------------------------------------------------------------------------------------------------------
-LANG, BREIT = 28.0, 9.5
+# Masse wie im gebauten Fahrzeug (bau_landkreuzer.py, Bloecke 0,25 m, Physik-Sensor bei z -12, y 2; Raeder 7x7, Boden
+# bei y -6,5): Rumpf z -66,5 .. 42,5 (+ Leiter), Front-Laser z 41 / y 3 / x 0, +-14, Seiten-Laser z -8 / y 6 / x +-19,
+# Bug-Laser in der Bugspitze z 42 / y 0, Heck-Laser z -67 / y 3
+LANG, BREIT = 27.5, 9.5
 HL = LANG / 2
 SENSOR_H = 2.1
-BUG_H = 0.6
+BUG_H = 1.6
 LASER = {  # Kanal: (vor, rechts, hoch, Richtung)
-    9: (HL, -3.5, 2.4, "f"), 10: (HL, 0.0, 2.4, "f"), 11: (HL, 3.5, 2.4, "f"),
-    12: (0.0, -4.75, 2.0, "l"), 13: (0.0, 4.75, 2.0, "r"), 14: (HL, 0.0, BUG_H, "u"), 15: (-HL, 0.0, 2.0, "h"),
+    9: (13.25, -3.5, 2.4, "f"), 10: (13.25, 0.0, 2.4, "f"), 11: (13.25, 3.5, 2.4, "f"),
+    12: (1.0, -4.75, 3.1, "l"), 13: (1.0, 4.75, 3.1, "r"), 14: (13.5, 0.0, BUG_H, "u"), 15: (-13.75, 0.0, 2.4, "h"),
 }
 
 
