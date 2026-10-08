@@ -65,6 +65,8 @@ Gefundene **Fehler**, die im Spiel Ärger gemacht hätten (alle behoben und mit 
 - Laser- und Sensor-Höhe stellt die KI selbst auf die Radgröße ein.
 - Nach Hause schon bei 40 % Batterie; der Status zeigt die **Restzeit** der Batterie.
 - **Fahrtenschreiber** im KI-Chip (wie in den Waffen-Chips, Standard aus), siehe Schnellstart.
+- Er fährt erst 30 s nach dem Spawnen los (vorher 10 s – zu kurz, um in die Brücke zu kommen).
+- Karte: „H“ am Heimatpunkt; Werkzeug `ki_log.py` wertet Fahrtenschreiber-Logs aus.
 - Status zeigt Nick/Roll/Kurs in Grad (Vorzeichen prüfen) und rot L!/R!, wenn eine Radseite falsch herum dreht.
 - Prüfstände: Wald, Damm durch einen See, enges Tal, größere Räder, Stehen am Hang, Lenk-Variante; Kabel-Vergleich
   Schiff ↔ Panzer.
