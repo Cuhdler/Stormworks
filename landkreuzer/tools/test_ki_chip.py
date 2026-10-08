@@ -15,7 +15,8 @@ from chip_sim import ChipSim  # noqa: E402
 def lauf(sek, schalter=(False, False, False, False), tipp=None, sitz=None, ziel=None, batterie=0.0, laser=4000.0):
     """Panzer auf flachem Land (Hoehe 50 m), Kurs Nord. tipp = (Tick, Pixel x, y[, Ticks gehalten]) auf dem Kartenmonitor.
     -> Liste je Tick (Ort, Ausgaenge)"""
-    sim = ChipSim(build_ki.build())
+    # Pruefstand mit 10 s Startverzoegerung (Standard im Fahrzeug: 30 s)
+    sim = ChipSim(build_ki.build(eigen=build_ki.props_mit(**{"Start Verzoegerung s": 10})))
     x, z, hd, v = 0.0, 0.0, 0.0, 0.0                     # hd Kurs im Uhrzeigersinn (U)
     out, rl, rr = [], 0.0, 0.0
     for t in range(int(sek * 60)):

@@ -19,7 +19,7 @@ from schreiber_spalten import spalten  # noqa: E402
 
 
 def fahrt(sek=60):
-    pr = [(n, 8768 if n == "Schreiber Port" else v, d) for n, v, d in build_ki.props()]
+    pr = build_ki.props_mit(**{"Schreiber Port": 8768, "Start Verzoegerung s": 10})
     sim = ChipSim(build_ki.build(eigen=pr))
     quelle = build_ki.lua("ki_status")
     cid = next(c for c, (typ, *r) in sim.comps.items() if typ == 56 and r[3]["script"] == quelle)

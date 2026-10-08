@@ -23,7 +23,8 @@ VERSION = "v1.0"
 LASER_NAMEN = ["Laser vorn links", "Laser vorn Mitte", "Laser vorn rechts", "Laser links", "Laser rechts",
                "Laser unten", "Laser hinten"]
 PROPS_KLEBER = [
-    ("Start Verzoegerung s", 10, "Nach dem Spawnen so lange warten, bis die KI faehrt"),
+    # 30 s: Zeit, um nach dem Spawnen ueber die Leitern in die Bruecke zu kommen (die Schalter stehen beim Spawnen aus)
+    ("Start Verzoegerung s", 30, "Nach dem Spawnen so lange warten, bis die KI faehrt"),
     ("Waffen Verzoegerung s", 60, "Nach dem Spawnen so lange warten, bis die Waffen frei sind (die KI kennt keinen Freund)"),
     # 0,4: Elektromotoren werden mit sinkender Ladung schwaecher (Forum) - bei 20 % kaeme er nicht mehr den Hang hoch
     ("Heim Batterie", 0.4, "Batterie darunter (0 bis 1): die KI faehrt von selbst nach Hause (0 = aus)"),
@@ -48,6 +49,11 @@ PROPS_SCHREIBER = [
     ("Schreiber Port", 0, "Schreiber: Port von tools/waffen_logger.py auf dem PC (0 = aus; 8768 wie die Waffen)"),
     ("Schreiber Zeichen", 3000, "Schreiber: hoechstens so viele Zeichen je Paket"),
 ]
+
+
+def props_mit(**werte):
+    """props() mit geaenderten Werten, z. B. props_mit(**{'Start Verzoegerung s': 10}) fuer Pruefstaende."""
+    return [(n, werte.get(n, v), d) for n, v, d in props()]
 
 
 def props():

@@ -19,7 +19,10 @@ fahren – quasi ein KI-Panzer“.
    Große Räder nehmen (bis 12 Blöcke), dann hat er mehr Bodenfreiheit.
 3. `python landkreuzer/tools/raeder.py --schreiben` (kopiert das Rad an alle 14 Wellen), im Spiel neu laden
    **ohne** zu speichern.
-4. In der Brücke im Instrumentenblock **„Waffen sperren“ an** und **„KI Pause“ an**, dann spawnen.
+4. Die Schalter stehen beim Spawnen immer auf „aus“ (= die KI darf). Für den ersten Test darum vorher im Editor
+   den KI-Chip anklicken und bei den Eigenschaften **„Start Verzoegerung s“ = 600** und **„Waffen Verzoegerung s“
+   = 600** eintragen (10 Minuten Ruhe), speichern, spawnen. Dann in der Brücke im Instrumentenblock **„Waffen
+   sperren“ an** und **„KI Pause“ an**. (Ohne diese Änderung fährt er nach 30 s los, schießt nach 60 s.)
 5. Hinsetzen, W/A/S/D: fährt und lenkt er? Status-Monitor rechts vom Sitz: stehen bei allen 7 Lasern Zahlen
    (nicht „--“)?
 6. „KI Pause“ aus: Er fährt allein (Revier 400 m um den Startpunkt). Auf die Karte links vom Sitz tippen = Wegpunkt.
@@ -167,7 +170,8 @@ haben denselben KI-Chip; die Lenk-Ausgänge sind in der einfachen Variante nur n
 
 ## 3. Bedienung
 
-**Ganz ohne Bedienung:** 10 s nach dem Spawnen fährt er los, nach 60 s sind die Waffen frei. Dann schießt er selbst
+**Ganz ohne Bedienung:** 30 s nach dem Spawnen fährt er los (Zeit, um von Bord zu kommen oder in die Brücke zu
+steigen), nach 60 s sind die Waffen frei. Dann schießt er selbst
 und wirft Chaff, wenn ihn ein Radar erfasst (und seine Radare einen Gegner sehen). Er patrouilliert in 400 m um den Spawn-Punkt.
 
 > **Achtung, kein Freund-Feind:** Die KI kennt keine Freunde (nur die Schutzzone, siehe unten). Mit freien Waffen

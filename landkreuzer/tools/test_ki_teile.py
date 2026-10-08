@@ -51,11 +51,12 @@ def test_kleber():
     pr = {n: v for n, v, _ in build_ki.PROPS_KLEBER}
     g, io = lade("ki_kleber", pr)
     rueck = []
-    # Start-Verzoegerung 10 s: vorher weder KI noch Waffen frei, danach beides (Schalter aus = KI darf)
-    o = [tick(g, io, {1: 100.0, 3: 200.0}) for _ in range(599)]
-    rueck.append(("vor 10 s: KI aus, Waffen aus", not o[-1].get(101) and not o[-1].get(110)))
-    o = [tick(g, io, {1: 100.0, 3: 200.0}) for _ in range(3000)]
-    rueck.append(("nach 10 s: KI an, Waffen noch aus (bis 60 s)", o[1].get(101) and not o[-1].get(110)))
+    # Start-Verzoegerung: vorher weder KI noch Waffen frei, danach beides (Schalter aus = KI darf)
+    sv, wv = int(pr["Start Verzoegerung s"] * 60), int(pr["Waffen Verzoegerung s"] * 60)
+    o = [tick(g, io, {1: 100.0, 3: 200.0}) for _ in range(sv - 1)]
+    rueck.append(("vor %d s: KI aus, Waffen aus" % (sv // 60), not o[-1].get(101) and not o[-1].get(110)))
+    o = [tick(g, io, {1: 100.0, 3: 200.0}) for _ in range(wv - sv)]
+    rueck.append(("nach %d s: KI an, Waffen noch aus (bis %d s)" % (sv // 60, wv // 60), o[1].get(101) and not o[-1].get(110)))
     o = [tick(g, io, {1: 100.0, 3: 200.0}) for _ in range(2)]
     rueck.append(("nach 60 s: Waffen frei", o[-1].get(101) and o[-1].get(110)))
     o = tick(g, io, {1: 100.0, 3: 200.0}, {1: True, 3: True})
