@@ -318,6 +318,13 @@ class Bau:
                     saeule = x in (-7, 7) and z in (-12, -7)
                     if rand or saeule:
                         setze((x, y, z), aussen=True)
+        # Aufstieg zur Bruecke: Plattform hinter den beiden Bruecken-Tueren (Tueren in der Rueckwand bei x +-14, z -16;
+        # Bruecken-Boden y 15), von hinten ueber eine Leiter (ab Deck y 10) zu erreichen
+        for sx in (-1, 1):
+            for x in range(10, 15):
+                for z in range(-19, -16):
+                    for y in range(11, 16):
+                        setze((sx * x, y, z), aussen=True)
         # Mast-Turm
         lo, hi = MAST_TURM
         for x in range(lo[0], hi[0] + 1):
@@ -338,6 +345,36 @@ class Bau:
                     setze((x, y, p[2]), aussen=True)
         self.rumpf.extend(neu)
         return len(neu)
+
+    def leitern(self):
+        """Leitern (wie im Schiff, 2 Bloecke hoch): hinten vom Boden aufs Deck, hinter der Bruecke auf die Plattform."""
+        lt = vorlage(self.F, "ladder_small", (14, 3, -20))
+        r = (1, 0, 0, 0, 0, -1, 0, 1, 0)          # Leiter an einer Wand, die nach -z (hinten) schaut
+        orte = [(-3, y, HINTEN - 1) for y in range(-5, 10, 2)] + [(sx * 12, y, -20) for sx in (-1, 1) for y in (11, 13, 15)]
+        for p in orte:
+            xml = lt.xml.replace('r="0,0,1,1,0,0,0,1,0"', 'r="%s"' % rstr(r))
+            self.plus(fz.Teil(xml).verschoben(fz.sub(p, lt.vp)))
+
+    def bemalen(self):
+        """Tarnanstrich (Wald, 4 Farben) auf alle Bloecke und Schraegen aller Koerper - Fenster und Bauteile bleiben."""
+        farben = ["4B5320", "2F3B1E", "5C4A32", "1E1E1E"]
+        wellen = [(0.11, 0.07, 0.05, 1.3), (0.05, 0.13, 0.09, 4.1), (0.08, 0.04, 0.12, 2.2), (0.15, 0.10, 0.03, 5.7)]
+
+        def muster(p):
+            v = sum(math.sin(a * p[0] + b * p[1] + c * p[2] + ph) for a, b, c, ph in wellen)
+            return farben[0 if v < -0.6 else 1 if v < 0.4 else 2 if v < 1.3 else 3]
+
+        def neu(t):
+            if t.d not in fz.STRUKTUR:
+                return t
+            f = muster(t.vp)
+            x = re.sub(r' (bc|ac)="[0-9A-Fa-f]*"', "", t.xml, count=2)
+            x = re.sub(r'<o( r="[^"]*")?', lambda m: m.group(0) + ' bc="%s" ac="%s"' % (f, f), x, count=1)
+            return fz.Teil(x)
+
+        self.rumpf = [neu(t) for t in self.rumpf]
+        self.koerper = [[neu(t) for t in k] for k in self.koerper]
+        # self.neu zeigt auf Bauteile (keine Bloecke) - bleibt gueltig
 
     # ---------------- Chips ----------------
     def koerper_liste(self):
@@ -588,6 +625,8 @@ def main():
     b.fahrwerk()
     b.laser()
     n = b.rumpf_bauen()
+    b.leitern()
+    b.bemalen()
     b.chips_bauen()
     alt, neu = b.kabel_bauen()
     txt = b.text()

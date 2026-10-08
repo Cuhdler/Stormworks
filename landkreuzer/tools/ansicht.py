@@ -48,7 +48,7 @@ def zeichnen(pfad, aus):
         tiefe = (lambda t: t.vp[1]) if titel.startswith("von oben") else (
             (lambda t: -t.vp[0]) if titel.startswith("von links") else (lambda t: t.vp[2]))
         ts = sorted(teile, key=tiefe)
-        a.scatter([t.vp[i] for t in ts], [t.vp[j] for t in ts], c=[farbe(t) for t in ts], marker="s", s=9, linewidths=0)
+        a.scatter([t.vp[i] for t in ts], [t.vp[j] for t in ts], c=[farbe(t) for t in ts], marker="s", s=16, linewidths=0)
         a.set_aspect("equal")
         a.set_title(titel)
         a.grid(alpha=.2)
