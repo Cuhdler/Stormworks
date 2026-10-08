@@ -43,7 +43,7 @@ Eigenschaft man im KI-Chip umstellt, wenn z. B. eine Seite falsch herum dreht.
 | Brücke | die Brücke der Figet Marena: Steuersitz, Hauptmonitor 9×5 (Radar, Kamera, Zielliste), Monitor 3×3 = **Karte der KI**, Monitor 2×3 = **KI-Status**, Instrumentenblock; Aufstieg über Leitern hinten und hinter der Brücke |
 | Antrieb | 14 Elektromotoren (Medium), je einer pro Rad, 24 große Batterien im Fahrwerksraum; gelenkt wird wie bei einem Kettenfahrzeug (links und rechts verschieden schnell) |
 | KI | fährt Wegpunkte ab oder patrouilliert im Revier, weicht Hindernissen aus (7 Laser), meidet Wasser und Abhänge, befreit sich, wenn sie feststeckt, bleibt im Gefecht stehen (hält auch am Hang die Stelle), fährt auf Wunsch oder bei 40 % Batterie nach Hause, schießt nicht in die Schutzzone um ihre Basis |
-| Aussehen | Tarnanstrich (Wald: Oliv, Dunkelgrün, Braun, Schwarz) auf allen Blöcken, unten Schlamm-Spritzer, Bug als Keil (oben und unten 45°), Heck unten abgeschrägt, Kennung „KL-1“ weiß an beiden Seiten |
+| Aussehen | Tarnanstrich (Wald: Oliv, Dunkelgrün, Braun, Schwarz) auf allen Blöcken, unten Schlamm-Spritzer, Bug als Keil (oben und unten 45°), Heck unten abgeschrägt, Kennung „KL-1“ weiß und ein Abzeichen (gelber Blitz) an beiden Seiten, Lüftungsgitter auf dem Heckdeck |
 
 ### Woher die Teile kommen
 Alles, was im Schiff schon funktioniert, ist **genau kopiert**: gleiche Teile, gleiche Abstände, gleiche Kabel,
