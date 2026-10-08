@@ -367,3 +367,8 @@ Keine Schrift (stünde quer).
 - **Ferngesteuerte Fahrzeuge** (Drohne/Boot vom Schiff): Sitz → Chip → Radio (Frequenz) → Radio → Chip im Fahrzeug,
   Rückkanal auf zweiter Frequenz. Allein bedienbar nur, wenn das Schiff solange selbst Kurs hält oder stoppt. Grenzen:
   Funkreichweite, ferne Fahrzeuge werden nicht simuliert, Video per Funk unklar.
+  Gegen Anhalten/Verschwinden in der Ferne: Bauteil **„Keep Active Block“** (seit v0.7.1; Karriere: über Blaupause
+  „Radio RX“) ins Flugzeug, evtl. auch ins Schiff. Laut Forum: zusammen gespawnte Teile trennen sich ab ca. 1,5–3 km →
+  Flugzeug besser getrennt spawnen und an Deck stellen. Kostet Leistung. Ungeprüft – im Spiel 3–5 km wegfliegen und testen.
+  Idee Flugzeug (08.10.): Start mit Fahrtwind (60 kn ≈ 30 m/s) oder Senkrechtstarter; Landung als Wasserflugzeug + Kran;
+  Schiff braucht Autopilot (Kurs/Tempo halten), Flugzeug Selbststabilisierung + „Zurück zum Schiff“. Nur Aufklärung/Spaß.
