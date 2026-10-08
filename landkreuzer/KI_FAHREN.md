@@ -27,9 +27,13 @@ Prüfstand im Rechner. Im Spiel noch **nicht** erprobt – alles unten unter „
   Ziel: weiter auf der Route.
 - **Batterie** unter „Batterie min“: anhalten. Unter 30 %: nur 60 % Tempo. Ist der Eingang nicht angeschlossen
   (immer 0), gilt die Batterie als unbekannt – kein Halt.
+- Dazu im **Klebe-Skript** (`lua/ki_kleber.lua`, vor der Fahr-KI): Startverzögerung (30 s) und Waffen-Verzögerung
+  (60 s), unter „Heim Batterie“ (40 %) von selbst nach Hause, **Schutzzone** (300 m um den Startpunkt und um die
+  Freund-Punkte der Karte): Ziele dort bekommen keinen Schuss und werden nicht angefahren; Auto-Chaff nur mit Ziel.
+- **Hält die Stelle**, wenn das Soll-Tempo 0 ist (Kampf, Pause, am Ziel, Batterie leer, LASER?).
 
 ### Hindernisse, Hänge, Wasser, Kanten
-- Die **drei Front-Laser** (2,4 m hoch, gerade nach vorn, 3,5 m auseinander) decken die Fahrgasse ab. Ein Hang mit
+- Die **drei Front-Laser** (mit 7er-Rädern 2,4 m hoch, gerade nach vorn, 3,5 m auseinander) decken die Fahrgasse ab. Ein Hang mit
   Winkel a erscheint dem Strahl erst bei d = 2,4 / tan(a − Nick) – eine Wand und ein Hang sehen von weitem gleich aus.
   Darum: ab „Hindernis m“ langsamer, unter „Notstopp m“ nur kriechen. Hebt ein Hang den Bug an, geht der Strahl über
   ihn weg und er fährt weiter; kommt eine Wand näher als ca. 4,2 m (= steiler als „Steigung max Grad“), setzt er
