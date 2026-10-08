@@ -43,9 +43,16 @@ def lua(name):
     return minify(open(pfad, encoding="utf-8").read())
 
 
+# Schreiber im Status-Skript (wie die Waffen-Chips; bau_landkreuzer --schreiber setzt den Port auf 8768)
+PROPS_SCHREIBER = [
+    ("Schreiber Port", 0, "Schreiber: Port von tools/waffen_logger.py auf dem PC (0 = aus; 8768 wie die Waffen)"),
+    ("Schreiber Zeichen", 3000, "Schreiber: hoechstens so viele Zeichen je Paket"),
+]
+
+
 def props():
-    """Eigenschaften aller drei Skripte (ki_props.py vom Fahr-KI-Teil, falls vorhanden)."""
-    out = list(PROPS_KLEBER) + list(PROPS_LENKUNG)
+    """Eigenschaften aller Skripte (ki_props.py vom Fahr-KI-Teil, falls vorhanden)."""
+    out = list(PROPS_KLEBER) + list(PROPS_LENKUNG) + list(PROPS_SCHREIBER)
     try:
         import ki_props
         for liste in (getattr(ki_props, "PROPS_FAHREN", []), getattr(ki_props, "PROPS_KARTE", [])):

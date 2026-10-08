@@ -29,6 +29,12 @@ fahren – quasi ein KI-Panzer“.
 Was nicht klappt, bitte aufschreiben (am besten mit der Anzeige des Status-Monitors). Abschnitt 4 sagt, welche
 Eigenschaft man im KI-Chip umstellt, wenn z. B. eine Seite falsch herum dreht.
 
+**Fahrtenschreiber (sehr hilfreich für mich):** Im KI-Chip die Eigenschaft „Schreiber Port“ auf **8768** stellen
+(oder den Panzer mit `python landkreuzer/tools/bau_landkreuzer.py --schreiber` bauen, dann schreiben auch die
+Waffen-Chips mit). Auf dem PC `python tools/waffen_logger.py` starten (wie beim Schiff). Dann landet jede Fahrt in
+`logs/waffen_<Datum>_<Zeit>/ki.csv`: je Tick Zustand, Ort, Kurs, Tempo, Befehle, alle Laser, Batterie, Nick/Roll.
+Mit `git add -f logs/...` hochladen – dann sehe ich genau, was die KI gesehen und entschieden hat.
+
 ---
 
 ## Was in der Nacht noch dazukam (nachdem du ins Bett bist)
@@ -53,6 +59,7 @@ Gefundene **Fehler**, die im Spiel Ärger gemacht hätten (alle behoben und mit 
 - Auto-Chaff nur, wenn die Radare auch einen Gegner sehen.
 - Laser- und Sensor-Höhe stellt die KI selbst auf die Radgröße ein.
 - Nach Hause schon bei 40 % Batterie; der Status zeigt die **Restzeit** der Batterie.
+- **Fahrtenschreiber** im KI-Chip (wie in den Waffen-Chips, Standard aus), siehe Schnellstart.
 - Status zeigt Nick/Roll/Kurs in Grad (Vorzeichen prüfen) und rot L!/R!, wenn eine Radseite falsch herum dreht.
 - Prüfstände: Wald, Damm durch einen See, enges Tal, größere Räder, Stehen am Hang, Lenk-Variante; Kabel-Vergleich
   Schiff ↔ Panzer.

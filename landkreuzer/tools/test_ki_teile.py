@@ -19,7 +19,8 @@ def lade(name, props):
     rt = lua53.LuaRuntime(unpack_returned_tuples=True)
     g = rt.globals()
     io = {"n": {}, "b": {}, "on": {}, "draw": []}
-    rt.execute("input={} output={} property={} screen={}")
+    rt.execute("input={} output={} property={} screen={} async={}")
+    g["async"].httpGet = lambda port, url: io.setdefault("http", []).append((port, url))
     def kanal(i):
         assert 1 <= int(i) <= 32 and int(i) == i, "Composite-Kanal %r gibt es nicht (nur 1-32)" % (i,)
         return int(i)
@@ -150,9 +151,32 @@ def test_status_batterie():
     return [("Batterie-Restzeit (1 %%/min, %.0f %%): %s" % (b * 100, t), t and t[0].endswith(" %dM" % round(b / 0.01)))]
 
 
+def test_status_schreiber():
+    """Schreiber im Status-Skript: mit Port 8768 gehen Pakete an den waffen_logger (Messstelle 'ki', je Zeile Tick + 28
+    Werte); mit Port 0 nichts."""
+    rueck = []
+    for port in (0, 8768):
+        pr = {n: v for n, v, _ in build_ki.props()}
+        pr["Schreiber Port"] = port
+        g, io = lade("ki_status", pr)
+        for _ in range(100):
+            tick(g, io, {1: 10.0, 3: 20.0, 26: 2.0, 32: 5.0, 9: 30.0}, {1: True})
+        http = io.get("http", [])
+        if port == 0:
+            rueck.append(("Schreiber aus (Port 0): %d Pakete" % len(http), not http))
+        else:
+            import urllib.parse
+            q = urllib.parse.parse_qs(urllib.parse.urlparse(http[0][1]).query) if http else {}
+            zeile = q.get("d", [""])[0].split(";")[0].split(",")
+            rueck.append(("Schreiber an: %d Pakete an Port %s, Messstelle %s, %d Werte je Zeile" % (
+                len(http), http[0][0] if http else "-", q.get("q"), len(zeile) - 1),
+                http and http[0][0] == 8768 and q.get("q") == ["ki"] and len(zeile) - 1 == 28))
+    return rueck
+
+
 def main():
     ok = True
-    for t in (test_kleber, test_lenkung, test_status, test_status_batterie):
+    for t in (test_kleber, test_lenkung, test_status, test_status_batterie, test_status_schreiber):
         for txt, g in t():
             print("%-75s %s" % (txt, "ok" if g else "FEHLER"))
             ok &= bool(g)

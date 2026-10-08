@@ -602,6 +602,7 @@ class Bau:
                                 ("A", "AC", 2, 0, 31, 9, "Heavy Autocannon", "AC-Turm vorn", False)]
         port = 8768 if self.schreiber else 0
         build_lage.SCHREIBER_PROPS = [(n, port if n == "Schreiber Port" else v, d) for n, v, d in build_lage.SCHREIBER_PROPS]
+        build_ki.PROPS_SCHREIBER = [(n, port if n == "Schreiber Port" else v, d) for n, v, d in build_ki.PROPS_SCHREIBER]
         mini = schiff_lua
         src = land_lua()
 

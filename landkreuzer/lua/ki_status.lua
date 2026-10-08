@@ -6,6 +6,8 @@
 --  Tempo, 29 aktueller Wegpunkt, 30 Lenkbefehl, 31 Fahrbefehl (roh, + rechts / + vor), 32 Tempo vorwaerts (von
 --  KI_FAHREN gerechnet); Bool 7 Fahrt
 --  aktiv, 9 Revier
+-- Schreiber v2 wie in den Waffen-Skripten (Messstelle 'ki', an tools/waffen_logger.py; Eigenschaft 'Schreiber Port',
+-- 0 = aus): je Tick eine Zeile mit allem, was die Fahr-KI sieht und tut - fuer die Auswertung der ersten Fahrten.
 -- Video: Monitor 2x3 (64 x 96 Pixel, hochkant) und Helm des Steuersitzes (breit: dort nur eine Zeile unten)
 -- Unten zwischen den Motor-Balken: N Nick (+ = Bug hoch), R Roll (+ = rechts tief), K Kurs (Grad, 0 Nord, 90 Ost) - so,
 -- wie die Fahr-KI sie sieht (mit 'Nick/Roll/Kompass Richtung'). Zum Pruefen der Vorzeichen am Hang.
@@ -19,6 +21,56 @@ st=screen
 ZN={'AUS','HAND','WEGPUNKT','REVIER','AUSWEICHEN','ZURUECK','KAMPF','BATTERIE','GEFAHR','WARTET','LASER?'}
 L={'VL','VM','VR','LI','RE','UN','HI'}
 W={}
+-- SCHREIBER v2 (in allen Waffen-Skripten gleich; Andre 04.10.: "der Log muss ALLES sagen, sonst ist es ein Ratespiel"):
+-- je Tick eine Zeile mit dem, was das Skript sieht und entscheidet (Tick + Werte, leer = 0); alle LT Ticks ein Paket
+-- an tools/waffen_logger.py. Der Bau-Schritt setzt LQ (Name), LT, LO. LG(Kennbuchstabe, Werte-Tabelle, Anzahl).
+-- Gesendet wird erst, wenn die Antwort aufs letzte Paket da ist (hoechstens 300 Ticks warten), fruehestens LT Ticks
+-- danach. w = wie viele Ticks die Antwort aufs vorige Paket brauchte (-1 = keine).
+LQ='ki' LT=16 LO=10
+LB={} LN=0 LS=0 LX=0 LC=0 LM=3000 LW=0 LR=0
+LA=LO+1
+function httpReply()
+	LR=LW
+	LW=0
+end
+function LG(g,t,n)
+	if LP==0 then return end
+	local z={g..LN}
+	for i=1,n do
+		local v=t[i]
+		v=v==true and 1 or v or 0
+		z[i+1]=v==0 and '' or string.format('%.5g',v)
+	end
+	local s=table.concat(z,',')
+	LB[#LB+1]=s
+	LC=LC+#s+1
+	while LC>LM and #LB>1 do
+		LC=LC-#LB[1]-1
+		table.remove(LB,1)
+		LX=LX+1
+	end
+end
+function LF()
+	if not LP then LP,LM=property.getNumber('Schreiber Port'),property.getNumber('Schreiber Zeichen') end
+	LN=LN+1
+	if LW>0 then
+		LW=LW+1
+		if LW>300 then
+			LW=0
+			LR=-1
+		end
+	end
+	if LP>0 and LW==0 and LN>=LA then
+		LS=LS+1
+		async.httpGet(LP,'/w?q='..LQ..'&s='..LS..'&x='..LX..'&w='..LR..'&d='..table.concat(LB,';'))
+		LB={}
+		LC=0
+		LX=0
+		LW=1
+		LA=LN+LT
+	end
+end
+
 function onTick()
 	if not ini then
 		ini=1
@@ -34,6 +86,11 @@ function onTick()
 		if b0 and b>0 and b<=b0 then dv=dv and dv*.7+(b0-b)/600*.3 or (b0-b)/600 end
 		b0=b
 	end
+	-- Schreiber (Port 0 = aus): Zustand, Ort x/z/Hoehe, Kurs Grad, Tempo ist/soll, Fahr-/Lenkbefehl roh, 7 Laser,
+	-- Batterie, Wegpunkt/Zahl, Nick/Roll Grad, KI an, Waffen frei, Schutzzone, Sitz, nach Hause, umgelernt L/R
+	LG('',{W[26],W[1],W[3],W[2],ku,W[32],W[28],W[31],W[30],W[9],W[10],W[11],W[12],W[13],W[14],W[15],W[16],W[29],W[27],
+		ni,ro,ki,wa,sz,sb,hm,ul,ur},28)
+	LF()
 	ki,sb,zi,hm,fa,wa,rv,sz=B(1),B(2),B(4),B(6),B(7),B(10),B(9),B(11)
 end
 function f(v)
