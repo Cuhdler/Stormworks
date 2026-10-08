@@ -15,6 +15,7 @@ SCHRITTE = [
     ("Fahrzeug bauen (Lenkung)", ["bau_landkreuzer.py", "--lenkung"], False),
     ("Chip-Baukasten gegen Schiff", ["test_build_mc.py"], False),
     ("KI-Teile (Kleber, Lenkung, Status)", ["test_ki_teile.py"], False),
+    ("KI-Chip im Ganzen (chip_sim)", ["test_ki_chip.py"], False),
     ("Fahr-KI Simulation", ["test_ki.py"], True),
     ("Lage/Bildschirm an Land", ["test_land_lage.py"], True),
     ("Kanonen gegen Bodenziele", ["test_land_kanone.py"], True),
