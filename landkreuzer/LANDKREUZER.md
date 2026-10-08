@@ -55,7 +55,7 @@ Was an Land anders sein muss, ist in die Chips eingebaut:
 |---|---|
 | `tools/test_land_lage.py` | Panzer auf 100 m Höhe, 2 Bodenfahrzeuge, Hubschrauber, Jet, Gebäude. Kanonen auf Bodenfahrzeugen 329/360 Zeitschritte, nie auf Gebäude oder Luftziel. Flaks nur auf Luftzielen. Ohne die Land-Änderung: 0/360. |
 | `tools/test_land_kanone.py` | BC und AC gegen fahrende Bodenziele am Hang (+45 m bis −25 m, 0,8–3 km): 47–55 % Treffer. Mit der festen Schiffs-Zielhöhe: 0 Treffer. |
-| `tools/test_ki.py` | Fahr-KI in einer Simulation (siehe Abschnitt 3) |
+| `tools/test_ki.py` | Fahr-KI in einer Simulation mit Hügeln, See, Klippe, Häusern, Wänden, Sackgasse: 38 Prüfungen, auch 10-Minuten-Dauerläufe ohne Unfall (Einzelheiten `KI_FAHREN.md`) |
 | `tools/pruefen.py` | Datei: XML, Teil-Arten, keine doppelten Plätze, Rumpf hängt zusammen, Kabel, Chips |
 | `tools/test_build_mc.py` | Chip-Baukasten baut alle Schiffs-Chips byte-gleich nach |
 
@@ -126,12 +126,28 @@ Die Schalter sind andersherum als auf dem Schiff. **Aus heißt: Die KI darf.**
 
 ### Karte (Monitor 3×3 links vom Sitz)
 - Auf die Karte tippen: Dort kommt ein **Wegpunkt** hin. Bis zu 8 Wegpunkte, die KI fährt sie der Reihe nach im Kreis ab.
-- Knopf **Löschen**: alle Wegpunkte weg. Ohne Wegpunkte patrouilliert die KI im Revier.
-- **+ / −**: Zoom. **Revier**: Patrouille an/aus.
+- Knopf **Loeschen** zweimal binnen 3 s tippen: alle Wegpunkte weg (einmal wäre zu leicht aus Versehen). Ohne
+  Wegpunkte patrouilliert die KI im Revier (Zufallspunkte bis 400 m um den Startpunkt, an jedem 45 s Pause).
+- **+ / −**: Zoom. **Revier** (grün = an): nach dem letzten Wegpunkt wieder von vorn; aus = am letzten stehen bleiben.
+- Oben steht der Zustand der KI (siehe unten).
 
 ### KI-Status (Monitor 2×3 rechts vom Sitz und im Helm)
 Der Monitor zeigt:
-- den Zustand der KI (z. B. WEGPUNKT, REVIER, AUSWEICHEN, ZURUECK, GEFECHT, GEFAHR, ANGEKOMMEN)
+- den Zustand der KI:
+
+  | Zustand | heißt |
+  |---|---|
+  | AUS / PAUSE | KI aus (Schalter „KI Pause“ oder Startverzögerung) |
+  | HAND | du fährst (W/S/A/D), oder 2 s Pause danach |
+  | WEGPUNKT | fährt zum Wegpunkt oder nach Hause |
+  | REVIER | fährt zum nächsten Revier-Punkt |
+  | AUSWEICHEN | Hindernis vorn: kriecht und lenkt zur freien Seite |
+  | ZURUECK | setzt zurück (Wand, Sackgasse, festgefahren) |
+  | KAMPF | Ziel näher als 1,5 km: steht, Bug zum Ziel |
+  | BATTERIE | Batterie fast leer: steht |
+  | GEFAHR | Wasser, Kante oder zu schräg: zurück, die Stelle wird gemieden |
+  | WARTET | am Ziel, zu Hause oder Pause im Revier |
+
 - das Tempo (ist/soll), den Wegpunkt, die Batterie, ob die Waffen frei sind
 - die **7 Laser-Entfernungen**: VL, VM, VR = vorn links/Mitte/rechts, LI, RE = Seiten, UN = unten, HI = hinten.
   „--“ heißt: der Laser meldet nichts.
@@ -166,7 +182,8 @@ In dieser Reihenfolge. Anfangen jeweils mit **KI Pause an** und **Waffen sperren
    Bekommen die kleinen Gelenk-Motoren Strom und Gas (Konstante 1)? Beides ist wie beim Schiffs-Ruder verkabelt.
    Anders als beim Ruder trägt hier jedes Gelenk das Gewicht seines Rades. Knickt ein Rad weg oder wackelt es stark,
    ist das Gelenk zu schwach; dann bleibt nur die einfache Variante.
-7. **KI:** KI Pause aus, auf freiem Gelände. Fährt er los, weicht er aus, hält er vor Wasser?
+7. **KI:** KI Pause aus, auf freiem Gelände. Fährt er los, weicht er aus, hält er vor Wasser? Die genaue Prüfliste
+   (Kompass, Rad-Richtung, Nick/Roll, Bug-Laser, Bremsweg, Karte) steht in `KI_FAHREN.md`, Abschnitt 6.
 8. **Waffen:** Waffen sperren aus, mit Gegnern.
 9. **Chaff:** Auf dem Schiff war offen, ob der Radarwarner die **eigenen** Radare meldet. Wenn ja, wirft der Panzer
    dauernd Chaff, bis die 60 Salven leer sind. Dann bitte melden; ich baue dann eine Sperre ein.
@@ -201,6 +218,8 @@ In dieser Reihenfolge. Anfangen jeweils mit **KI Pause an** und **Waffen sperren
 | `tools/pruefen.py` | Prüfungen der Datei (läuft nach jedem Bau) |
 | `tools/ansicht.py` | Bilder zeichnen (braucht matplotlib) |
 | `tools/test_ki.py` | Prüfstand der Fahr-KI (Simulation, braucht lupa) |
+| `KI_FAHREN.md` | **alles zur Fahr-KI**: Verhalten, Kanäle, alle Eigenschaften mit Erklärung, Grenzen, Prüfliste im Spiel |
+| `tools/ki_props.py` | Eigenschaften der Fahr-KI und Karte (Standardwerte) |
 | `tools/test_ki_teile.py` | Prüfstand Kleber, Lenkung, Status-Anzeige |
 | `tools/test_land_lage.py`, `tools/test_land_kanone.py` | Prüfstände Waffen an Land (mit den Schiffs-Prüfständen, braucht lupa) |
 | `lua/ki_kleber.lua`, `lua/ki_fahren.lua`, `lua/ki_karte.lua`, `lua/ki_status.lua`, `lua/ki_lenkung.lua` | die fünf Skripte im KI-Chip |

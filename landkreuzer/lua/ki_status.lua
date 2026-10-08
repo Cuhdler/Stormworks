@@ -9,7 +9,7 @@
 N=input.getNumber
 B=input.getBool
 st=screen
-ZN={'AUS','SELBER','WEGPUNKT','REVIER','AUSWEICHEN','ZURUECK','GEFECHT','BATTERIE','GEFAHR','ANGEKOMMEN'}
+ZN={'AUS','HAND','WEGPUNKT','REVIER','AUSWEICHEN','ZURUECK','KAMPF','BATTERIE','GEFAHR','WARTET'}
 L={'VL','VM','VR','LI','RE','UN','HI'}
 W={}
 function onTick()
