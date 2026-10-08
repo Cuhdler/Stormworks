@@ -122,7 +122,7 @@ In dieser Reihenfolge, jeweils mit **KI Pause an** und **Waffen sperren an** anf
 | `lua/ki_fahren.lua`, `lua/ki_karte.lua`, `lua/ki_kleber.lua` | die drei Skripte im KI-Chip |
 
 **Koordinaten** (Blöcke à 0,25 m): x rechts, y oben, z vorn. Boden des Fahrwerksraums y −4, Hauptboden y 1, Deck vorn
-y 6, Mitte y 10, hinten y 9. Wellen-Stummel bei x ±15, y −3, z 30 / 15 / 0 / −15 / −30 / −45 / −60.
+y 6, Mitte y 10, hinten y 9. Wellen-Stummel bei x ±15, y −3, z 35 / 20 / 5 / −10 / −25 / −40 / −55 (Mitte = geschätzter Schwerpunkt).
 
 **Chips** liegen auf dem Hauptboden in der Mitte (y 2, z −29 … −17), Physik-Sensor bei (0, 2, −12), Batterien im
 Fahrwerksraum.

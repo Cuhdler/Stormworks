@@ -58,7 +58,7 @@ SOCKEL = ((-14, 11, -16), (14, 14, -3))
 R_SCHRAEGE = (-1, 0, 0, 0, 1, 0, 0, 0, -1)       # 02_wedge so gedreht: offene Seiten +y und +z (aus dem Schiff gelesen)        # unter der Bruecke (Bruecken-Boden y 15 wie im Schiff)
 
 # Fahrwerk: Rad-Achsen je Seite (z), Achs-Hoehe y, Motor-Spalte x
-RAD_Z = [30, 15, 0, -15, -30, -45, -60]
+RAD_Z = [35, 20, 5, -10, -25, -40, -55]          # Mitte -10 = Schwerpunkt (grob geschaetzt)
 ACHSE_Y = -3
 MOTOR_X = 13
 
