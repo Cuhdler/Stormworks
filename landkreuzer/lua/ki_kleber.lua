@@ -6,8 +6,10 @@
 -- Ziel fuer die Fahr-KI: von den Zielen, die der Bildschirm-Chip den beiden Kanonen (BC, AC) gegeben hat, das naechste.
 -- Die Vorgabe des Bildschirm-Chips ist Ost/Nord relativ zu uns (m) und Hoehe ueber dem Meer (m) - hier in die Welt
 -- umgerechnet.
+-- Bei wenig Batterie (0 < Ladung < 'Heim Batterie') faehrt die KI von selbst nach Hause (wie Schalter 'Nach Hause'),
+-- statt irgendwo im Gelaende stehen zu bleiben; erst ab 'Heim Batterie' + 10 % wieder normal.
 -- Eingang (Composite): Zahl 1-3 Physik x/Hoehe/z (ganzes Physik-Composite), ueberschrieben: 21-23 BC-Ziel Ost/Nord/Hoehe,
---  24-26 AC-Ziel; Bool 1-4 Instrumente, 5 BC hat Ziel, 6 AC hat Ziel
+--  24-26 AC-Ziel, 27 Batterie (0..1, 0 = unbekannt); Bool 1-4 Instrumente, 5 BC hat Ziel, 6 AC hat Ziel
 -- Ausgang: Zahl 20-22 Ziel Welt x/z/Hoehe; Bool 1 KI an, 4 Ziel gueltig, 6 Nach Hause, 10 Master Arm (Waffen frei)
 N=input.getNumber
 B=input.getBool
@@ -19,7 +21,7 @@ tk=0
 function onTick()
 	if not ini then
 		ini=1
-		sv,wv=P('Start Verzoegerung s')*60,P('Waffen Verzoegerung s')*60
+		sv,wv,hb=P('Start Verzoegerung s')*60,P('Waffen Verzoegerung s')*60,P('Heim Batterie')
 	end
 	tk=tk+1
 	local x,z=N(1),N(3)
@@ -37,6 +39,8 @@ function onTick()
 	S(22,bh or 0)
 	O(1,los and not B(3))
 	O(4,bd~=nil)
-	O(6,B(4))
+	local b=N(27)
+	if b>0 and b<hb then hl=true elseif b>hb+.1 or b<=0 then hl=false end
+	O(6,B(4) or hl)
 	O(10,tk>wv and not B(1))
 end

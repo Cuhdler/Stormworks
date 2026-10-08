@@ -24,6 +24,7 @@ LASER_NAMEN = ["Laser vorn links", "Laser vorn Mitte", "Laser vorn rechts", "Las
 PROPS_KLEBER = [
     ("Start Verzoegerung s", 10, "Nach dem Spawnen so lange warten, bis die KI faehrt"),
     ("Waffen Verzoegerung s", 60, "Nach dem Spawnen so lange warten, bis die Waffen frei sind (die KI kennt keinen Freund)"),
+    ("Heim Batterie", 0.2, "Batterie darunter (0 bis 1): die KI faehrt von selbst nach Hause (0 = aus)"),
 ]
 PROPS_LENKUNG = [
     ("Lenk Faktor", 1, "Lenk-Variante: Lenkwinkel je Kurven-Befehl (1 = voller Befehl gibt 'Lenk max Grad')"),
@@ -73,8 +74,8 @@ def build(src=None, eigen=None):
         return mc.comp(typ, pos, {"i": ch} if ch else {}, [(q, 0)])
 
     # --- KI_KLEBER: Physik-Composite + Bedienung (BC/AC-Ziel) + Instrumente + 'Ziel da'
-    w = mc.comp(40, (-10, 8), {"count": 6, "offset": 20}, [("inc", (phys, 0))] + [
-        (rd(bed, ch, (-12, 8 - .5 * j)), 0) for j, ch in enumerate((7, 8, 9, 11, 12, 13))])
+    w = mc.comp(40, (-10, 8), {"count": 7, "offset": 20}, [("inc", (phys, 0))] + [
+        (rd(bed, ch, (-12, 8 - .5 * j)), 0) for j, ch in enumerate((7, 8, 9, 11, 12, 13))] + [(bat, 0)])
     w = mc.comp(41, (-10, 6), {"count": 6}, [("inc", (w, 0))] + [(rd(inst, ch, (-12, 5 - .5 * j), 29), 0)
                                                               for j, ch in enumerate((0, 1, 2, 3))] +
                 [(rd(bed, ch, (-12, 3 - .5 * j), 29), 0) for j, ch in enumerate((8, 9))])
