@@ -8,7 +8,7 @@ Prüfstand im Rechner. Im Spiel noch **nicht** erprobt – alles unten unter „
 | `lua/ki_fahren.lua` | das Fahr-Gehirn (Antrieb links/rechts) |
 | `lua/ki_karte.lua` | Touch-Karte im Cockpit (Monitor 3×3 oder 5×3) |
 | `tools/ki_props.py` | alle Properties mit Standardwert und Erklärung (`PROPS_FAHREN`, `PROPS_KARTE`, `PROPS`) |
-| `tools/test_ki.py` | Prüfstand: Simulator + 49 Prüfungen (auch Wald, Damm, Tal, 0,6 m höhere Räder, Stehen am Hang), am Ende „ALLES OK“ |
+| `tools/test_ki.py` | Prüfstand: Simulator + 52 Prüfungen (auch Wald, Damm, Tal, 0,6 m höhere Räder, Stehen am Hang), am Ende „ALLES OK“ |
 
 ---
 
@@ -163,7 +163,7 @@ leicht aus Versehen), „−“ weiter weg, „+“ näher dran, „Revier“ (a
   (je 10 min) streifte einer dreimal einen runden Fels, der genau in dieser Lücke lag; die anderen 9 ohne Stoß. Flache Hindernisse unter 2,4 m sieht
   kein Front-Laser – dafür gibt es die Festfahr-Erkennung.
 - **Dichter Wald** (Bäume im Mittel 30 m auseinander): von 8 zufälligen Wäldern schafft sie 5, in 3 bleibt sie
-  hängen (viele Stöße). Versucht und verworfen: zwei Eck-Laser ganz außen am Bug (mit Gedächtnis 3/8, nur bremsen
+  hängen (viele Stöße). Die Lenk-Variante schafft 4 von 8, streift aber deutlich weniger (69 statt 97 Stöße). Versucht und verworfen: zwei Eck-Laser ganz außen am Bug (mit Gedächtnis 3/8, nur bremsen
   und weglenken 3/8 – beides schlechter). Lichter Wald (Prüfung „Wald“) geht.
 - **Wand oder Hang** erkennt sie erst bei ca. 4 m: vor Hindernissen kriecht sie deshalb das letzte Stück.
 - **Kanten seitlich** sieht nur der Bug-Laser, wenn der Bug drüber ist. Schräg an eine Kante herangefahren kann eine

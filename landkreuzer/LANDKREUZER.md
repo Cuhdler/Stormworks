@@ -54,7 +54,10 @@ Gefundene **Fehler**, die im Spiel Ärger gemacht hätten (alle behoben und mit 
 - Laser- und Sensor-Höhe stellt die KI selbst auf die Radgröße ein.
 - Nach Hause schon bei 40 % Batterie; der Status zeigt die **Restzeit** der Batterie.
 - Status zeigt Nick/Roll/Kurs in Grad (Vorzeichen prüfen) und rot L!/R!, wenn eine Radseite falsch herum dreht.
-- Prüfstände: Wald, Damm durch einen See, enges Tal, größere Räder, Stehen am Hang; Kabel-Vergleich Schiff ↔ Panzer.
+- Prüfstände: Wald, Damm durch einen See, enges Tal, größere Räder, Stehen am Hang, Lenk-Variante; Kabel-Vergleich
+  Schiff ↔ Panzer.
+- **Lenk-Variante:** Beim Rückwärtsfahren schlugen die Achsen falsch herum ein (Lenkung und Kettenlenkung arbeiteten
+  gegeneinander). Behoben; im Simulator jetzt geprüft.
 - Aussehen: Schlamm unten, Lüftungsgitter, Abzeichen; Bild `beschriftet.png` (was wo ist), `anzeigen.png` (Monitore).
 
 Ausprobiert und **verworfen**: zwei zusätzliche Eck-Laser für dichten Wald (im Simulator schlechter). Ein
@@ -105,7 +108,7 @@ Was an Land anders sein muss, ist in die Chips eingebaut:
 |---|---|
 | `tools/test_land_lage.py` | Panzer auf 100 m Höhe, 2 Bodenfahrzeuge, Hubschrauber, Jet, Gebäude. Kanonen auf Bodenfahrzeugen 329/360 Zeitschritte, nie auf Gebäude oder Luftziel. Flaks nur auf Luftzielen. Ohne die Land-Änderung: 0/360. |
 | `tools/test_land_kanone.py` | BC und AC gegen fahrende Bodenziele am Hang (+45 m bis −25 m, 0,8–3 km): 47–55 % Treffer. Mit der festen Schiffs-Zielhöhe: 0 Treffer. |
-| `tools/test_ki.py` | Fahr-KI in einer Simulation mit Hügeln, See, Klippe, Häusern, Wänden, Sackgasse, Wald, Damm, Tal: 49 Prüfungen, auch 10-Minuten-Dauerläufe ohne Unfall, mit größeren Rädern und Stehen am Hang (Einzelheiten `KI_FAHREN.md`) |
+| `tools/test_ki.py` | Fahr-KI in einer Simulation mit Hügeln, See, Klippe, Häusern, Wänden, Sackgasse, Wald, Damm, Tal: 52 Prüfungen, auch 10-Minuten-Dauerläufe ohne Unfall, mit größeren Rädern und Stehen am Hang (Einzelheiten `KI_FAHREN.md`) |
 | `tools/pruefen.py` | Datei: XML, Teil-Arten, keine doppelten Plätze, Rumpf hängt zusammen, Kabel, Chips |
 | `tools/test_build_mc.py` | Chip-Baukasten baut alle Schiffs-Chips byte-gleich nach |
 
@@ -123,7 +126,8 @@ Dateien:
 | `KI Landkreuzer.xml` | nur Skid-Lenkung (wie ein Kettenfahrzeug): 14 feste Räder. Einfacher, weniger Teile. |
 | `KI Landkreuzer Lenkung.xml` | dazu **Allrad-Lenkung**: Die vorderen 2 und die hinteren 2 Achsen sitzen auf senkrechten Gelenken (gebaut wie die Ruder der Figet Marena, mit kleinem Gelenk-Motor). Vorn und hinten lenken gegenläufig, die mittleren 3 Achsen bleiben fest. |
 
-**Empfehlung:** Erst `KI Landkreuzer.xml` ausprobieren. Dreht er schlecht, die Lenk-Variante nehmen. Beide
+**Empfehlung:** Erst `KI Landkreuzer.xml` ausprobieren. Dreht er schlecht, die Lenk-Variante nehmen. Im Simulator
+fährt die Lenk-Variante genauso sauber (Wegpunkte, Wand, Sackgasse, Dauerläufe) und streift im Wald weniger. Beide
 haben denselben KI-Chip; die Lenk-Ausgänge sind in der einfachen Variante nur nicht verkabelt.
 
 1. Auf dem PC das Repo holen (pull).

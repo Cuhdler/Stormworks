@@ -408,7 +408,8 @@ class Panzer:
                     return ob
         return None
 
-    def schritt(self, links, rechts, dt=DT):
+    def schritt(self, links, rechts, dt=DT, lenk=0.0):
+        """lenk: Lenkwinkel der vorderen Achsen in rad (+ rechts; hinten gegenlaeufig) - Lenk-Variante."""
         links, rechts = max(-1.0, min(1.0, links)), max(-1.0, min(1.0, rechts))
         thr, dif = (links + rechts) / 2, (links - rechts) / 2
         v = self.v
@@ -420,7 +421,9 @@ class Panzer:
                 nv = 0.0
         else:
             nv = 0.0 if abs(kraft) < 0.3 else v + (kraft - 0.3 * math.copysign(1, kraft)) * dt
-        self.om += (0.4 * dif - self.om) * dt / 0.4
+        # Lenk-Variante: vordere 2 Achsen (im Mittel 6,9 m vor der Mitte) und hintere 2 (9,4 m dahinter) lenken
+        # gegenlaeufig -> Drehrate aus der Geometrie (die festen Mittelachsen rutschen dabei etwas)
+        self.om += (0.4 * dif + v * 2 * math.tan(lenk) / 16.3 - self.om) * dt / 0.4
         npsi = self.psi + self.om * dt
         nx = self.x + nv * math.sin(npsi) * dt
         nz = self.z + nv * math.cos(npsi) * dt
@@ -485,8 +488,9 @@ class Panzer:
 # Simulation: KI-Chip + Panzer
 # ---------------------------------------------------------------------------------------------------------------
 class Sim:
-    def __init__(self, welt, x=0.0, z=0.0, kurs=0.0, props=None, ki=True, rad=(1, -1), seed=1):
-        """rad: wie die Antriebe eingebaut sind (Ausgang mal rad = Vortrieb der Seite); rechts gespiegelt = -1."""
+    def __init__(self, welt, x=0.0, z=0.0, kurs=0.0, props=None, ki=True, rad=(1, -1), seed=1, lenkung=False):
+        """rad: wie die Antriebe eingebaut sind (Ausgang mal rad = Vortrieb der Seite); rechts gespiegelt = -1.
+        lenkung: Lenk-Variante - ki_lenkung.lua rechnet aus den Ausgaengen der Fahr-KI den Lenkwinkel."""
         pr = dict(PR_FAHREN)
         pr.update(props or {})
         self.pr = pr
@@ -503,6 +507,10 @@ class Sim:
         self.weg = 0.0
         self.erreicht = []          # (Zeit s, Ziel Ost, Ziel Nord)
         self.zustaende = set()
+        self.lenk = None
+        if lenkung:
+            import build_ki
+            self.lenk = Chip(minify(quelle("ki_lenkung.lua")), {n: v for n, v, _ in build_ki.PROPS_LENKUNG}, seed)
 
     def tippe(self, x, z):
         self.ereignisse.append(("t", x, z))
@@ -534,7 +542,15 @@ class Sim:
         if self.rad == (1, -1) and (ch.ob[5] or ch.ob[6]):
             FALSCH_GELERNT.add(self.welt.name or "?")
         x0, z0 = pz.x, pz.z
-        pz.schritt(*self.seiten())
+        winkel = 0.0
+        if self.lenk:
+            lk = self.lenk
+            for i in range(1, 33):
+                lk.n[i] = ch.on[i]
+            lk.n[32] = abs(pz.v)                       # wie im Chip: Physik Zahl 13 (Tempo)
+            lk.tick()
+            winkel = lk.on[1] * math.pi / 2            # Signal 1 = 90 Grad
+        pz.schritt(*self.seiten(), lenk=winkel)
         self.weg += math.hypot(pz.x - x0, pz.z - z0)
         zs = int(round(ch.on[3]))
         self.zustaende.add(zs)
@@ -1122,6 +1138,31 @@ def test_gelaende():
             s.pz.abgestuerzt), ok)
 
 
+def test_lenkvariante():
+    """Lenk-Variante (vordere/hintere Achsen lenken, ki_lenkung.lua): Wegpunkte, Wand, Sackgasse (viel rueckwaerts:
+    dort muessen die Achsen andersherum einschlagen) und ein Dauerlauf - ohne Pendeln und Stoesse."""
+    s = Sim(eben(), lenkung=True)
+    for p in [(0, 200), (150, 300), (-100, 350)]:
+        s.tippe(*p)
+    s.lauf(240, bis=lambda s: len(s.erreicht) >= 3)
+    w = [e[6] - e[7] for e in s.log]
+    wechsel = sum(1 for a, b in zip(w, w[1:]) if a * b < 0)
+    pruefe("Lenk-Variante: 3 Wegpunkte nach %s s, Stoesse %d, Lenk-Wechsel %d" % (
+        [round(e[0]) for e in s.erreicht], s.pz.stoesse, wechsel), len(s.erreicht) >= 3 and s.pz.stoesse == 0
+        and wechsel < 20)
+    s = Sim(Welt(hind=[("b", -50, 100, 50, 103, 10)], name="Wand"), lenkung=True)
+    s.tippe(0, 230)
+    s.lauf(240, bis=lambda s: len(s.erreicht) >= 1)
+    pruefe("Lenk-Variante: Wand umfahren nach %s s, Stoesse %d" % (
+        round(s.erreicht[0][0]) if s.erreicht else "-", s.pz.stoesse), bool(s.erreicht) and s.pz.stoesse == 0)
+    u = [("b", -14, 140, 14, 143, 10), ("b", -14, 95, -11, 143, 10), ("b", 11, 95, 14, 143, 10)]
+    s = Sim(Welt(hind=u, name="Sackgasse"), lenkung=True)
+    s.tippe(0, 270)
+    s.lauf(420, bis=lambda s: len(s.erreicht) >= 1)
+    pruefe("Lenk-Variante: aus der Sackgasse und herum nach %s s, Stoesse %d" % (
+        round(s.erreicht[0][0]) if s.erreicht else "-", s.pz.stoesse), bool(s.erreicht) and s.pz.stoesse <= 1)
+
+
 def test_grosse_raeder():
     """Andre waehlt die Raeder erst im Spiel: mit 12er-Raedern steht der Panzer 0,6 m hoeher. Mit den Standard-
     Eigenschaften (Hoehen 0 = Automatik aus dem Bug-Laser) muss die KI genauso Wand, Huegel, Klippe und See schaffen."""
@@ -1147,7 +1188,7 @@ def test_grosse_raeder():
 TESTS = [test_groesse, test_karte, test_aus, test_bodenlaser, test_hand, test_batterie, test_pause, test_heim, test_lernen, test_kampf,
          test_wegpunkte, test_wand,
          test_huegel, test_fest, test_sackgasse, test_see, test_klippe, test_revier, test_dauerlauf,
-         test_nie_falsch_gelernt, test_hang, test_gelaende, test_grosse_raeder]
+         test_nie_falsch_gelernt, test_hang, test_gelaende, test_lenkvariante, test_grosse_raeder]
 
 if __name__ == "__main__":
     wahl = sys.argv[1:]

@@ -4247,7 +4247,7 @@ ini=1
 lf,lm,lr,lt,lg=P('Lenk Faktor'),P('Lenk max Grad')/90,P('Lenk Richtung'),P('Lenk Tempo m/s'),P('Lenk Tempo Grad/s')/90/60
 end
 local k,v=N(29),math.abs(N(32))
-local z=k*lf*lm
+local z=k*lf*lm*(N(30)&lt;0 and -1 or 1)
 if lt&gt;0 then z=z*lt/math.max(lt,v) end
 z=math.max(-lm,math.min(lm,z))
 w=w+math.max(-lg,math.min(lg,z-w))
