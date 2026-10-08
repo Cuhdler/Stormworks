@@ -53,7 +53,9 @@ X0, X1 = -15, 15
 HINTEN, VORN = -66, 37
 BODEN, HAUPTBODEN = -4, 1
 ABSCHNITTE = [(16, 36, 6), (0, 15, 10), (-30, -1, 10), (-65, -31, 9)]
-SOCKEL = ((-14, 11, -16), (14, 14, -3))        # unter der Bruecke (Bruecken-Boden y 15 wie im Schiff)
+SOCKEL = ((-14, 11, -16), (14, 14, -3))
+# Bug-Schraege (45 Grad) vom vorderen Deck (y 6) bis zum Boden: z VORN .. VORN + 10; Schraege nach oben-vorn
+R_SCHRAEGE = (-1, 0, 0, 0, 1, 0, 0, 0, -1)       # 02_wedge so gedreht: offene Seiten +y und +z (aus dem Schiff gelesen)        # unter der Bruecke (Bruecken-Boden y 15 wie im Schiff)
 
 # Fahrwerk: Rad-Achsen je Seite (z), Achs-Hoehe y, Motor-Spalte x
 RAD_Z = [30, 15, 0, -15, -30, -45, -60]
@@ -89,12 +91,12 @@ R_RECHTS = (0, 0, -1, 1, 0, 0, 0, -1, 0)
 R_HINTEN = (-1, 0, 0, 0, 0, -1, 0, -1, 0)
 R_UNTEN = (1, 0, 0, 0, -1, 0, 0, 0, -1)
 LASER = [
-    ("Laser vorn links", (-13, 3, VORN + 1), R_VORN),
-    ("Laser vorn Mitte", (0, 3, VORN + 1), R_VORN),
-    ("Laser vorn rechts", (13, 3, VORN + 1), R_VORN),
+    ("Laser vorn links", (-13, 3, VORN + 4), R_VORN),          # auf der Bug-Schraege (dort liegt sie bei y 2)
+    ("Laser vorn Mitte", (0, 3, VORN + 4), R_VORN),
+    ("Laser vorn rechts", (13, 3, VORN + 4), R_VORN),
     ("Laser links", (X0 - 1, 6, -8), R_LINKS),          # ueber den Raedern (Rad-Radius bis 6 Bloecke frei)
     ("Laser rechts", (X1 + 1, 6, -8), R_RECHTS),
-    ("Laser unten", (0, BODEN, VORN + 1), R_UNTEN),
+    ("Laser unten", (0, BODEN - 1, VORN + 9), R_UNTEN),        # unter der Bugspitze
     ("Laser hinten", (0, 3, HINTEN - 1), R_HINTEN),
 ]
 # Batterien (Battery Large, Anschluss oben +2): im Fahrwerksraum
@@ -331,7 +333,21 @@ class Bau:
             self.teil_voxel.add(p)
             neu.append(block(p, farbe))
 
-        for z in range(HINTEN, VORN + 1):
+        # Bug-Schraege: je Schritt eine Schraege oben, darunter Bloecke bis zum Boden
+        for k in range(0, 11):
+            z = VORN + k
+            top = 6 - k
+            for x in range(X0, X1 + 1):
+                for y in range(BODEN, top):
+                    # hohl: Boden, eine Lage unter der Schraege, Seitenwaende
+                    if y in (BODEN, top - 1) or x in (X0, X1):
+                        setze((x, y, z), FARBE_BODEN if y == BODEN else FARBE_RUMPF, True)
+                p = (x, top, z)
+                if p not in self.teil_voxel:
+                    self.teil_voxel.add(p)
+                    neu.append(fz.Teil('<c d="02_wedge"><o r="%s" bc="%s" ac="%s" sc="5">%s</o></c>'
+                                       % (rstr(R_SCHRAEGE), FARBE_RUMPF, FARBE_RUMPF, fz.vox("vp", p))))
+        for z in range(HINTEN, VORN):
             for x in range(X0, X1 + 1):
                 setze((x, BODEN, z), FARBE_BODEN, True)
             for y in range(BODEN + 1, HAUPTBODEN):
