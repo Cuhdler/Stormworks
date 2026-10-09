@@ -167,7 +167,7 @@ leicht aus Versehen), „−“ weiter weg, „+“ näher dran, „Revier“ (a
 ## 5. Grenzen (was die KI nicht kann)
 
 Zum Vergleich der Endstand (09.10. früh): 12 zufällige gemischte Welten je 10 Minuten Patrouille (Seeds 1–12):
-12/12 fehlerfrei, zusammen ≈ 39 km, 0 Ticks im Wasser, nie abgestürzt, 2 Stöße.
+12/12 fehlerfrei, zusammen ≈ 39 km, 0 Ticks im Wasser, nie abgestürzt, 2 Stöße (nach den Korrekturen vom 09.10. früh nochmal: wieder 12/12, 39,6 km, 4 leichte Stöße).
 
 
 - **Lücke zwischen Außenstrahl und Bordwand** (3,5 m bis 4,75 m seitlich): ein schmaler Pfosten genau dort wird erst
