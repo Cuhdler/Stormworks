@@ -91,7 +91,8 @@ Gefundene **Fehler**, die im Spiel Ärger gemacht hätten (alle behoben und mit 
 - **Zuverlässigkeit im Simulator (Endstand):** 12 zufällige Welten mit Hügel, See, Klippe, Felsen, Häusern, je
   10 Minuten Patrouille: 12 von 12 fehlerfrei – zusammen 2 Stunden, rund 39 km, nie im Wasser, nie abgestürzt,
   2 leichte Stöße. Nach den Korrekturen aus der Durchsicht nochmal gerechnet: wieder 12 von 12, 39,6 km, 4 leichte
-  Stöße.
+  Stöße. **Lenk-Variante** genauso: 6 von 6 fehlerfrei, 20,9 km, 1 leichter Stoß (einer davon jetzt fest im
+  Prüfstand).
 - **Lenk-Variante:** Beim Rückwärtsfahren schlugen die Achsen falsch herum ein (Lenkung und Kettenlenkung arbeiteten
   gegeneinander). Behoben; im Simulator jetzt geprüft.
 - **Durchsicht der KI-Skripte** (ein Helfer las alles gegen, jeder Fund im Simulator nachgestellt, jetzt mit Prüfung):
