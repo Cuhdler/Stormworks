@@ -16,6 +16,7 @@ fahren – quasi ein KI-Panzer“.
 ## Schnellstart (die ersten 15 Minuten)
 
 1. Auf dem PC pullen. `landkreuzer/fahrzeug/KI Landkreuzer.xml` nach `%APPDATA%\Stormworks\data\vehicles\` kopieren.
+   Spawnen nur an einer großen **Land**-Werkbank (z. B. großer Hangar der Kreativ-Insel), nicht am Schiffs-Dock.
 2. Im Editor laden, **ein** Rad an den pinken Stummel links vorn setzen (Bild `bilder/rad_stummel.png`), speichern.
    Große Räder nehmen (bis 12 Blöcke), dann hat er mehr Bodenfreiheit.
 3. `python landkreuzer/tools/raeder.py --schreiben` (kopiert das Rad an alle 14 Wellen), im Spiel neu laden
@@ -187,7 +188,10 @@ haben denselben KI-Chip; die Lenk-Ausgänge sind in der einfachen Variante nur n
    - Wenn du rechts ein anderes Rad willst: auch rechts vorn eines setzen, dann nimmt das Programm dieses für rechts.
    - Zweimal laufen lassen schadet nicht: Wellen, die schon ein Rad haben, bleiben, wie sie sind. Ein Rad aus
      mehreren Teilen (z. B. mit Kappe) wird als Ganzes kopiert. Nur rechts gesetzt geht auch (links wird gespiegelt).
-4. Spawnen. Er ist groß und braucht eine große Werkbank bzw. einen großen Platz.
+4. Spawnen. Er ist groß (≈ 27 × 10 × 9 m) und braucht eine große **Land**-Werkbank, z. B. den großen Hangar auf der
+   Kreativ-Insel (laut Forum gibt es die große Werkbank auch an anderen Orten; welche Insel was hat, steht bei der
+   Insel-Auswahl). **Nicht** am Schiffs-Dock spawnen – dort steht er im Wasser. Zum Bearbeiten im Editor (Rad setzen)
+   ist jede Werkbank recht, in die er passt.
 5. **Einsteigen:** Leiter hinten (links der Mitte) aufs Deck. Die unterste Sprosse hängt je nach Rad etwa 1 m über
    dem Boden (das Heck ist unten abgeschrägt): hinlaufen und hochspringen. Nach vorn zur Plattform hinter der Brücke,
    dort die Leiter hoch, dann durch die Tür in der Rückwand der Brücke.
