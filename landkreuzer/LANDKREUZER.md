@@ -20,7 +20,9 @@ fahren – quasi ein KI-Panzer“.
 2. Im Editor laden, **ein** Rad an den pinken Stummel links vorn setzen (Bild `bilder/rad_stummel.png`), speichern.
    Große Räder nehmen (bis 12 Blöcke), dann hat er mehr Bodenfreiheit.
 3. `python landkreuzer/tools/raeder.py --schreiben` (kopiert das Rad an alle 14 Wellen), im Spiel neu laden
-   **ohne** zu speichern.
+   **ohne** zu speichern. Danach im Editor ansehen: Stecken die Räder im Boden der Werkbank? Dann das ganze
+   Fahrzeug mit dem Verschiebe-Werkzeug anheben, bis die Räder auf dem Boden stehen, und speichern – sonst steckt er
+   beim Spawnen im Boden und springt.
 4. Die Schalter stehen beim Spawnen immer auf „aus“ (= die KI darf). Für den ersten Test darum vorher im Editor
    den KI-Chip anklicken und bei den Eigenschaften **„Start Verzoegerung s“ = 600** und **„Waffen Verzoegerung s“
    = 600** eintragen (10 Minuten Ruhe), speichern, spawnen. Dann in der Brücke im Instrumentenblock **„Waffen
