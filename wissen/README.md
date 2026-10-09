@@ -26,7 +26,7 @@ Alle Pfade gelten ab dem Repo-Ordner.
 | Schwerkraft, Auftrieb, Dichtigkeit, Lecks, Flüssigkeiten, Flügel, Treibstoff | `wissen/mechaniken/physik.md` |
 | Batterien, Generatoren, Verbrauch, Stromausfall | `wissen/mechaniken/strom.md` |
 | Funk, Video, Reichweiten, Fernsteuerung | `wissen/mechaniken/funk.md` |
-| Spielregeln: Ticks, HTTP, Spiegeln, Zielhöhen, offene Fragen | `wissen/mechaniken/README.md` |
+| Spielregeln: Ticks, HTTP, Spiegeln, Mehrspieler, Zielhöhen, offene Fragen | `wissen/mechaniken/README.md` |
 
 ## Ordner
 

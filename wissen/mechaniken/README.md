@@ -50,6 +50,23 @@ Weitere Dateien in diesem Ordner:
 - Speichert man im Editor auf einem älteren geladenen Stand, sind Datei-Änderungen dazwischen weg → nach jeder
   Änderung per Datei im Spiel **neu laden, nicht speichern** [G].
 
+## Mehrspieler (Host und Mitspieler)
+
+- **Lua-Skripte laufen auf jedem PC selbst, ihr innerer Zustand (Variablen) wird nicht abgeglichen.** Entwickler auf
+  Geometa #22188 (Jan. 2024): die Engine synchronisiert selbst geschriebene Lua-Skripte nicht, „nicht praktikabel“;
+  außerdem laden Mitspieler nicht alle Fahrzeuge (Bandbreite) – ihre Radare sehen ferne Ziele also gar nicht [W].
+- Logik-Werte außerhalb von Lua (Anschlüsse, Composite) werden laut Wiki abgeglichen, das Bild auf Monitoren kann
+  trotzdem verschieden sein [W]. Offener Wunsch an die Entwickler (Geometa #28174): Zustand von Fahrzeug-Lua speichern
+  und im Mehrspieler abgleichen; bis dahin wichtigen Zustand in Logik außerhalb von Lua halten [W].
+- Physik rechnet der Host und schickt sie an alle (Türme drehen sich bei Mitspielern richtig) [W/G].
+- Figet Marena, 09.10. (Andre Host, Freund Mitspieler) [G]: Türme drehen richtig; Zielliste leer, Radar-Pings und
+  Kamera-Zoom nur ab und zu; Schüsse und Explosionen sieht er nur ca. 10 %; Autopilot- und Abteile-Monitor richtig.
+  Beim Host feuerten die Waffen (gleichzeitig im Schreiber: BC 182, AC 562, Flak 192/100 Schuss). Erklärung: Lage,
+  Bildschirm und Geschütz-Chips rechnen beim Mitspieler selbst, ohne die Radar-Ziele des Hosts; was er ab und zu sieht,
+  sind vermutlich abgeglichene Zwischenstände vom Host. Treffer zählen vermutlich nur beim Host [V].
+- Folge für eigene Chips: alles, was Mitspieler sehen sollen, nur aus Werten berechnen, die jeder PC gleich hat
+  (Sensoren am eigenen Fahrzeug, Sitz, Physik) – Radar-Ziele gehören nicht dazu.
+
 ## Ziele und Welt
 
 - Zielhöhen (Radar/Laser): fahrende Schiffe ca. −2 m (Ausreißer bis +6), stehende Dinge im Wasser 3–6 m,
