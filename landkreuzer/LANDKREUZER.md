@@ -26,7 +26,11 @@ fahren – quasi ein KI-Panzer“.
    = 600** eintragen (10 Minuten Ruhe), speichern, spawnen. Dann in der Brücke im Instrumentenblock **„Waffen
    sperren“ an** und **„KI Pause“ an**. (Ohne diese Änderung fährt er nach 30 s los, schießt nach 60 s.)
 5. Hinsetzen, W/A/S/D: fährt und lenkt er? Status-Monitor rechts vom Sitz: stehen bei allen 7 Lasern Zahlen
-   (nicht „--“)?
+   (nicht „--“)? **Zeigen die Laser in die richtige Richtung?** (Das ist noch nie im Spiel geprüft – die beiden
+   Laser-Sensoren im Schiff hängen an keinem Kabel.) Im Stand muss **UN** etwa 0,4–1,5 m zeigen (Boden unter dem
+   Bug). Langsam von Hand auf eine Wand oder ein Haus zufahren: **VM** muss kleiner werden; seitlich daneben **LI**
+   bzw. **RE**; rückwärts auf etwas zu: **HI**. Zeigt ein Laser immer „>1K“, obwohl etwas davor ist, zeigt sein Strahl
+   woandershin – bitte melden, dann drehe ich ihn.
 6. „KI Pause“ aus: Er fährt allein (Revier 400 m um den Startpunkt). Auf die Karte links vom Sitz tippen = Wegpunkt.
 7. Erst wenn das klappt: „Waffen sperren“ aus. Achtung: Er schießt auf alles außerhalb der Schutzzone (300 m um
    den Startpunkt).
@@ -317,6 +321,8 @@ In dieser Reihenfolge. Anfangen jeweils mit **KI Pause an** und **Waffen sperren
      KI-Chip ein. Die KI lernt das auch selbst, solange „Richtung lernen“ 1 ist.
 4. **Laser:** Auf dem KI-Status-Monitor stehen alle 7 Entfernungen. Bei „--“ hängt ein Laser nicht richtig.
    Annahme: Strom, Ausgang und Einschalten sitzen am Laser-Block selbst, der Strahl zeigt wie bei der Turm-Kamera.
+   Achtung: Die zwei Laser-Sensoren im Schiff haben keine Kabel – Anschlüsse und Strahlrichtung des einzelnen
+   Laser-Sensors sind also nirgends im Spiel bestätigt. Prüfung der Richtung: siehe Schnellstart Schritt 5.
    Die Turm-Kamera hat für ihren Laser einen Eingang „Laser an“; darum bekommt jeder Laser vom KI-Chip
    (Ausgang „Immer an“) ein Einschalt-Kabel. Zeigen trotzdem alle „--“: im Editor an einem Laser nachsehen,
    welche Anschlüsse er hat, und mir sagen. Solange der mittlere Front-Laser oder der Bug-Laser 0 meldet, fährt die
