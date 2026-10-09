@@ -67,9 +67,29 @@ def zeichnen(pfad, aus):
     print("gezeichnet:", aus)
 
 
-def schraeg(pfad, aus, rechts=True, markiert=(), titel=None, ausschnitt=None, beschriftung=()):
+def vorschau_raeder(F, durchmesser=11, breite=3):
+    """Nur fuers Bild: Raeder (Reifen schwarz, Felge grau) an allen Wellen-Stummeln, wie nach raeder.py."""
+    import raeder
+    r2 = (durchmesser / 2) ** 2
+    out = []
+    for seite, s in raeder.stummel(F):
+        sx = -1 if seite == "L" else 1
+        n = int(durchmesser // 2) + 1
+        for dx in range(1, breite + 1):
+            for dy in range(-n, n + 1):
+                for dz in range(-n, n + 1):
+                    q = dy * dy + dz * dz
+                    if q <= r2:
+                        f = "6B6B6B" if q <= r2 * .2 or (dx == breite and q <= r2 * .45) else "1E1E1E"
+                        out.append(fz.Teil('<c><o bc="%s" ac="%s" sc="6">%s</o></c>' % (
+                            f, f, fz.vox("vp", (s[0] + sx * dx, s[1] + dy, s[2] + dz)))))
+    return out
+
+
+def schraeg(pfad, aus, rechts=True, markiert=(), titel=None, ausschnitt=None, beschriftung=(), raeder=False):
     """Schraegbild (isometrisch, von vorn rechts oben): jedes Teil als Wuerfel, hinten zuerst gezeichnet.
-    beschriftung: [(Text, (x, y, z), (dx, dy) Versatz des Textes in Bildpunkten)] - Pfeil vom Text zum Ort."""
+    beschriftung: [(Text, (x, y, z), (dx, dy) Versatz des Textes in Bildpunkten)] - Pfeil vom Text zum Ort.
+    raeder: Vorschau-Raeder (11 Bloecke) an die Wellen malen (nur im Bild)."""
     import matplotlib
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
@@ -77,6 +97,8 @@ def schraeg(pfad, aus, rechts=True, markiert=(), titel=None, ausschnitt=None, be
     import matplotlib.colors as mc
     F = fz.Fahrzeug.lesen(pfad)
     teile = [t for _, ts in F.koerper for t in ts]
+    if raeder:
+        teile += vorschau_raeder(F)
     sx = 1 if rechts else -1
     # Projektion: x nach rechts-unten, z nach rechts-oben, y nach oben
     cx, cz = 0.866, 0.5
@@ -159,6 +181,11 @@ def alle_bilder():
     schraeg(einfach, os.path.join(bi, "rad_stummel.png"), rechts=False, markiert={(-B.X1, B.ACHSE_Y, B.RAD_Z[0])},
             ausschnitt=((-16, -5, 10), (0, 12, 48)),
             titel="Hier das EINE Rad ansetzen: pinker Wellen-Stummel links vorn (x -15, y -3, z 35), Blick von vorn links")
+    schraeg(einfach, os.path.join(bi, "vorschau_raeder.png"), rechts=False, raeder=True,
+            titel="KI Landkreuzer - so etwa sieht er mit Raedern aus (Vorschau: 11er-Raeder nur gemalt, setzt Andre)")
+    if os.path.exists(lenk):
+        schraeg(lenk, os.path.join(bi, "vorschau_raeder_lenkung.png"), raeder=True,
+                titel="KI Landkreuzer Lenkung mit Raedern (Vorschau, von vorn rechts; vordere/hintere Achsen lenken)")
 
 
 if __name__ == "__main__":

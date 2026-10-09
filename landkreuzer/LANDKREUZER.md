@@ -5,7 +5,8 @@
 Abschnitt 2). Beide sind fertig, nur die Räder fehlen.
 **Bilder:** `landkreuzer/bilder/beschriftet.png` (was wo ist), `schraeg.png` und `schraeg_links.png` (schräg von
 vorn), `schraeg_lenkung.png` (Lenk-Variante), `ansicht.png` (oben, rechts, vorn), `rad_stummel.png` (wo das Rad hin
-muss). Alle Bilder zeigen ihn so, wie man ihn im Spiel sieht (nicht gespiegelt).
+muss), `vorschau_raeder.png` und `vorschau_raeder_lenkung.png` (so etwa sieht er mit Rädern aus – die Räder
+sind dort nur gemalt). Alle Bilder zeigen ihn so, wie man ihn im Spiel sieht (nicht gespiegelt).
 
 Andres Wunsch (08.10.): „eine Art Landkreuzer, groß, mit allen möglichen Geschützen, und er soll komplett autonom
 fahren – quasi ein KI-Panzer“.
@@ -80,6 +81,7 @@ Gefundene **Fehler**, die im Spiel Ärger gemacht hätten (alle behoben und mit 
 - **Räder-Werkzeug:** Zweimal `raeder.py --schreiben` hätte jedes Rad doppelt gesetzt (zwei Räder im selben Platz)
   und die Sicherung überschrieben. Jetzt bleiben Wellen mit Rad unberührt; Räder aus mehreren Teilen gehen auch;
   eigene Sicherung je Datei; `--lenkung` für die Lenk-Variante. Neuer Prüfstand `test_raeder.py`.
+- Bilder `vorschau_raeder.png` / `vorschau_raeder_lenkung.png`: so etwa sieht er mit 11er-Rädern aus.
 - Aussehen: Schlamm unten, Lüftungsgitter, Abzeichen; Bild `beschriftet.png` (was wo ist), `anzeigen.png` (Monitore).
 
 Ausprobiert und **verworfen**: zwei zusätzliche Eck-Laser für dichten Wald (im Simulator schlechter). Ein
