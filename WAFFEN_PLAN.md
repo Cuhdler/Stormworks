@@ -522,3 +522,120 @@ ohne 'channel', also alle auf Bool 1 (fehlende Angabe = Kanal 0, wie in den Beis
 - Andres Frage Treibstoff (Tank getroffen -> Wasser im Motor): Fluid Filter (laesst nur gewaehlte Fluessigkeiten durch)
   auf Diesel vor jedem Motor ist die einfache Loesung; Centrifugal Separator (RPS-Antrieb, Dense Fluid Out = Wasser)
   kann Wasser aktiv abtrennen, braucht aber Drehmoment und Leitung ueber Bord.
+
+### 05.-07.10.: Seeradar, Raketen-Rueckbau, Anstrich, Lua-Liste (Stand 07.10.)
+- Raketen: die 24 alten Raketen und der alte Feuerleit-Chip sind raus (Andre baut sein Raketensystem selbst, mit
+  Workshop-Chips - Claude baut keine Raketen-Lenk-/Zielerfassungslogik).
+- SEERADAR v2.1 (Chip 4x3 an der Rueckwand vp (0,6,-59)): Radar 6 kreist flach, Monitor 3x3 links neben dem Sitz zeigt
+  2D-Radar (See blau, Land gruen, Strich, Verblassen, 12 s), Bild 180 Grad gedreht, Zoom 1/2,5/5/10 km selbst (keine
+  zwei Punkte naeher als 5 px), Antippen: mit BC/AC gewaehlt -> diese Kanone 20 s auf das Ziel (UEBERGABE im Chip setzt
+  es in deren Bedienung), sonst Koordinaten X/Y an 'Ziel X/Y' und Monitor 1x2. Kanonen und Dachkamera bekommen ihre
+  Bedienung jetzt ueber den Seeradar-Chip.
+- Bildschirm v3.6: 3D-Radar-Zoom 1/2,5/5/10 km selbst, nur Seeziele loesen aus. Flak/Kanone v2.9/v1.7: Bodenziel
+  (Vorgabe hoeher als 'Land ab m' 7) -> Radar-Hoehe statt 'Ziel Hoehe fest m'.
+- Anstrich (tools/anstrich.py v2.2, Vorschau tools/anstrich_vorschau.py): Marine-Schema mit Platten-Schraffur, innen
+  und aussen, auch Bauteile (sc + bc/bc2/bc3).
+- LUA_STORMWORKS.md: im Spiel gemessene Lua-Liste (kein select/print/pcall/setmetatable, table.unpack geht).
+- Folgeschalter 54 (2 Chips, nur Bibliothek).
+
+### Offen (Andre 07.10.)
+- Flak-Zuender: Splitter reichen weiter als 0,5 m, bester Zerlegepunkt ~0,75 m hinter dem Ziel. Grenze: Zuender zaehlt
+  ganze Ticks (~13-17 m Flugweg je Tick). Idee: bevorzugt feuern, wenn ein Tick-Ende ~0,75 m hinter dem Ziel liegt
+  (Pruefstand: Treffer gegen Feuerrate abwaegen).
+- Antrieb: nach langer Fahrt nur noch 35 kn, eine Schraube zeitweise schneller als die andere (Schiff lenkt komisch).
+  Verdacht: Temperatur-Regler je Motor (95 C) drosselt einseitig. Fahrtenschreiber an (Log Port 8766), Auswertung steht
+  aus; Abhilfe dann: beide Seiten gleich drosseln und/oder Kuehlung der heissen Seite.
+- Autopilot (Andre 07.10.): noch einzubauen - Umfang klaeren (Kurs halten, Tempo halten, Wegpunkt per Seeradar-Antippen,
+  Land-Warnung).
+
+### 08.10. ~19:31: Autopilot v1.0 eingebaut (Sicherung 'vor Autopilot (08.10. 19-31)', tools/autopilot_update.py)
+- Chip "Figet Marena Autopilot" 4x3 an der Chip-Wand vp (-4,12,-59); Skript lua/autopilot.lua (6018 Zeichen),
+  Pruefstand tools/test_autopilot.py (26 Pruefungen ok: Kurs gegen Stroemung, D/W verstellen, Route mit 3 Wegpunkten,
+  Antippen/Loeschen, Zoom, Reset, Hotkey 2, Insel-Ausweichen, Laser-Treffer, Nickausgleich, onDraw).
+- Kabel: Sitz -> Autopilot 'Sitz', 'Sitz aus' -> Schiffsfuehrung 'Sitz' (statt direkt; Composite-Umschalter Typ 53 im
+  Chip: aus = Sitz unveraendert); Physik, Touch, Knoepfe, Laser (Distance/Active/Pivot), Monitor (Video/Power).
+  Strom von der Batterie (-4,-13,-46) an Monitor 5x3, beide Knoepfe, Laser. Monitor 5x3 aufrecht gedreht.
+- Im Spiel zu pruefen: Zoom-Richtung von drawMap (+ = naeher?), rote Laser-Punkte auf der Kueste (sonst 'Laser Seite'
+  -1), Laser-Hoehe (keine Punkte: 'Laser Hoehe Richtung' -1), Regler (Log ap).
+
+### 08.10. ~19:38: Laser schaute aufs Wasser (Sicherung 'vor Laser-Richtung', tools/chip_eigenschaft.py)
+- Andres Bild: rote Punkte 300-650 m voraus auf dem Wasser, HINDERNIS im Hafen. Log ap: Nick -3,7 Grad, Felder 1-5
+  treffen in 274..430 m (gleichmaessig steigend), Felder 6-9 nichts (4000). Passt zu: Pivot Y plus kippt diesen Laser
+  nach UNTEN -> Strahl -7,6 statt +0,3 Grad, Treffer = Meeresboden 36-57 m tief (der Laser sieht durchs Wasser).
+- 'Laser Hoehe Richtung' im Schiff auf -1 (nur diese Eigenschaft), Vorgabe in build_autopilot.py ebenso.
+
+### 08.10. ~19:55: Autopilot v1.1 - Control Handle statt Touch, Anti-Kollision per Knopf (Sicherung 'vor Autopilot v1.1 (Andres Stand 19-48)', tools/autopilot11_update.py)
+- Andre: Blick bewegt ein Kreuz auf der Karte (nicht schiffzentriert), Leertaste = Wegpunkt dazu/weg, Zoom hoch/runter,
+  Touch raus; Bug-Laser beim Laden aus, Knopf 'Automatic anti kollision' schaltet ihn an.
+- Chip-Definition getauscht ('Touch' -> 'Griff' gleiche Stelle, neu 'Knopf Anti-Kollision' (2,2)); Kabel: Touch weg,
+  Control Handle (-6,19,-21) Seat data -> Griff (Blick = Kanal 9/10, Leertaste Bool 31, besetzt 32), Knopf -> Chip,
+  Strom an den Knopf. Pruefstand 36 Pruefungen ok. Skript 7019 Zeichen.
+- Griff ist im Editor um 180 Grad (um x) gekippt eingebaut (r 1,0,0,0,-1,0,0,0,-1) - falls Blick/Kreuz verkehrt:
+  'Blick X/Y Richtung' -1.
+
+### 08.10. ~20:02: Autopilot v1.2 - Zoom (Sicherung 'vor Autopilot v1.2 (Andres Stand 19-56)', tools/autopilot12_update.py)
+- Andre: Zoom per hoch/runter geht nicht. Log: 33 s am Griff, Zoom-Stufe blieb 3 (Schwelle war 0,5). Verdacht:
+  Tastatur-Achsen steigen erst an. Jetzt ab 0,2 (scharf erst wieder unter 0,1), dazu Hotkey 3/4 am Griff; Log hat
+  alle 4 Griff-Achsen roh (griff_ad, griff_ws, griff_pfeil_lr, griff_pfeil_hr) - zeigt beim naechsten Test, was ankommt.
+
+### 08.10. ~20:20: Licht v1.0 (Sicherung 'vor Licht (Andres Stand 20-14)', tools/licht_update.py)
+- Andre: 55 small_light_rgb verteilt (Kabel keine). Chip "Figet Marena Licht" 2x2 (1,12,-59) + Uhr (Clock) (4,12,-59)
+  an der Chip-Wand; Tag 1,0 / Nacht 0,35 nach Uhrzeit, Steuerungsraum (4 Deckenlampen y 25) bei Lage-Bedrohung rot
+  (5 s halten). 113 Kabel (Farbe, Strom, Uhr, Lage). RGB-Werte 0-1 wie beim Rescue Heli.
+
+### 08.10. ~20:40: Abteile + Schotten v1.0 (Sicherung 'vor Abteile (Andres Stand 20-28)', tools/abteile_update.py)
+- Andre: Liquid Meter + 10 Schiebetueren (Schotten) eingebaut, Monitor 9x5 (8,21,-23) fuer die Anzeige. 18 Sensoren
+  (8 alte bei y -19 + 10 neue), Abteile erkennt der Chip im Spiel (gleiche Kapazitaet+Fuellung). Zwei Chips (36 Werte),
+  61 Kabel. Pruefstand tools/test_abteile.py. kabel_flak.teile: r-Regex las 'fluid_filter="..."' als Drehung - behoben.
+  Spiegel-Flags (t) an Anschluessen lokal (vor der Drehung) - per 38 vorhandenen Kabeln bestaetigt.
+
+### 08.10. ~21:10: Abteile v1.2 + Lenzpumpen automatisch (Sicherung 'vor Abteile v1.2 + Pumpen (Andres Stand 21-00)', tools/abteile12_update.py)
+- Andre baute die Lenzleitung (eine Pumpe fuer alle Abteile); Schalter 'Auto water pumps' (Instrumentenblock Bool 4) =
+  Automatik; Anzeige: pumpt?, L/s, insgesamt raus. Alte Pumpen jetzt auch vom Abteil-Chip (Schutz-Kabel weg).
+- Befund: Teile ohne r-Attribut = Drehung 0,0,1,-1,0,0,0,-1,0. Darum stand der Monitor 9x5 senkrecht kopfueber (meine
+  Drehung um 20:43 haette ihn flach gelegt - Andres Speichern 21:00 auf altem Stand hat sie ueberschrieben) und die
+  Kapazitaets-Kabel der Sensoren 17/18 zeigten daneben (vom Spiel verworfen). kabel_flak/kabel_flossen/teil_drehen
+  korrigiert. Abteil-Chip 4x8 an derselben Wand (Ecke an Waffenwahl).
+- Andre speichert manchmal auf einem Stand vor meinem letzten Einbau (21:00 basierte auf 20:39) - vor jedem Einbau den
+  Stand pruefen, Aenderungen ggf. erneut einbauen.
+
+### 08.10. ~21:22: Abteile v1.3 - Sprit und Batterie (Sicherung 'vor Abteile v1.3', tools/abteile13_update.py)
+- Andres Bild: "WASSER!" im Hafen - die 8 alten Sensoren bei y -19 sind die Treibstofftanks (Doppelboden mit Fluid
+  Spawner, 98 % voll). Jetzt: Tanks fest (7 Stueck aus den Wand-Querschnitten), kein Wasser-Alarm/Pumpen/Schotten
+  durch Sprit; SPRIT/VERBR/Restzeit/BATTERIE auf dem Monitor. Sammler schickt jeden 2. Tick Liter genau (gepackt nur
+  0,1 %). Pumpen-Fluss und Batterie ueber Formel-Bausteine (Typ 10, e="...") zusammengefasst.
+
+### 08.10. ~21:26: Abteile v1.4 - Sprit als Tabelle (Sicherung 'vor Abteile v1.4', tools/chip_tauschen.py)
+- Andre: Sprit-Anzeige unuebersichtlich (Zeilen liefen ineinander), es sind 8 Tanks (je Liquid Meter einer - meine
+  Querschnitt-Deutung "vorn ein Tank" war falsch). Jetzt 8 Balken in 2 Zeilen (SB/BB) x 4 Abschnitte, Bug rechts.
+  Neues Werkzeug tools/chip_tauschen.py fuer reine Skript-Tausche.
+
+### 08.10. ~21:53: Schotten-Chip + Abteile v1.5 (Sicherung 'vor Schotten-Chip (Andres Stand 21-44)', tools/schotten_update.py)
+- Andre: Wasser rein -> automatisch alle Schotten zu; je Tuer ein Knopf zum Oeffnen von Hand (5 Kippschalter
+  button_toggle_2side, je Schottwand einer an der Backbord-Tuer -> schaltet beide Tueren der Wand); Anzeige ohne Punkte.
+- Chip Schotten 4x3 an der Decke des Chip-Raums; Abteile v1.5: Liste mit Namen/Balken, Tueren-Kaestchen, Auto zu 0,5 %.
+
+### 08.10. ~22:01: Abteile v1.6 - LECK statt OFFEN (Sicherung 'vor Abteile v1.6', tools/chip_tauschen.py)
+- Andres Test mit C4-Loch im Vorschiff: Schotten gingen automatisch zu (Auto zu funktioniert), Vorschiff zeigte
+  'OFFEN' (kein geschlossener Raum). Jetzt: Hoehe zum Wasser < 0 = LECK (rot, zaehlt als voll), sonst OFFEN; Namen
+  mit BB/SB, wenn die Seiten getrennt sind; 'BUG' unter den Tank-Balken war abgeschnitten (x 267). Ein Tank stand auf
+  0 % und VERBR 89,8 L/s - wohl ebenfalls vom C4 (Tank leckt).
+
+### 08.10. ~22:40: Ferngesteuerter Jet v1.0 (Sicherungen 'small Jet vor Chip-Ausbau', 'small Jet vor Jet-Chip', 'Figet Marena vor Jet-Steuerung'; tools/jet_update.py)
+- small Jet: 9 alte Chips (Drone receptor/send data + 5 Frequenz-Chips) raus, 44 Logik-Kabel weg; Andre: Physik-Sensor
+  + Platzhalter 4x4; Schiff: 2 Funkgeraete (Dach x +-7) + Video-Empfaenger. Chips Jet Flug (lua/jet.lua) und Jet
+  Steuerung (lua/jet_steuerung.lua), Pruefstand tools/test_jet.py (25 ok, mit Dreh-Modell 30/60/120 m/s).
+- Offen: Landung (Andre noch nicht entschieden), Test im Spiel (Ruder-Vorzeichen!).
+
+### Reihenfolge (Andre 08.10.)
+1. Autopilot (v1.0 eingebaut 08.10., Test im Spiel steht aus): Kurs/Tempo halten, Karte (screen.drawMap) mit Wegpunkten zum Antippen, Ausweichen ueber 2-3 Laser am Bug
+   (Lua kann das Gelaende der Karte nicht auslesen). Andre baut: Autopilot-Knopf, Karten-Monitor, Laser. Chip zwischen
+   Sitz und Schiffsfuehrung (gibt Ruder/Fahrhebel vor).
+2. Kleinigkeiten: LED-Licht in allen Kabinen, Decklichter. (08.10.: 55 RGB-Lampen + Licht-Chip eingebaut)
+3. Liquid Meter je Abteil + Anzeige im Steuerraum, Schotten (noch zu bauen) alle schliessen. (08.10.: eingebaut)
+4. Mehr Lenzpumpen (automatisch je Abteil). (08.10.: Andres Lenzleitung + Automatik eingebaut)
+5. Ueberhitzung: Temperatur-Regler gleich fuer alle Motoren und sanft; danach ggf. Elektromotoren/Fluid Jets zum Halten
+   des Tempos waehrend des Abkuehlens.
+6. Raketen raus, dafuer Andres Flugzeug: ferngesteuert, Maussteuerung (Blick wie Swifter), Kamera; eigener Sitz, allein
+   per Umschaltung am Hauptsitz. Claude: Steuerlogik mit Stabilisierung, Funkstrecke (Steuerung hin, Flugdaten zurueck),
+   Sitz-Umschaltung, Kamerabild mit Anzeige. Andre baut zuerst.

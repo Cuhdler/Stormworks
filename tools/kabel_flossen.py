@@ -60,7 +60,7 @@ def teile(s):
     out = {}
     for m in re.finditer(r'<c d="([^"]+)"(?: t="(\d)")?><o ([^>]*)><vp([^/]*)/>', s):
         r = re.search(r'r="([^"]*)"', m.group(3))
-        out.setdefault(u.xyz(m.group(4)), []).append((m.group(1), [int(float(q)) for q in (r.group(1) if r else "1,0,0,0,1,0,0,0,1").split(",")], m.group(2)))
+        out.setdefault(u.xyz(m.group(4)), []).append((m.group(1), [int(float(q)) for q in (r.group(1) if r else "0,0,1,-1,0,0,0,-1,0").split(",")], m.group(2)))
     return out
 
 

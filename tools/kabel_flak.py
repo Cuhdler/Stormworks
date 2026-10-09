@@ -83,8 +83,10 @@ def teile(s):
     out = {}
     s2 = re.sub(r"<microprocessor_definition.*?</microprocessor_definition>", "", s, flags=re.S)
     for m in re.finditer(r'<c d="([^"]+)"(?: t="(\d+)")?><o ([^>]*)>(?:(?!</c>).)*?<vp([^/]*)/>', s2, re.S):
-        r = re.search(r'r="([^"]*)"', m.group(3))
-        rr = [int(float(q)) for q in (r.group(1) if r else "1,0,0,0,1,0,0,0,1").split(",")]
+        r = re.search(r'(?:^|\s)r="([^"]*)"', m.group(3))   # nicht 'fluid_filter="..."' (Liquid Meter)
+        # ohne r-Attribut nimmt das Spiel NICHT die Grunddrehung, sondern 0,0,1,-1,0,0,0,-1,0 (08.10. aus den Kabeln aller
+        # Fahrzeuge bestimmt: erklaert 122 Teile, die Grunddrehung 4; Monitor 9x5 stand so 'kopfueber')
+        rr = [int(float(q)) for q in (r.group(1) if r else "0,0,1,-1,0,0,0,-1,0").split(",")]
         out.setdefault((m.group(1), u.xyz(m.group(4))), []).append((rr, int(m.group(2) or 0)))
     return out
 

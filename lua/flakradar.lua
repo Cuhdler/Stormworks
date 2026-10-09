@@ -1,4 +1,4 @@
--- FLAKRADAR v2.3 - Figet Marena, Flak-Turm hinten (ein Chip je Turm): Spuren fuehren, Turm-Radar steuern.
+-- FLAKRADAR v2.4 - Figet Marena, Flak-Turm hinten (ein Chip je Turm): Spuren fuehren, Turm-Radar steuern.
 -- Umbau von AARADAR v4 (Swifter-Flugabwehr, im Spiel erprobt) fuers Schiff: Lage und eigenes Tempo kommen vom
 -- Physik-Sensor (Kurs = -Kompass, im Uhrzeigersinn, Norden = +z; Tempo aus der Positionsaenderung wie beim Rescue Heli),
 -- das Radar (Basic) sitzt auf dem Flak-Turm und wird im manuellen Modus ueber 'Gimbal Input' gerichtet.
@@ -36,7 +36,8 @@
 -- Ausgang: Zahl 1/2 Strahl Seite/Hoehe (U, an 'Gimbal Input'), 3-5 Ziel Ost/Nord/Hoch (m, relativ zu uns, jetzt),
 --  6-8 dessen Tempo relativ zu uns (m/s), 9 Messdauer s, 10 Entfernung, 11 Hoehe ueber dem Meer, 12 Ticks seit Meldung,
 --  13 Spuren, 14/15 naechste Spur Entfernung/Hoehe, 16 Flak-Turm (U, + rechts), 17 Kurs U, 18 Nick U, 19 Roll U,
---  21 Zustand (0 sucht, 1 sucht die Vorgabe, 2 Ziel), 22 Ziel-Nummer (wechselt bei neuem Ziel), 23-25 eigenes Tempo
+--  20 Hoehe der Vorgabe ueber dem Meer (v2.4: Kanonen erkennen daran Bodenziele), 21 Zustand (0 sucht, 1 sucht die
+--  Vorgabe, 2 Ziel), 22 Ziel-Nummer (wechselt bei neuem Ziel), 23-25 eigenes Tempo
 --  Ost/Nord/Hoch (m/s); Bool 1 Feuer frei, 2 Ziel
 N=input.getNumber
 B=input.getBool
@@ -264,7 +265,7 @@ function onTick()
 	end
 	S(13,#T) S(14,#T>0 and nr or 0) S(15,nh)
 	S(16,ar) S(17,hd) S(18,nk) S(19,rl)
-	S(21,bq and 2 or cp and 1 or 0) S(22,id)
+	S(20,cu and N(31) or 0) S(21,bq and 2 or cp and 1 or 0) S(22,id)
 	S(23,VE) S(24,VN) S(25,VU)
 	O(1,on)
 	O(2,bq~=nil)

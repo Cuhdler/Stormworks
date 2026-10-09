@@ -16,7 +16,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from build_schiff import MC, minify, fmt, LUA_LIMIT, LUA_DIR, BUILD  # noqa: E402
 
 VERSION = "v3.3"          # Lage-Chip (v2.9 Tempo erst bestaetigt; v3.0 stehend Ziel ab 60 m; v3.1 Hafen: enger Fang, See vorn)
-VERSION_BILD = "v3.3"
+VERSION_BILD = "v3.6"
 VERSION_WAHL = "v1.2"
 # Mast-Radare: Teil-Position (zum Verkabeln), Strahl-Hoehe (Grad gegen das Deck, Gimbal hoechstens 45), Startphase (U),
 # Seitenvorzeichen (-1 = gespiegelt eingebaut).
@@ -50,7 +50,13 @@ TAKT = {"la": (16, 0), "ba": (16, 1), "fLr": (8, 2), "fLf": (16, 3), "fRr": (8, 
         # Dachkamera (04.10.)
         "ka": (16, 0),
         # Schutz-Chip (Chaff, Pumpen)
-        "sc": (16, 5)}
+        "sc": (16, 5),
+        # Seeradar (Radar 6 + Monitor 3x3, 06.10.)
+        "sr": (16, 2),
+        # Autopilot (Monitor 5x3, Laser am Bug, 08.10.)
+        "ap": (16, 7),
+        # Jet-Steuerung (zweiter Sitz, 08.10.)
+        "js": (16, 9)}
 _belegt = [lo + i * lt for lt, lo in TAKT.values() for i in range(16 // lt)]
 assert max(_belegt.count(t) for t in set(_belegt)) <= 2 and all(t < 16 for t in _belegt), "Schreiber-Takte zu voll"
 
@@ -181,10 +187,10 @@ def bild_flak(s):
 
 def build_bild(src):
     mc = MC("Figet Marena Bildschirm",
-            "Bildschirm %s: 3D-Radar | Kamera | Zielliste; Waffen waehlen Ziele selbst, Master Arm, Leertaste. H5 Waffe"
+            "Bildschirm %s: 3D-Radar | Kamera | Zielliste; Waffen waehlen Ziele selbst, Master Arm, Leertaste. H5 Waffe, Tippen = km"
             % VERSION_BILD, 4, 3)
     lage = mc.node("Lage", 1, 5, "Lage-Chip: Ausgang 'Lage'", 0, 0, (-10, 6))
-    mc.node("Touch", 1, 5, "Monitor 9x5 am Steuersitz: Touch Output (seit v2 nicht mehr gebraucht)", 1, 0, (-10, 5))
+    touch = mc.node("Touch", 1, 5, "Monitor 9x5 am Steuersitz: Touch Output (nicht gebraucht)", 1, 0, (-10, 5))
     sitz = mc.node("Sitz", 1, 5, "Steuersitz: Seat data (H5 naechste Waffe, Leertaste, besetzt)", 2, 0, (-10, 4))
     fl = mc.node("Flak L Daten", 1, 5, "Flak-L-Chip: Ausgang 'Flak Daten'", 3, 0, (-10, 3))
     fr = mc.node("Flak R Daten", 1, 5, "Flak-R-Chip: Ausgang 'Flak Daten'", 0, 1, (-10, 2))

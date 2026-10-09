@@ -1,6 +1,6 @@
 # Figet Marena – Gesamtübersicht
 
-**Stand:** 04.10.2026, Andres Speicherstand 22:56
+**Stand:** 08.10.2026, 22:40 (Autopilot, Licht, Abteile/Sprit/Schotten/Pumpen, Jet-Steuerung)
 **Fahrzeug:** `%APPDATA%\Stormworks\data\vehicles\Figet Marena.xml`
 **Projektordner:** `Documents\Rok\Main Cloude\stormworks_schiff` (lua/, tools/, build/, backup/, logs/)
 **Spiel:** Stormworks: Build and Rescue, nur DLC *Search and Destroy*, Andre spielt allein → alles von einem Sitz aus bedienbar.
@@ -124,6 +124,9 @@ Skript `lua/flossen.lua`, Bau `tools/build_flossen.py`, Kabel `tools/kabel_floss
 | A / D | Ruder (+ Lenk-Schub + Bugstrahl) |
 | Pfeil links/rechts | Bugstrahlruder von Hand |
 | Pfeil hoch/runter | Gang von Hand (nur ohne Automatik) |
+| A / D bei Autopilot an | Soll-Kurs verstellen (10 Grad/s), verlässt die Route |
+| W / S bei Autopilot an | Soll-Tempo verstellen (5 kn/s) |
+| Hotkey 2 bei Autopilot an | Stopp und Autopilot aus |
 | Leertaste | gewählte Waffe schießt einmal (nur mit Master Arm) |
 | Blick (Kopf) | Zielkorrektur, wenn der Knopf „Aim correction“ an ist (Abschnitt 5.6) |
 
@@ -134,7 +137,95 @@ Skript `lua/flossen.lua`, Bau `tools/build_flossen.py`, Kabel `tools/kabel_floss
 | Master Arm (Schalter) | Bool 1 | Waffenwahl-Chip → alle Waffen dürfen schießen |
 | Aim correction (Knopf) | Bool 2 | Kamera-Chip: Blick-Korrektur an |
 | Auto Chaff (Schalter) | Bool 3 | Schutz-Chip |
-| Water Pumps (Schalter) | Bool 4 | Schutz-Chip → beide Lenzpumpen |
+| Auto water pumps (Schalter) | Bool 4 | Abteil-Chip: Lenzpumpen automatisch, sobald Wasser in einem Abteil steht (seit 08.10.; vorher Schutz-Chip, Pumpen dauernd an) |
+
+### 3.6 Autopilot (Chip „Figet Marena Autopilot“ v1.2, 4×3, vp (−4,12,−59), seit 08.10.)
+
+- **Lage:** Chip zwischen Fahrersitz und Schiffsführung. Ein Composite-Umschalter im Chip (nicht das Skript) lässt das
+  Sitz-Signal unverändert durch, solange der Autopilot aus ist. Ist er an, kommen Achse 1 (Ruder) und Achse 2
+  (Fahrhebel) vom Skript `lua/autopilot.lua`; alle anderen Tasten gehen weiter direkt durch.
+- **Knöpfe** (an der Karte): „Activate Autopilot“ (−4,19,−22) an/aus, „Reset“ (−5,19,−22) löscht die Route,
+  „Automatic anti kollision“ (−8,19,−22) schaltet Bug-Laser und Ausweichen an/aus (beim Laden aus).
+  Beim Einschalten des Autopiloten: Soll-Kurs = jetziger Kurs, Soll-Tempo = jetziges Tempo.
+- **Karte** auf Monitor 5×3 (−6,21,−22), aufrecht gedreht (`screen.drawMap` lässt sich nicht drehen), Nord oben.
+  Niemand am Griff: Schiff in der Mitte. Weißes Dreieck = Schiff, grüne Linie = Soll-Kurs, gelb = Route, rot =
+  Laser-Treffer. Text: AP AUS/KURS/ROUTE, S = Soll-Kurs/-Tempo, I = Ist, WP = Wegpunkte, AK AN/AUS, Maßstab.
+- **Control Handle** (−6,19,−21) für die Karte (seit v1.1, Touch ist raus): der Blick bewegt ein gelbes Kreuz
+  (±0,09 U links/rechts, ±0,055 U oben/unten = Bildrand); solange man den Griff hält, bleibt die Karte stehen.
+  Leertaste = Wegpunkt am Kreuz, nochmal an derselben Stelle = weg (höchstens 20). W/S oder Pfeil hoch/runter = Zoom
+  (ab Achse 0,2, gehalten alle 0,4 s; v1.1 brauchte 0,5 und reagierte im Spiel nicht), ersatzweise Hotkey 3 näher /
+  Hotkey 4 weiter. Blick knapp über den Bildrand schiebt die Karte. Hotkey 1 = jetziger Blick ist die Bildmitte,
+  Hotkey 2 = Karte zurück aufs Schiff. Unten links: Entfernung Schiff–Kreuz.
+- **Route:** mit Wegpunkten fährt er sie der Reihe nach ab (erreicht = näher als 150 m). Nach dem letzten: Kurs halten,
+  mit „Am Ziel stoppen“ 1 Soll-Tempo 0.
+- **Regler:** Kurs = (Fehler − 3 s × Drehrate) / 25 Grad + kleiner I-Anteil; Tempo = PI auf den Soll-Hebel, W/S-Pulse
+  schieben den Fahrhebel der Schiffsführung dorthin. Den Hebel rechnet der Chip wie die Schiffsführung mit („Hebel
+  Tempo“ 0,25, „Rückwärts max“ 0,5 müssen in beiden Chips gleich sein).
+- **Anti-Kollision, Laser am Bug** (0,2,64): schwenkt in 9 Schritten über ±0,06 U, Nicken über Pivot Y ausgeglichen
+  (0,3 Grad über waagerecht). Treffer in der Gasse (±30 m) näher als 400 m bzw. Tempo × 40 s = Hindernis: 35 Grad zur
+  freieren Seite, 15 s halten, langsamer; ab 150 m Hebel 0 (nur bei Autopilot an; aus = nur Anzeige). Der Laser sitzt
+  ~0,2 m über der Wasserlinie (im Hafen knapp darunter; er sieht durchs Wasser, das stört nicht).
+- **Laser Höhe Richtung −1** (08.10. umgestellt): mit 1 zeigte der Strahl 7,6 Grad nach unten und traf durchs Wasser
+  den Meeresboden (rote Punkte auf dem Wasser, „HINDERNIS“ im Hafen).
+- **Ungeprüft im Spiel:** Vorzeichen von Pivot X („Laser Seite“), Blickrichtung am Griff („Blick X/Y Richtung“,
+  „Blick X/Y U“), Zoom-Richtung von `drawMap`, Regler-Werte. Log „ap“ (Port 8768) zeigt alles.
+
+### 3.7 Licht (Chip „Figet Marena Licht“ v1.0, 2×2, vp (1,12,−59), seit 08.10.)
+
+- 55 kleine RGB-Lampen (Andre), immer an. Helligkeit nach der Uhr (Bauteil „Clock“ an der Chip-Wand (4,12,−59)):
+  Tag 1,0 ab 6:30, Nacht 0,35 ab 19:30, je 1 h Übergang; Farbe warmweiß (1 / 0,92 / 0,8). Alles über Eigenschaften
+  einstellbar („Hell Tag“, „Hell Nacht“, „Tag ab Uhr“, „Nacht ab Uhr“, „Farbe R/G/B“).
+- Steuerungsraum = die 4 Deckenlampen (±4,25,−25) und (±4,25,−11): bei Bedrohung (Lage-Chip Bool 25, wie
+  „BEDROHUNG“ am großen Bildschirm) rot, bleibt 5 s nach der letzten Meldung.
+- Strom aller Lampen und der Uhr von der Batterie (−4,−13,−46). Skript `lua/licht.lua`, Prüfstand `tools/test_licht.py`.
+
+### 3.8 Abteile, Sprit, Batterie, Schotten, Lenzpumpen (Chips „Figet Marena Abteile“ v1.6 4×8 (−5,5,−59) + „Abteile Sammler“ v1.1 4×5 (5,2,−58), seit 08.10.)
+
+- 18 Liquid Meter: 10 in den Abteilen (Andre 08.10.) und 8 im Doppelboden (y −19) = **Treibstofftanks** (Fluid
+  Spawner füllen sie beim Spawnen). (0,−16,−129) gehört dem Flossen-Chip (Heck-Wasser). Je Sensor Füllstand +
+  Kapazität; Sensor 10–18 schickt der Sammler abwechselnd gepackt (Kapazität/200 L × 1000 + Promille, Zahl 32 = 0) und
+  als Liter (Zahl 32 = 1). Abteil-Sensoren mit gleicher Kapazität und Füllung = ein Abteil (offene Schotten verbinden
+  Abteile), nummeriert vom Bug.
+- 8 Tanks, je Sensor einer (Andre; Abschnitte z 15/−1/−19/−42, je Backbord + Steuerbord). Anzeige SPRIT gesamt %
+  und L, Tabelle mit 8 Balken (Spalten Heck links → Bug rechts, oben SB, unten BB), VERBR (L/s über 2 min), Restzeit;
+  BATTERIE (Charge der großen (−4,−13,−46) und mittleren (−8,−19,−65), alle 6 in einem Netz). Tanks zählen nicht als
+  Wasser.
+- Monitor 9×5 (8,21,−23) steht senkrecht an Steuerbord, Bild nach Backbord (r 0,0,−1,−1,0,0,0,1,0; vorher ohne
+  Drehangabe = kopfüber). Oben Grundriss waagerecht (Bug rechts, Steuerbord oben; Sensoren grün/gelb ab 1 %/rot ab
+  20 %/grau = nicht dicht, Schotten grün auf/rot zu), darunter Liste Abteil – Prozent – Liter (3 Spalten), unten
+  Pumpen (AN/AUS, L/s, „RAUS“ = gepumpt seit dem Laden, AUTO AN/AUS) und Schotten-Feld; „WASSER!“ blinkt.
+- Lenzpumpen: Andres Lenzleitung (Einlässe in den Abteilen bei y −13, Rohr auf x 0, Pumpe (0,−4,−5), Rückschlagventil,
+  Auslass an Deck (0,14,−47)) + die zwei alten (±15,−19,−56). Schalter „Auto water pumps“ an und ein Abteil ab 0,3 %
+  Wasser → alle drei an, 20 s Nachlauf. Fluss = Summe der Flow Rates.
+- Schotten = 10 Schiebetüren (Sliding Door (Electric), an = auf) in 5 Schottwänden (vom Bug: z 3, Oberdeck −13, −15,
+  −29, −53, je Backbord + Steuerbord). Chip „Figet Marena Schotten“ v1.0 (4×3, Decke des Chip-Raums (−2,13,−50)):
+  „alle zu/auf“ vom Abteil-Chip (Feld unten rechts antippen, Eingang „Knopf Schotten“ noch frei; Wasser ab 0,5 % in
+  einem Abteil = alle zu, nur beim Auftreten); Kippschalter (2 Seiten) an jeder Wand (Backbord-Seite) schaltet die
+  zwei Türen dieser Wand um. Beim Laden alle auf. Strom Monitor, Türen, Schalter von Batterie (−4,−13,−46).
+- Monitor-Bild v1.5: links Abteile als Liste (Name nach Sensor-Lage: BUG, VORSCHIFF, MITTE, SEITE BB/SB, MASCHINE;
+  „+“ = mit weiteren verbunden) mit Balken und Prozent, darunter TÜREN je Wand (1AUF/1ZU, vom Bug); rechts SPRIT,
+  Tank-Balken, VERBR, BATTERIE, PUMPEN; unten rechts Feld „ALLE ZU/AUF“.
+- v1.6: Sensor nicht in einem geschlossenen Raum (Loch, offene Luke) misst die Höhe zum Wasser: darunter = **LECK**
+  (rot, zählt als voll: Alarm „LECK!“, Schotten zu, Pumpen), darüber = OFFEN (grau). Getrennte Räume einer Seite
+  heißen „… BB“/„… SB“. Bestätigt mit Andres C4-Loch im Vorschiff (08.10.).
+
+### 3.9 Ferngesteuerter Jet („small Jet“, Chips „Jet Flug“ v1.0 im Jet + „Figet Marena Jet Steuerung“ v1.0 im Schiff, seit 08.10.)
+
+- **Jet** (`%APPDATA%\Stormworks\data\vehicles\small Jet.xml`, Workshop-Drohne von Ciampi141, alte Chips raus): steht
+  senkrecht (Nase +y), 6 Booster für den Start, Strahltriebwerk, 2 Elevons (±6,−6,−21) + Seitenruder, Kamera vorn
+  (klein, oben am Heck) und unten (mittel, Zoom), 4 Magnete. Physik-Sensor (0,3,−18) rückwärts und kopfüber: Nick =
+  −Kippung lokal z, Querlage = −Kippung lokal x. Chip „Jet Flug“ 4×4 an Andres Platzhalter (−3,−3,−21): Querlage-
+  und Nick-Regler (Band/Dämpfung, Ruder × (60 m/s / Tempo)², 0,3–2,5), Elevon-Mischung, Notprogramm nach 1 s ohne
+  Lebenszeichen (Flügel gerade, 5° Nick, Gas 0,6), Start-Nick 45° für 3 s nach dem Zünden, Flugdaten zurück.
+- **Schiff**: zweiter Sitz (−5,16,−26), Monitor 3×3 (−5,20,−24) mit Kamerabild + Anzeige; Chip an der Decke des
+  Chip-Raums (−2,13,−54). Funk Senden (−7,24,−50) auf 7301 (Befehle), Empfang (7,24,−50) auf 7302 (Flugdaten), Video-
+  Empfänger (0,24,−44) auf 7301 (Kamera vorn) bzw. 7302 (unten).
+- **Bedienung:** Maus (Blick) = Knüppel (rechts/links Querlage, hoch/runter Nick; Totzone 0,1; Hotkey 6 = Blick-Mitte),
+  W/S Gas, A/D Seitenruder, Pfeil hoch/runter Zoom, Leertaste Booster (nur mit Triebwerk an), Hotkey 1 Triebwerk,
+  2 Licht, 3 Magnete (beim Laden an), 4 Kamera vorn/unten. Anzeige: Horizont, Knüppel-Kreis, kn, m, Kurs, Gas, Sprit,
+  Entfernung, KEIN SIGNAL / NOTPROGRAMM / TRIEBWERK AUS. Log „js“ (Port 8768).
+- **Ungeprüft:** Ruder-Richtungen („Höhe/Quer/Seite Richtung“), Regler-Werte, ob Video- und Daten-Funk dieselbe
+  Frequenz-Zahl teilen dürfen, Bildwinkel-Wert der Kamera.
 
 ---
 
@@ -153,6 +244,12 @@ Skript `lua/flossen.lua`, Bau `tools/build_flossen.py`, Kabel `tools/kabel_floss
 | Figet Marena Kanone AC | v1.6 | 4×5 | (5,10,−58) | Heavy-Autocannon-Turm vorn | flakradar, flak |
 | Figet Marena Kamera | v2.2 | 4×5 | (5,10,−53) | Dachkamera, Zoom, Blick-Korrektur | kamera |
 | Figet Marena Schutz | v1.0 | 2×3 | (−5,13,−51) | Auto-Chaff, Lenzpumpen | schutz |
+| Figet Marena Jet Steuerung | v1.0 | 4×3 | (−2,13,−54) Decke | Jet fernsteuern: Maus-Knüppel, Funk, Kamerabild Monitor 3×3 | jet_steuerung |
+| Figet Marena Schotten | v1.0 | 4×3 | (−2,13,−50) Decke | 5 Schottwände: alle zu/auf, Kippschalter je Wand | schotten |
+| Figet Marena Abteile | v1.6 | 4×8 | (−5,5,−59) | Monitor 9×5: Abteile, Sprit, Batterie, Pumpen; Schotten zu/auf, Lenzpumpen automatisch | abteile |
+| Figet Marena Abteile Sammler | v1.1 | 4×5 | (5,2,−58) | Liquid Meter 10–18 gepackt | abteile_sammler |
+| Figet Marena Licht | v1.0 | 2×2 | (1,12,−59) | 55 RGB-Lampen, Tag/Nacht, Steuerungsraum rot bei Bedrohung | licht |
+| Figet Marena Autopilot | v1.2 | 4×3 | (−4,12,−59) | Kurs/Tempo halten, Karte mit Wegpunkten (Control Handle), Anti-Kollision | autopilot |
 | Quarter Panel NO (3×) | – | 1×2 | Maschinenräume | Andres Anzeigen (alt) | – |
 | „Microcontroller“ (24×) | – | 3×3 | je Rakete | Raketen (Andre) | – |
 
@@ -254,8 +351,8 @@ Keine Schrift (stünde quer).
 - **PC-Programm:** `python -u tools/waffen_logger.py` (im Ordner stormworks_schiff) → `logs/waffen_<Zeit>/<Kennung>.csv`
   (Spaltennamen aus `tools/schreiber_spalten.py`; `empfang.csv` = Ankunft/Paketnummern).
 - **Kennungen:** r1–r6 Mast-Radare, la/laD Lage, ba Bildschirm, fLr/fLf und fRr/fRf Flak-Radar/-Feuerleitung L/R,
-  kBr/kBf und kAr/kAf Kanonen, ka Kamera, sc Schutz; **ki** = Fahr-KI des Landkreuzers (Status-Skript, Spalten
-  in `schreiber_spalten.py`, Auswertung `landkreuzer/tools/ki_log.py`).
+  kBr/kBf und kAr/kAf Kanonen, ka Kamera, sc Schutz, sr/srK Seeradar, ap Autopilot (alle 4 Ticks); **ki** = Fahr-KI
+  des Landkreuzers (Status-Skript, Spalten in `schreiber_spalten.py`, Auswertung `landkreuzer/tools/ki_log.py`).
 - **Fahrtenschreiber** (Schiffsführung Port 8766) und **Flossen-Schreiber** (8767): `Log Port` steht auf 0 (aus).
   Anfragen an Ports ohne Lauscher blockieren die HTTP-Warteschlange des Spiels für Sekunden. Wieder an: Port setzen
   und `tools/logger.py` starten.
@@ -299,6 +396,11 @@ Keine Schrift (stünde quer).
 - Gemessene Zielhöhen: fahrende Schiffe ca. −2 m (Ausreißer bis +6), stehende Dinge im Wasser 3–6 m,
   Bodenziele 14–16 m; fahrende Schiffe 6–13 m/s.
 - Battle Cannon: Verschluss öffnet 79 Ticks, „Loaded“ ca. 98 Ticks nach dem Schließen.
+- **Teile ohne r-Attribut** haben im Spiel die Drehung 0,0,1,−1,0,0,0,−1,0, nicht die Grunddrehung (aus den Kabeln
+  aller Fahrzeuge bestimmt: erklärt 122 Teile, die Grunddrehung 4). Spiegel-Flag t wirkt lokal vor der Drehung.
+- Laser Distance Sensor (Log 08.10.): sieht **durch das Wasser bis zum Meeresboden** (Wellen/Wasseroberfläche
+  zählen nicht). Pivot in Umdrehungen (höchstens 0,125); beim Bug-Laser kippt Pivot Y plus den Strahl nach unten.
+  Mit falschem Vorzeichen sah der Autopilot im Hafen den Boden 36–57 m tief als „Hindernis“.
 
 ---
 
@@ -339,9 +441,10 @@ Keine Schrift (stünde quer).
 - **Bedienteile:** Monitor 3×3 (−3,20,−10), Lockable Button (−1,19,−8).
 
 ### 9.3 Stand
-- **Fertig gebaut (Andre, 05.10.2026).** Raketen-Chip „Figet Marena Raketen“, seine Kabel, Radar 6, Monitor 3×3,
+- **07.10. entfernt:** die 24 Raketen und der Raketen-Chip (funktionierten nicht). Radar 6 und der Monitor 3×3 dienen
+  jetzt dem Seeradar; statt Raketen kommt der ferngesteuerte Jet (Abschnitt 3.9). Bis 07.10. galt: Raketen-Chip „Figet Marena Raketen“, seine Kabel, Radar 6, Monitor 3×3,
   Startknopf und die 24 Raketen bei anderen Änderungen unverändert lassen.
-- Die Kopie in `fahrzeug/` ist Andres Stand vom 05.10. 19:08 (mit Raketen-Chip).
+- Die Kopie in `fahrzeug/` ist der Stand vom 08.10. 22:40 (ohne Raketen, mit allen Chips; ohne Steam-Autorangaben).
 
 ---
 
@@ -357,10 +460,10 @@ Keine Schrift (stünde quer).
 - **Höchsttempo:** seit dem Umbau am 02.10. ca. 25 % mehr Widerstand (Ballast, Türme); Gang 8 ungetestet.
 - **Links/rechts-Unterschied** im Tempo der Seiten (seit 02.10.) – Ursache offen.
 - **Getriebe C** (z −100, beide Seiten): kein Wert in der Datei (Standard) – im Editor prüfen, ob 2:1.
-- **Werkzeuge:** `build_mc.py` (aus `stormworks_flugpanzer\tools`) fehlt im Repo. Seit 08.10. gibt es einen Nachbau in
-  `landkreuzer/tools/build_mc.py`: Mit ihm bauen die Schiffs-Bauskripte alle Waffen-Chips **byte-gleich** so nach, wie sie
-  in `fahrzeug/Figet Marena.xml` stecken (Prüfung: `python landkreuzer/tools/test_build_mc.py`). Damit kann Claude auch in
-  der Cloud Chips bauen (für die Bibliothek bleibt das Original auf dem PC maßgeblich).
+- **Werkzeuge:** `build_mc.py` liegt seit 08.10. als Kopie in `tools/` (die Bau-Skripte nehmen bevorzugt die aus
+  `stormworks_flugpanzer\tools`, sonst diese). Außerdem gibt es den Nachbau `landkreuzer/tools/build_mc.py` (08.10.):
+  Mit ihm bauen die Schiffs-Bauskripte alle Waffen-Chips byte-gleich nach (Prüfung:
+  `python landkreuzer/tools/test_build_mc.py`); der Landkreuzer-Bau benutzt ihn.
 
 ## 11. Ideen für später
 

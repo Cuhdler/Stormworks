@@ -51,7 +51,7 @@ def lade(src, props, http=None):
         return lambda *a: io["draw"].append((name,) + tuple(a))
     g.screen = rt.table(setColor=zeichen("c"), drawText=zeichen("t"), drawLine=zeichen("l"), drawRect=zeichen("r"),
                         drawRectF=zeichen("rf"), drawTriangleF=zeichen("tf"), drawCircle=zeichen("ci"),
-                        drawCircleF=zeichen("ci"), getWidth=lambda: io.get("w", (288, 160))[0],
+                        drawCircleF=zeichen("ci"), drawClear=zeichen("clr"), getWidth=lambda: io.get("w", (288, 160))[0],
                         getHeight=lambda: io.get("w", (288, 160))[1])
     sperren(rt)
     rt.execute(src)
@@ -107,6 +107,7 @@ class Lage:
         self.frisch = frisch
         self.t = 0
         self.h5 = False
+        self.btouch = False                 # Bildschirm v3.5: Monitor 9x5 beruehrt
         self.wtouch = None                  # Touch auf dem Waffenwahl-Monitor 2x3
         self.wout = {}
         self.ma = True                      # Master Arm (Flip Switch am Instrument Panel)
@@ -193,6 +194,7 @@ class Lage:
         bb = {i: bool(self.aus.get(100 + i, False)) for i in range(1, 33)}
         bn.update({21: self.flakz[21], 22: self.flakz[22], 23: self.wout.get(1, 0)})
         bb[26], bb[28], bb[30], bb[31] = bool(self.wout.get(101)), self.h5, self.leer, self.sitz
+        bb[32] = self.btouch
         self.bio["n"], self.bio["b"] = bn, bb
         self.bio["on"].clear()
         self.bg.onTick()
@@ -928,7 +930,7 @@ def test_zeichnen():
     """Bildschirm zeichnet (ohne Eingaenge in onDraw) mit jeder Waffe; rotes Quadrat um beschossene Ziele; Zoom."""
     L = Lage([((150, 120, 2), (4, 4, 0)), ((-120, 200, 2), (-4, 4, 0)), ((-1400, 900, 200), (20, 0, 0)),
               ((5000, 3000, 2), (0, 0, 0))], own=(0, 0, 0), behalten=True)
-    L.laufe(12)
+    L.laufe(25)
     ok = True
     rot = 0
     for wfw in range(5):
@@ -942,13 +944,18 @@ def test_zeichnen():
             print("  Fehler", wfw, e)
             ok = False
     texte = [x[3] for x in L.bio["draw"] if x[0] == "t"]
+
     print("  Zoom %g m, rote Quadrate/Rahmen %d, Texte %s" % (L.bg.rr, rot, texte[:5]))
     L0 = Lage([], own=(0, 0, 0))
     L0.laufe(1)
+    # Bild v3.4 (Andres Test 06.10. im Hafen: Zoom 200 m): zwei stehende Bodenziele in 130/145 m halten den Zoom nicht fest
+    LH = Lage([((100, 83, 15), (0, 0, 0)), ((-60, 132, 15), (0, 0, 0))], own=(0, 0, 0), behalten=True)
+    LH.laufe(20)
     return [("Bildschirm zeichnet mit jeder Waffe", ok),
             ("rote Quadrate um die beschossenen Ziele (Radar und Liste)", rot >= 4),
-            ("Zoom so, dass die zwei nahen Schiffe (375 m auseinander) getrennt liegen: 1,5 km", L.bg.rr == 1500),
-            ("ohne Ziele: groesste Zoom-Stufe", L0.bg.rr == 10000),
+            ("Zoom (Stufen 1/2,5/5/10 km): zwei Schiffe ~400 m auseinander -> 1 km (%g)" % L.bg.rr, L.bg.rr == 1000),
+            ("ohne Ziele: 10 km", L0.bg.rr == 10000),
+            ("Hafen: zwei Bodenziele 130/145 m (15 m hoch) loesen keinen Zoom aus (%g m)" % LH.bg.rr, LH.bg.rr == 10000),
             ("Master Arm an steht da", "MASTER ARM AN" in texte)]
 
 

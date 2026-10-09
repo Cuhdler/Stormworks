@@ -76,6 +76,30 @@ SPALTEN = {
     # Schutz (SCHUTZ v1.0): Auto-Chaff an, Ortung Radar Detector, Salve, Salven gesamt, Salven dieser Ortung, Ticks ohne
     # Ortung, Pumpen an, Master Arm, Zielkorrektur an
     "sc": ["auto_chaff", "ortung", "salve", "salven", "salven_ortung", "ohne_ortung", "pumpen", "master_arm", "korrektur"],
+    # Seeradar (SEERADAR v1.0, Radar 6 + Monitor 3x3): Strahl ab Bug (U), Gimbal-Befehl, frische Ortungen, neue
+    # Kontakte, Kontakte See/Land/Luft, Reichweite m, Kurs U, Schirm hat den Befehl eingeholt
+    "sr": ["strahl", "befehl", "ortungen", "neue", "see", "land", "luft", "reichweite", "kurs", "eingeholt"],
+    # Seeradar ab v1.2 jede Sekunde: die ersten 8 Kontakte (Ost/Nord relativ zum Schiff m, Hoehe ueber dem Meer m,
+    # Art 1 See, 2 Land, 3 Luft)
+    "srK": _je("k", 8, ["ost", "nord", "hoehe", "art"]),
+    # Jet-Steuerung (JET STEUERUNG v1.0, alle 4 Ticks): Befehle Quer, Nick, Gas, Seite, Zoom, Triebwerk, Licht, Magnete,
+    # Kamera (1 vorn, 2 unten), Booster; Flugdaten Hoehe m, Tempo m/s, Kurs U, Nick Grad, Querlage Grad, Sprit %,
+    # Steigen m/s, Notprogramm, kein Signal, Funk-Signal, Entfernung km, Knueppel X/Y roh
+    "js": ["quer", "nick", "gas", "seite", "zoom", "triebwerk", "licht", "magnete", "kamera", "booster", "hoehe", "tempo",
+           "kurs", "nick_ist", "querlage", "sprit", "steigen", "notprogramm", "kein_signal", "signal", "entf_km",
+           "knueppel_x", "knueppel_y"],
+    # Autopilot (AUTOPILOT v1.0, alle 4 Ticks): an, Modus (0 Kurs, 1 Route), Kurs Grad, Soll-Kurs, Ausweichen Grad,
+    # Kursfehler, Drehrate Grad/s, Ruder (Achse 1), Tempo kn, Soll kn, Ziel kn (bei Hindernis kleiner), Soll-Hebel,
+    # Hebel (mitgerechnet), Hebel-Befehl (Achse 2), Welt x/y, Wegpunkte, Entfernung/Peilung zum naechsten, Sitz A/D, W/S,
+    # Motoren an, Hindernis, Hindernis-Entfernung (vorwaerts), Laser-Feld (1-9), Laser-Entfernung, Treffer-Hoehe ueber
+    # dem Meer, Nick U
+    "ap": ["an", "modus", "kurs", "soll_kurs", "ausweichen", "fehler", "drehrate", "ruder", "tempo_kn", "soll_kn",
+           "ziel_kn", "hebel_soll", "hebel", "hebel_befehl", "x", "y", "wegpunkte", "wp_entf", "wp_peilung", "sitz_ad",
+           "sitz_ws", "motoren", "hindernis", "hind_entf", "laser_feld", "laser_entf", "laser_hoehe", "nick",
+           # ab v1.1: Anti-Kollision an, Griff besetzt, Blick X/Y (U), Kreuz x/y (Pixel), Zoom-Stufe (1-7)
+           "anti_koll", "griff", "blick_x", "blick_y", "kreuz_x", "kreuz_y", "zoom_stufe",
+           # ab v1.2: Griff-Achsen roh (A/D, W/S, Pfeil links/rechts, Pfeil hoch/runter), Griff Hotkey 3/4
+           "griff_ad", "griff_ws", "griff_pfeil_lr", "griff_pfeil_hr", "griff_hk3", "griff_hk4"],
     # Flak-Feuerleitung: Ziel da, Feuer frei, Zustand (0 aus, 1 sucht, 2 Ziel, 3 feuert, 4 zu flach), Feuer (ab v2.0:
     # 1 linkes Rohr, 2 rechtes), Turm-
     # Befehl, Rohrwinkel U, tiefster erlaubter U, Richtung Grad ab Bug, Entfernung, Messdauer, Ticks ohne Meldung,
