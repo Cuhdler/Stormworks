@@ -538,10 +538,21 @@ class Bau:
             # Summe von 4 Sinus ~ Normalverteilung (Streuung 1,41): 40 % Oliv, 30 % Dunkelgruen, 20 % Braun, 10 % Schwarz
             return farben[0 if v < -0.36 else 1 if v < 0.74 else 2 if v < 1.81 else 3]
 
+        # Jeder Block bekommt einen leicht anderen Ton seiner Tarnfarbe (Helligkeit +-6 %, Gruen dazu +-3 %), damit
+        # die Flaechen nicht eintoenig wirken - Andre 09.10.: "jeder Block ein leicht anderes Gruen, nicht zu stark"
+        def fein(p, f):
+            h = ((p[0] * 73856093) ^ (p[1] * 19349663) ^ (p[2] * 83492791)) & 0xFFFFFFFF
+            h = ((h ^ (h >> 13)) * 1274126177) & 0xFFFFFFFF
+            h ^= h >> 16
+            k = 1 + 0.06 * ((h % 13) / 6 - 1)
+            kg = k * (1 + 0.03 * (((h >> 8) % 7) / 3 - 1))
+            r, g, b = (int(f[i:i + 2], 16) for i in (0, 2, 4))
+            return "%02X%02X%02X" % tuple(max(0, min(255, int(c * q + .5))) for c, q in ((r, k), (g, kg), (b, k)))
+
         def neu(t):
             if t.d not in fz.STRUKTUR:
                 return t
-            f = muster(t.vp)
+            f = fein(t.vp, muster(t.vp))
             x = re.sub(r' (bc|ac)="[0-9A-Fa-f]*"', "", t.xml, count=2)
             x = re.sub(r'<o( r="[^"]*")?', lambda m: m.group(0) + ' bc="%s" ac="%s"' % (f, f), x, count=1)
             return fz.Teil(x)
@@ -554,7 +565,7 @@ class Bau:
 
     def kennung(self, text="KL-1", z0=-12, y0=7, farbe="E6E6E6"):
         """Kennung in Blockschrift (3 x 5) auf beide Seitenwaende, von aussen lesbar."""
-        schrift = {"K": ["X.X", "XX.", "X..", "XX.", "X.X"], "L": ["X..", "X..", "X..", "X..", "XXX"],
+        schrift = {"K": ["X.X", "X.X", "XX.", "X.X", "X.X"], "L": ["X..", "X..", "X..", "X..", "XXX"],
                    "-": ["...", "...", "XXX", "...", "..."], "1": [".X.", "XX.", ".X.", ".X.", "XXX"]}
         punkte = set()
         for i, ch in enumerate(text):

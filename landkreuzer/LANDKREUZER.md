@@ -117,6 +117,8 @@ Gefundene **Fehler**, die im Spiel Ärger gemacht hätten (alle behoben und mit 
   und die Sicherung überschrieben. Jetzt bleiben Wellen mit Rad unberührt; Räder aus mehreren Teilen gehen auch;
   eigene Sicherung je Datei; `--lenkung` für die Lenk-Variante. Neuer Prüfstand `test_raeder.py`.
 - Bilder `vorschau_raeder.png` / `vorschau_raeder_lenkung.png`: so etwa sieht er mit 11er-Rädern aus.
+- **Bemalung lebendiger:** Jeder Block hat einen leicht anderen Ton seiner Tarnfarbe (Helligkeit ±6 %, Grün
+  ±3 %), dazu ein besser lesbares „K“ in „KL-1“. Bild `bilder/bemalung_nah.png`.
 - **Lampen:** Deine RGB-Lampen aus dem Schiff gibt es jetzt auch am Panzer: Statuslicht oben am Mast und hinten
   (Farbe = KI-Zustand, siehe „Lampen“), vorn 2 weiße.
 - **Zusammengeführt mit deinem Update vom 08.10. abends** (Autopilot, Licht, Abteile, neue Schiffsdatei):
@@ -149,7 +151,7 @@ Diesel-Generator aus Schiffsteilen geht nicht sicher (im Schiff fehlen Kraftstof
 | Antrieb | 14 Elektromotoren (Medium), je einer pro Rad, 24 große Batterien im Fahrwerksraum; gelenkt wird wie bei einem Kettenfahrzeug (links und rechts verschieden schnell) |
 | KI | fährt Wegpunkte ab oder patrouilliert im Revier, weicht Hindernissen aus (7 Laser), meidet Wasser und Abhänge, befreit sich, wenn sie feststeckt, bleibt im Gefecht stehen (hält auch am Hang die Stelle), fährt auf Wunsch oder bei 40 % Batterie nach Hause, schießt nicht in die Schutzzone um ihre Basis |
 | Lampen | Statuslicht oben am Mast und hinten (Farbe = KI-Zustand), vorn 2 weiße Lampen |
-| Aussehen | Tarnanstrich (Wald: Oliv, Dunkelgrün, Braun, Schwarz) auf allen Blöcken, unten Schlamm-Spritzer, Bug als Keil (oben und unten 45°), Heck unten abgeschrägt, Kennung „KL-1“ weiß und ein Abzeichen (gelber Blitz) an beiden Seiten, Lüftungsgitter auf dem Heckdeck |
+| Aussehen | Tarnanstrich (Wald: Oliv, Dunkelgrün, Braun, Schwarz) auf allen Blöcken, jeder Block ein leicht anderer Ton seiner Farbe (lebendiger, Bild `bemalung_nah.png`), unten Schlamm-Spritzer, Bug als Keil (oben und unten 45°), Heck unten abgeschrägt, Kennung „KL-1“ weiß und ein Abzeichen (gelber Blitz) an beiden Seiten, Lüftungsgitter auf dem Heckdeck |
 
 ### Woher die Teile kommen
 Alles, was im Schiff schon funktioniert, ist **genau kopiert**: gleiche Teile, gleiche Abstände, gleiche Kabel,
