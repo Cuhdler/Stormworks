@@ -1,5 +1,6 @@
 """Wertet einen Fahrtenschreiber-Log der KI aus (logs/waffen_<Datum>_<Zeit>/ki.csv, siehe LANDKREUZER.md, Schnellstart):
-Zusammenfassung als Text und ein Bild (Fahrspur nach Zustand gefaerbt, Tempo, Laser, Batterie, Neigung).
+Zusammenfassung als Text und ein Bild (Fahrspur nach Zustand gefaerbt, Tempo, Laser, Batterie, Neigung). Dazu prueft
+es aus der Fahrspur selbst die Vorzeichen von Kompass, Nick und Drehrichtung (vorzeichen()).
 
 Aufruf: python landkreuzer/tools/ki_log.py <Ordner oder ki.csv> [Bild.png]
         ohne Bild-Name: <Ordner>/ki_auswertung.png (braucht matplotlib)
@@ -64,6 +65,80 @@ def zusammenfassung(z):
     out.append("Waffen frei %.0f %% der Zeit, Schutzzone sperrte %.0f %%, jemand im Sitz %.0f %%" % (
         100 * sum(d["waffen_frei"] for d in z) / len(z), 100 * sum(d["schutzzone"] for d in z) / len(z),
         100 * sum(d["sitz"] for d in z) / len(z)))
+    out += vorzeichen(z)
+    return out
+
+
+def winkel(a):
+    """Winkel in Grad -> -180..180"""
+    return (a + 180) % 360 - 180
+
+
+def _korr(a, b):
+    n = len(a)
+    if n < 3:
+        return 0.0
+    ma, mb = sum(a) / n, sum(b) / n
+    sa = sum((v - ma) ** 2 for v in a) ** .5
+    sb = sum((v - mb) ** 2 for v in b) ** .5
+    return sum((x - ma) * (y - mb) for x, y in zip(a, b)) / (sa * sb) if sa > 0 and sb > 0 else 0.0
+
+
+def vorzeichen(z, fenster=30):
+    """Prueft aus der Fahrspur selbst (Ort und Hoehe, unabhaengig von den Sensoren), ob Kompass, Nick und Drehrichtung
+    das richtige Vorzeichen haben - die wahrscheinlichsten Fehler beim ersten Test im Spiel. -> Liste von Textzeilen.
+    Fahrtrichtung aus der Ortsaenderung (bei Rueckwaerts-Befehl umgedreht), nur waehrend er faehrt (> 1 m/s)."""
+    out = []
+    proben = []          # (Zeit s, echter Kurs, Kurs laut Kompass, Steigung Grad, Nick, Lenkbefehl)
+    for a, b in zip(z[::fenster], z[fenster::fenster]):
+        dx, dz, dt = b["x"] - a["x"], b["z"] - a["z"], (b["tick"] - a["tick"]) / 60
+        s = math.hypot(dx, dz)
+        fwd = (a["fahr"] + b["fahr"]) / 2
+        if dt <= 0 or s / dt < 1 or s / dt > 60 or abs(fwd) < .2:
+            continue
+        r = 1 if fwd > 0 else -1
+        echt = math.degrees(math.atan2(r * dx, r * dz)) % 360
+        k = (a["kurs"] + winkel(b["kurs"] - a["kurs"]) / 2) % 360
+        steig = math.degrees(math.atan2(r * (b["hoehe"] - a["hoehe"]), s))
+        proben.append(((a["tick"] + b["tick"]) / 120, echt, k, steig, (a["nick"] + b["nick"]) / 2,
+                       (a["lenk"] + b["lenk"]) / 2))
+    if len(proben) < 10:
+        out.append("Vorzeichen: zu wenig Fahrt im Log (%d Stuecke, braucht 10) - nicht pruefbar" % len(proben))
+        return out
+    # Kompass: passt der Kurs zur Fahrspur - oder passt er gespiegelt (Kompass Richtung falsch)?
+    gl = sorted(abs(winkel(p[2] - p[1])) for p in proben)
+    sp = sorted(abs(winkel(-p[2] - p[1])) for p in proben)
+    mg, ms = gl[len(gl) // 2], sp[len(sp) // 2]
+    if mg < 15:
+        out.append("Vorzeichen Kompass: passt (Kurs weicht im Mittel %.0f Grad von der Fahrspur ab)" % mg)
+    elif ms < 15:
+        out.append("Vorzeichen Kompass: FALSCH HERUM - im KI-Chip 'Kompass Richtung' umdrehen (1 <-> -1)")
+    else:
+        vers = sorted(winkel(p[2] - p[1]) for p in proben)[len(proben) // 2]
+        out.append("Vorzeichen Kompass: passt nicht zur Fahrspur (Kurs im Mittel %+.0f Grad daneben) - melden" % vers)
+    # Nick: Bug hoch beim Bergauf-Fahren (Steigung aus Hoehe und Weg)?
+    st, ni = [p[3] for p in proben], [p[4] for p in proben]
+    streu = (sum((v - sum(st) / len(st)) ** 2 for v in st) / len(st)) ** .5
+    if streu < 1.5:
+        out.append("Vorzeichen Nick: nicht pruefbar (Strecke zu flach, Steigung streut nur %.1f Grad)" % streu)
+    else:
+        r = _korr(st, ni)
+        out.append("Vorzeichen Nick: %s (Nick gegen Steigung der Spur: r = %.2f)" % (
+            "passt" if r > .5 else "FALSCH HERUM - im KI-Chip 'Nick Richtung' umdrehen" if r < -.5 else "unklar", r))
+    # Drehrichtung: Lenkbefehl + = rechtsherum; dreht die Fahrspur auch so? (sonst Motoren links/rechts vertauscht)
+    dreh, lenk = [], []
+    for p, q in zip(proben, proben[1:]):
+        if q[0] - p[0] < fenster / 60 * 1.5:
+            dreh.append(winkel(q[1] - p[1]) / (q[0] - p[0]))
+            lenk.append((p[5] + q[5]) / 2)
+    if len(dreh) < 10 or max(abs(v) for v in lenk) < .2:
+        out.append("Vorzeichen Drehen: nicht pruefbar (kaum Kurven im Log)")
+    else:
+        r = _korr(lenk, dreh)
+        out.append("Vorzeichen Drehen: %s (Lenkbefehl gegen Drehung der Spur: r = %.2f)" % (
+            "passt" if r > .3 else "FALSCH HERUM - Motoren links/rechts vertauscht? (Kabel 'Links'/'Rechts' am KI-Chip)"
+            if r < -.3 else "unklar", r))
+    out.append("Vorzeichen Roll: aus der Spur nicht pruefbar - am Hang quer stehen: rechts tief = R+ im Status")
     return out
 
 

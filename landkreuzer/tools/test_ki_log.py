@@ -76,6 +76,24 @@ def main():
         gef, daten[-1]["x"], daten[-1]["z"], ende[0], ende[1]),
         gef > 50 and abs(daten[-1]["x"] - ende[0]) < 5 and abs(daten[-1]["z"] - ende[1]) < 5))
     rueck.append(("Batterie-Verbrauch erkannt (0,9 %% je Minute)", any("0.90 % je Minute" in t for t in text)))
+    rueck.append(("Vorzeichen aus der Spur: Kompass und Drehen passen", any("Kompass: passt" in t for t in text)
+                  and any("Drehen: passt" in t for t in text)))
+    # absichtlich falsche Vorzeichen: Kompass gespiegelt, Lenkbefehl umgedreht, Nick auf einer Huegel-Strecke
+    falsch = [dict(d, kurs=(360 - d["kurs"]) % 360, lenk=-d["lenk"]) for d in daten]
+    tf = ki_log.vorzeichen(falsch)
+    weg, huegel, alt = 0.0, [], None
+    for d in daten:
+        if alt:
+            weg += math.hypot(d["x"] - alt["x"], d["z"] - alt["z"])
+        alt = d
+        huegel.append(dict(d, hoehe=40 + 8 * math.sin(weg / 40),
+                           nick=math.degrees(math.atan(.2 * math.cos(weg / 40)))))
+    tn = ki_log.vorzeichen(huegel)
+    tg = ki_log.vorzeichen([dict(d, nick=-d["nick"]) for d in huegel])
+    rueck.append(("Vorzeichen: Kompass gespiegelt und Lenkung umgedreht erkannt",
+                  any("Kompass: FALSCH" in t for t in tf) and any("Drehen: FALSCH" in t for t in tf)))
+    rueck.append(("Vorzeichen Nick am Huegel: richtig = passt, umgedreht = FALSCH",
+                  any("Nick: passt" in t for t in tn) and any("Nick: FALSCH" in t for t in tg)))
     try:
         b = ki_log.bild(daten, os.path.join(ordner, "ki_auswertung.png"))
         rueck.append(("Bild gezeichnet (%s)" % os.path.basename(b), os.path.getsize(b) > 10000))

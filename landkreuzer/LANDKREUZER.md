@@ -42,6 +42,9 @@ Schiffs-Übersicht). Dann landet jede Fahrt in `logs/waffen_<Datum>_<Zeit>/ki.cs
 Tempo, Befehle, alle Laser, Batterie, Nick/Roll.
 Mit `git add -f logs/...` hochladen – dann sehe ich genau, was die KI gesehen und entschieden hat. Selbst
 anschauen: `python landkreuzer/tools/ki_log.py logs/waffen_<Datum>_<Zeit>` (Zusammenfassung und Bild der Fahrspur).
+Das Werkzeug prüft dabei auch selbst die **Vorzeichen**: Passt der Kompass zur Fahrspur? Hebt sich der Bug beim
+Bergauffahren (Nick)? Dreht er bei „rechts“ wirklich rechtsherum (sonst sind die Motor-Kabel links/rechts vertauscht)?
+Es sagt dann, welche Eigenschaft im KI-Chip umzustellen ist.
 
 ---
 
@@ -92,6 +95,8 @@ Gefundene **Fehler**, die im Spiel Ärger gemacht hätten (alle behoben und mit 
   - Lenk-Variante: Beim Drehen auf der Stelle schlugen die Achsen meist falsch herum ein (kleiner negativer Fahrbefehl
     des Halte-Reglers galt als „rückwärts“). Jetzt zählt das Soll-Tempo; im Simulator so auch schneller um die Wand
     (74 statt 79 s).
+- **Fahrtenschreiber-Auswertung** (`ki_log.py`) prüft aus der Fahrspur die Vorzeichen von Kompass, Nick und
+  Drehrichtung und sagt, was umzustellen ist (im Prüfstand mit absichtlich falschen Vorzeichen geprüft).
 - **Karte:** zeigt jetzt die **Fahrspur** (blasse Punkte alle 10 m, die letzten 600 m) – man sieht, wo er war.
 - **Räder-Werkzeug:** Zweimal `raeder.py --schreiben` hätte jedes Rad doppelt gesetzt (zwei Räder im selben Platz)
   und die Sicherung überschrieben. Jetzt bleiben Wellen mit Rad unberührt; Räder aus mehreren Teilen gehen auch;
