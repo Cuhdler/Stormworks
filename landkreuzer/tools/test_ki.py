@@ -1078,8 +1078,8 @@ def test_dauerlauf():
         dauerlauf(seed)
 
 
-def dauerlauf(seed):
-    s = Sim(gemischt(), props={"Revier m": 400, "Patrouille Pause s": 0}, seed=seed)
+def dauerlauf(seed, lenkung=False):
+    s = Sim(gemischt(), props={"Revier m": 400, "Patrouille Pause s": 0}, seed=seed, lenkung=lenkung)
     nass, tief = [], []
 
     def bis(s):
@@ -1092,10 +1092,10 @@ def dauerlauf(seed):
     ziele = sum(1 for a, b in zip(s.log, s.log[1:]) if a[10:] != b[10:])
     ok = not nass and not s.pz.abgestuerzt and s.pz.stoesse <= 2 and s.weg > 2000 and len(s.erreicht) >= 3 \
         and ziele >= 6 and steh == 0
-    pruefe("Dauerlauf %d: 10 min Revier 400 m (Huegel, See, Klippe, Felsen, Haeuser, flacher Fels): %.0f m gefahren, "
+    pruefe("Dauerlauf %d%s: 10 min Revier 400 m (Huegel, See, Klippe, Felsen, Haeuser, flacher Fels): %.0f m gefahren, "
            "%d Punkte erreicht, %d Zielwechsel (unerreichbare uebersprungen), flacher Fels %d mal, "
            "nass %d Ticks, abgestuerzt %s, Stoesse %d, max %.0f m von der Heimat, %d mal 60 s fast still, "
-           "Zustaende %s" % (seed, s.weg, len(s.erreicht), ziele, s.pz.flach, len(nass), s.pz.abgestuerzt, s.pz.stoesse, weit, steh,
+           "Zustaende %s" % (seed, " Lenk-Variante" if lenkung else "", s.weg, len(s.erreicht), ziele, s.pz.flach, len(nass), s.pz.abgestuerzt, s.pz.stoesse, weit, steh,
                              sorted(s.zustaende)), ok)
 
 
@@ -1174,6 +1174,7 @@ def test_lenkvariante():
     s.lauf(420, bis=lambda s: len(s.erreicht) >= 1)
     pruefe("Lenk-Variante: aus der Sackgasse und herum nach %s s, Stoesse %d" % (
         round(s.erreicht[0][0]) if s.erreicht else "-", s.pz.stoesse), bool(s.erreicht) and s.pz.stoesse <= 1)
+    dauerlauf(4, lenkung=True)
 
 
 def test_holprig():
