@@ -321,6 +321,7 @@ Alle Eigenschaften stehen im **KI-Chip** (im Editor anklicken). Nach dem Ändern
 | Schießt auf **eigene Fahrzeuge** | dort einen Freund-Punkt setzen (Karte, Finger 1,5 s halten) oder „Schutzzone m“ größer |
 | Wirft **dauernd Chaff** | melden (Radarwarner sieht vermutlich die eigenen Radare) |
 | Steckt im **Wald** fest | Wegpunkte um den Wald setzen; Lenk-Variante streift weniger |
+| Nach **Spielstand laden** Wegpunkte weg, „H“ woanders | normal: die Skripte starten neu, Heimat = Ort beim Laden (siehe Schwachstellen) |
 
 ### Bekannte Schwachstellen
 - **Strom:** Es gibt nur Batterien (24 große), keinen Generator. Den Schiffs-Diesel kann man nicht einfach übernehmen,
@@ -332,6 +333,10 @@ Alle Eigenschaften stehen im **KI-Chip** (im Editor anklicken). Nach dem Ändern
   schon bei **40 %** Ladung nach Hause (Eigenschaft „Heim Batterie“ im KI-Chip), damit sie es noch den Hang hoch
   schafft. Ab 50 % fährt sie wieder normal.
 - **Größe:** Der Panzer ist sehr groß (≈ 27 × 10 m). Eine kleinere Werkbank reicht nicht.
+- **Spielstand laden:** Beim Laden startet jedes Lua-Skript neu (bekannt aus dem Forum, z. B. bei Autopilot-Karten
+  aus dem Workshop). Für den Panzer heißt das: Wegpunkte und Freund-Punkte sind weg, die **Heimat** (und damit
+  Revier und Schutzzone) ist dann der Ort, an dem er beim Laden steht, und die Wartezeiten (30 s Fahren, 60 s Waffen)
+  laufen neu. Nach dem Laden also kurz prüfen, wo das „H“ auf der Karte steht.
 - **Dichter Wald:** Im Simulator kommt er durch einen lichten Wald, in dichtem Wald (Bäume im Mittel 30 m
   auseinander) bleibt er aber in 3 von 8 Fällen hängen und streift viele Bäume. Grund: Er ist 27 m lang und 9,5 m
   breit, und dünne Stämme genau vor einer Bugecke sieht kein Laser. Zwei zusätzliche Eck-Laser habe ich ausprobiert –
