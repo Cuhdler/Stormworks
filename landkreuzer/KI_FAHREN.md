@@ -219,7 +219,7 @@ python landkreuzer/tools/test_ki.py            # alle Prüfungen (ca. 1 min), am
 python landkreuzer/tools/test_ki.py wand see   # nur einzelne (Teil des Namens)
 ```
 Braucht Python mit `lupa`. Der Prüfstand lädt die Skripte wie im Spiel (nur die dort vorhandenen Lua-Namen, Eingänge
-nur in `onTick`, Bildschirm/Karte nur in `onDraw`) und prüft die Größe nach dem Verkleinern (≤ 8000 Zeichen, auch mit
+nur in `onTick`, Bildschirm/Karte nur in `onDraw`) und prüft die Größe nach dem Verkleinern (≤ 8192 Zeichen – im Spiel gemessen; Fahr-KI jetzt 8111 –, auch mit
 `tools/build_mc.py`). Der Simulator: Welt mit Ebene, Hügel, See mit Strand, Klippe, Wänden, Häusern, flachem Fels;
 Panzer 27,5 × 9,5 m mit Panzerlenkung (Laser an den Stellen wie im gebauten Fahrzeug), 7 Radpaaren (kippt über eine Kante erst, wenn die Mitte drüber ist) und allen
 Lasern wie im Fahrzeug. Szenarien: Wegpunkte, Wand, Hügel, Sackgasse (zu eng zum Drehen), See, Klippe, flacher Fels
