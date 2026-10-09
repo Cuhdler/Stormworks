@@ -17,6 +17,13 @@ def _je(prefix, n, felder):
 
 
 SPALTEN = {
+    # KI Landkreuzer (landkreuzer/lua/ki_status.lua): Zustand (0 aus .. 10 Laser?), Ort, Kurs Grad, Tempo ist/soll m/s,
+    # Fahr-/Lenkbefehl roh (-1..1), Laser vorn L/M/R, Seite L/R, unten, hinten (m, 0 = nichts), Batterie 0..1,
+    # Wegpunkt / Zahl, Nick/Roll Grad (+ Bug hoch / rechts tief), KI an, Waffen frei, Schutzzone, Sitz, nach Hause,
+    # Rad-Richtung umgelernt L/R
+    "ki": ["zustand", "x", "z", "hoehe", "kurs", "v", "v_soll", "fahr", "lenk", "laser_vl", "laser_vm", "laser_vr",
+           "laser_li", "laser_re", "laser_un", "laser_hi", "batterie", "wp", "wp_zahl", "nick", "roll", "ki_an",
+           "waffen_frei", "schutzzone", "sitz", "heim", "umgelernt_l", "umgelernt_r"],
     # Mast-Radar: haelt (Lock), Winkel ab Strahl (1 = ab Sockel, 2 = ab Strahl, leer = unbekannt), Lock-Richtung
     # (von der Lage), Gimbal-Befehl, Schirm-Modell (wohin er gerade zeigt), Stimmen Strahl/Sockel, Ortungen da / neu
     # (Bits je Platz 1-7), Ausgabe an die Lage (Seite, Hoehe, Entfernung), neue Ortungen roh (Entfernung, Seite, Hoehe)

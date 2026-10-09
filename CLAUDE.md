@@ -10,3 +10,5 @@
   `onDraw` lesen.
 - Raketen und Raketen-Chip sind seit 07.10. entfernt; an ihre Stelle kommt der ferngesteuerte Jet (nur Flug, Kamera,
   Aufklärung). Teile ohne r-Attribut haben die Drehung 0,0,1,-1,0,0,0,-1,0 (nicht die Grunddrehung).
+- Zweites Projekt: **KI-Landkreuzer** (autonomer Panzer) in `landkreuzer/`, Stand und Regeln in `landkreuzer/LANDKREUZER.md`.
+  Er wird komplett per `landkreuzer/tools/bau_landkreuzer.py` erzeugt (Teile/Chips aus der Schiffsdatei kopiert).

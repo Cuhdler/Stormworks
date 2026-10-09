@@ -351,7 +351,8 @@ Keine Schrift (stünde quer).
 - **PC-Programm:** `python -u tools/waffen_logger.py` (im Ordner stormworks_schiff) → `logs/waffen_<Zeit>/<Kennung>.csv`
   (Spaltennamen aus `tools/schreiber_spalten.py`; `empfang.csv` = Ankunft/Paketnummern).
 - **Kennungen:** r1–r6 Mast-Radare, la/laD Lage, ba Bildschirm, fLr/fLf und fRr/fRf Flak-Radar/-Feuerleitung L/R,
-  kBr/kBf und kAr/kAf Kanonen, ka Kamera, sc Schutz, sr/srK Seeradar, ap Autopilot (alle 4 Ticks).
+  kBr/kBf und kAr/kAf Kanonen, ka Kamera, sc Schutz, sr/srK Seeradar, ap Autopilot (alle 4 Ticks); **ki** = Fahr-KI
+  des Landkreuzers (Status-Skript, Spalten in `schreiber_spalten.py`, Auswertung `landkreuzer/tools/ki_log.py`).
 - **Fahrtenschreiber** (Schiffsführung Port 8766) und **Flossen-Schreiber** (8767): `Log Port` steht auf 0 (aus).
   Anfragen an Ports ohne Lauscher blockieren die HTTP-Warteschlange des Spiels für Sekunden. Wieder an: Port setzen
   und `tools/logger.py` starten.
@@ -381,7 +382,8 @@ Keine Schrift (stünde quer).
 
 ## 8. Erkenntnisse aus dem Spiel (bestätigt)
 
-- Lua: 8192 Zeichen je Skript; **kein `select`**, kein `table.unpack`; Eingänge in `onDraw` lesen = „draw error 202“.
+- Lua: 8192 Zeichen je Skript; **kein `select`**, kein `unpack` (aber `table.unpack` geht, gemessen 05.10., siehe
+  `LUA_STORMWORKS.md`); Eingänge in `onDraw` lesen = „draw error 202“.
 - HTTP: höchstens eine Anfrage je Tick; Antwort braucht Content-Length; Ports ohne Lauscher blockieren 2–4 s.
 - Spiel lief im Gefecht mit ca. 21–37 Ticks/s.
 - Gespiegelte Teile (t-Attribut): Radare zählen gespiegelt; Drehkränze drehen andersherum; Steuerflossen: + =
@@ -459,7 +461,9 @@ Keine Schrift (stünde quer).
 - **Links/rechts-Unterschied** im Tempo der Seiten (seit 02.10.) – Ursache offen.
 - **Getriebe C** (z −100, beide Seiten): kein Wert in der Datei (Standard) – im Editor prüfen, ob 2:1.
 - **Werkzeuge:** `build_mc.py` liegt seit 08.10. als Kopie in `tools/` (die Bau-Skripte nehmen bevorzugt die aus
-  `stormworks_flugpanzer\tools`, sonst diese).
+  `stormworks_flugpanzer\tools`, sonst diese). Außerdem gibt es den Nachbau `landkreuzer/tools/build_mc.py` (08.10.):
+  Mit ihm bauen die Schiffs-Bauskripte alle Waffen-Chips byte-gleich nach (Prüfung:
+  `python landkreuzer/tools/test_build_mc.py`); der Landkreuzer-Bau benutzt ihn.
 
 ## 11. Ideen für später
 
