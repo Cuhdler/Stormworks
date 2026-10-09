@@ -1227,7 +1227,7 @@ def test_grosse_raeder():
 
 def test_nachtfunde():
     """Fehler, die eine Durchsicht in der Nacht fand (09.10.): (1) letzter Wegpunkt unerreichbar, Revier aus: nicht
-    wieder von vorn; (2) Handbetrieb bricht ein Manoever ab (sonst faehrt die KI danach das alte Rueckwaerts-Manoever
+    wieder von vorn; (1b) ein einziger Wegpunkt im Revier-Modus: dort warten; (2) Handbetrieb bricht ein Manoever ab (sonst faehrt die KI danach das alte Rueckwaerts-Manoever
     weiter und merkt eine riesige 'Sackgasse'); (3) Heimat bleibt am Spawn-Ort, auch wenn er vor dem KI-Start von Hand
     woanders hin faehrt (wie die Schutzzone im Klebe-Skript); (4) Bug-Laser-Grundwert lernt nur in den ersten 10 s."""
     # (1) WP 1 an Land, WP 2 mitten im See, Revier aus
@@ -1242,6 +1242,14 @@ def test_nachtfunde():
             folge.append(l[4])
     pruefe("letzter Wegpunkt im See, Revier aus: Wegpunkt-Folge %s (nicht wieder 1), nie im Wasser" % folge[:6],
            folge[:2] == [1, 2] and 1 not in folge[2:] and s.chip.g.fz)
+    # (1b) nur ein Wegpunkt, Revier an: dort stehen bleiben (Zustand 9), nicht endlos um den Punkt kriechen
+    s = Sim(eben())
+    s.tippe(0, 200)
+    s.lauf(120)
+    zs = {l[3] for l in s.log[-1800:]}
+    v = max(abs(l[5]) for l in s.log[-1800:])
+    pruefe("ein Wegpunkt, Revier an: steht dort (Zustaende %s, Tempo hoechstens %.2f m/s, %d Ziel-Pulse)" % (
+        sorted(zs), v, len(s.erreicht)), zs == {9} and v < 0.2 and len(s.erreicht) < 5)
     # (2) Sackgasse, mitten im Zuruecksetzen faehrt Andre von Hand weg
     u = [("b", -14, 140, 14, 143, 10), ("b", -14, 95, -11, 143, 10), ("b", 11, 95, 14, 143, 10)]
     s = Sim(Welt(hind=u, name="Sackgasse"))

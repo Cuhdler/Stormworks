@@ -211,7 +211,7 @@ function onTick()
 	-- anderen, sonst haelt eine Gefahr, die immer wieder ausloest, ihn ewig fest
 	if fe>=3 then
 		NG()
-		if B(6) then elseif #W>0 then if wi<#W or pm then wi=wi%#W+1 else fz=true end else px=nil end
+		if B(6) then elseif #W>0 then if wi<#W or pm and #W>1 then wi=wi%#W+1 else fz=true end else px=nil end
 	end
 	if hn>0 then
 		-- Hand: links = W/S + A/D, rechts = W/S - A/D
@@ -302,7 +302,7 @@ function onTick()
 			zs=(n>0 or nh) and 2 or 3
 			if d<ZR and not nh then
 				rp=true NG()
-				if n<1 then px,pw=nil,PP elseif wi<n then wi=wi+1 elseif pm then wi=1 else fz=true end
+				if n<1 then px,pw=nil,PP elseif wi<n then wi=wi+1 elseif pm and n>1 then wi=1 else fz=true end
 			end
 			-- Fortschritt: 60 s nicht 5 m naeher = ein Fehlschlag; 3 = Ziel ueberspringen
 			if d<bd-5 then bd,pk=d,0 else pk=pk+1 end

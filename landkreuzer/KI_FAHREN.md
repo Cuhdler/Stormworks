@@ -8,7 +8,7 @@ Prüfstand im Rechner. Im Spiel noch **nicht** erprobt – alles unten unter „
 | `lua/ki_fahren.lua` | das Fahr-Gehirn (Antrieb links/rechts) |
 | `lua/ki_karte.lua` | Touch-Karte im Cockpit (Monitor 3×3 oder 5×3) |
 | `tools/ki_props.py` | alle Properties mit Standardwert und Erklärung (`PROPS_FAHREN`, `PROPS_KARTE`, `PROPS`) |
-| `tools/test_ki.py` | Prüfstand: Simulator + 61 Prüfungen (auch Wald, Damm, Tal, holpriger Boden, Lenk-Variante, 0,6 m höhere Räder, Stehen am Hang), am Ende „ALLES OK“ |
+| `tools/test_ki.py` | Prüfstand: Simulator + 62 Prüfungen (auch Wald, Damm, Tal, holpriger Boden, Lenk-Variante, 0,6 m höhere Räder, Stehen am Hang), am Ende „ALLES OK“ |
 
 ---
 
@@ -18,7 +18,8 @@ Prüfstand im Rechner. Im Spiel noch **nicht** erprobt – alles unten unter „
   der Ort 0,5 s nach dem Spawnen (derselbe wie die Mitte der Schutzzone im Klebe-Skript) – auch wenn er vor dem
   KI-Start von Hand woanders hin fährt oder die Pause an- und ausgeht.
 - **Wegpunkte** (bis 8) tippt Andre auf der Karte an. Die KI fährt sie der Reihe nach ab. Im **Revier-Modus** (Knopf
-  „Revier“, grün = an, beim Start an) geht es danach wieder von vorn los, sonst bleibt er am letzten stehen.
+  „Revier“, grün = an, beim Start an) geht es danach wieder von vorn los, sonst bleibt er am letzten stehen. Bei nur
+  einem Wegpunkt bleibt er dort stehen.
 - **Ohne Wegpunkte** im Revier-Modus: Zufallspunkte höchstens „Revier m“ um die Heimat. Am Punkt bleibt er
   „Patrouille Pause s“ stehen (die Türme arbeiten weiter), dann der nächste Punkt.
 - **Schalter „Nach Hause“**: zurück zur Heimat und dort warten; Schalter aus = weiter wie vorher.
@@ -219,7 +220,7 @@ python landkreuzer/tools/test_ki.py            # alle Prüfungen (ca. 1 min), am
 python landkreuzer/tools/test_ki.py wand see   # nur einzelne (Teil des Namens)
 ```
 Braucht Python mit `lupa`. Der Prüfstand lädt die Skripte wie im Spiel (nur die dort vorhandenen Lua-Namen, Eingänge
-nur in `onTick`, Bildschirm/Karte nur in `onDraw`) und prüft die Größe nach dem Verkleinern (≤ 8192 Zeichen – im Spiel gemessen; Fahr-KI jetzt 8111 –, auch mit
+nur in `onTick`, Bildschirm/Karte nur in `onDraw`) und prüft die Größe nach dem Verkleinern (≤ 8192 Zeichen – im Spiel gemessen; Fahr-KI jetzt 8128 –, auch mit
 `tools/build_mc.py`). Der Simulator: Welt mit Ebene, Hügel, See mit Strand, Klippe, Wänden, Häusern, flachem Fels;
 Panzer 27,5 × 9,5 m mit Panzerlenkung (Laser an den Stellen wie im gebauten Fahrzeug), 7 Radpaaren (kippt über eine Kante erst, wenn die Mitte drüber ist) und allen
 Lasern wie im Fahrzeug. Szenarien: Wegpunkte, Wand, Hügel, Sackgasse (zu eng zum Drehen), See, Klippe, flacher Fels

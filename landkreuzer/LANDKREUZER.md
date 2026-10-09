@@ -97,7 +97,7 @@ Gefundene **Fehler**, die im Spiel Ärger gemacht hätten (alle behoben und mit 
     die Karte zeigte den roten Kreis also an der falschen Stelle, und „Nach Hause“ fuhr nicht zum Spawn-Ort. Jetzt ist
     die Heimat überall der Spawn-Ort.
   - Letzter Wegpunkt unerreichbar (z. B. im See) und Revier aus: Er fing wieder bei Wegpunkt 1 an und fuhr endlos hin
-    und her. Jetzt bleibt er stehen.
+    und her. Jetzt bleibt er stehen. Ebenso bei nur **einem** Wegpunkt im Revier-Modus (vorher kroch er endlos um den Punkt).
   - Nach Handbetrieb mitten im Zurücksetzen machte die KI das alte Manöver weiter und merkte sich eine „Sackgasse“
     mit 150 m Radius. Jetzt bricht W/S/A/D das Manöver ab.
   - Der Bug-Laser lernte bei jedem Stehen mit KI Pause weiter (über einer Mulde falsch). Jetzt nur in den ersten 10 s.
@@ -164,7 +164,7 @@ Was an Land anders sein muss, ist in die Chips eingebaut:
 |---|---|
 | `tools/test_land_lage.py` | Panzer auf 100 m Höhe, 2 Bodenfahrzeuge, Hubschrauber, Jet, Gebäude. Kanonen auf Bodenfahrzeugen 329/360 Zeitschritte, nie auf Gebäude oder Luftziel. Flaks nur auf Luftzielen. Ohne die Land-Änderung: 0/360. |
 | `tools/test_land_kanone.py` | BC und AC gegen fahrende Bodenziele am Hang (+45 m bis −25 m, 0,8–3 km): 47–55 % Treffer. Mit der festen Schiffs-Zielhöhe: 0 Treffer. |
-| `tools/test_ki.py` | Fahr-KI in einer Simulation mit Hügeln, See, Klippe, Häusern, Wänden, Sackgasse, Wald, Damm, Tal: 61 Prüfungen, auch 10-Minuten-Dauerläufe ohne Unfall, mit größeren Rädern und Stehen am Hang (Einzelheiten `KI_FAHREN.md`) |
+| `tools/test_ki.py` | Fahr-KI in einer Simulation mit Hügeln, See, Klippe, Häusern, Wänden, Sackgasse, Wald, Damm, Tal: 62 Prüfungen, auch 10-Minuten-Dauerläufe ohne Unfall, mit größeren Rädern und Stehen am Hang (Einzelheiten `KI_FAHREN.md`) |
 | `tools/pruefen.py` | Datei: XML, Teil-Arten, keine doppelten Plätze, Rumpf hängt zusammen, Kabel, Chips |
 | `tools/test_build_mc.py` | Chip-Baukasten baut alle Schiffs-Chips byte-gleich nach |
 

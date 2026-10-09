@@ -3837,7 +3837,7 @@ u,w,vs,zs,rp,up=0,0,0,0,false,true
 if mt&lt;1 and A(vf)&gt;.5 then qd=sg(vf) end
 if fe&gt;=3 then
 NG()
-if B(6) then elseif #W&gt;0 then if wi&lt;#W or pm then wi=wi%#W+1 else fz=true end else px=nil end
+if B(6) then elseif #W&gt;0 then if wi&lt;#W or pm and #W&gt;1 then wi=wi%#W+1 else fz=true end else px=nil end
 end
 if hn&gt;0 then
 zs,u,w,up,mt,mq=1,ws,ad,false,0,nil
@@ -3911,7 +3911,7 @@ else
 zs=(n&gt;0 or nh) and 2 or 3
 if d&lt;ZR and not nh then
 rp=true NG()
-if n&lt;1 then px,pw=nil,PP elseif wi&lt;n then wi=wi+1 elseif pm then wi=1 else fz=true end
+if n&lt;1 then px,pw=nil,PP elseif wi&lt;n then wi=wi+1 elseif pm and n&gt;1 then wi=1 else fz=true end
 end
 if d&lt;bd-5 then bd,pk=d,0 else pk=pk+1 end
 if pk&gt;3600 then pk=0 fe=fe+1 end
