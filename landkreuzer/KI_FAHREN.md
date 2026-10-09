@@ -196,11 +196,15 @@ Zum Vergleich der Endstand (09.10. früh): 12 zufällige gemischte Welten je 10 
 
 ## 6. Im Spiel prüfen
 
+0. **Selbstprüfung**: Der Status-Monitor vergleicht beim Fahren Kompass, Nick und Drehrichtung mit der eigenen
+   Fahrspur: K-Zeile rot = „Kompass Richtung“ umdrehen, N/R-Zeile rot = „Nick Richtung“ umdrehen, rot D! = Kabel
+   „Links“/„Rechts“ am KI-Chip vertauscht, UN rot = Bug-Laser sieht keinen Boden (Strahlrichtung). Dasselbe prüft
+   `tools/ki_log.py` im Fahrtenschreiber-Log.
 1. **Kompass**: KI an, Wegpunkt genau nördlich tippen – fährt er nach Norden? Sonst „Kompass Richtung“ umdrehen.
 2. **Rad-Richtung**: mit W fährt er vor, mit D dreht er rechts? Rot L! / R! auf dem Status-Monitor = umgelernt → Property
    richtig stellen.
-3. **Nick/Roll-Vorzeichen**: am Hang Bug hoch → Physik-Sensor Nick positiv? Rechte Seite tief → Roll **negativ**
-   (so ist es bei den Flossen des Schiffs)? Sonst „Nick Richtung“ bzw. „Roll Richtung“ umdrehen.
+3. **Nick/Roll-Vorzeichen**: am Hang Bug hoch → Status N+? Rechte Seite tief → Status R+ (der Physik-Sensor selbst
+   meldet dann Roll negativ, wie bei den Flossen des Schiffs)? Sonst „Nick Richtung“ bzw. „Roll Richtung“ umdrehen.
 4. **Bug-Laser**: Grundwert auf ebenem Boden (Zahl 14) notieren; an einer Böschung zum Wasser: hält er rechtzeitig?
    Trifft der Laser die Wasseroberfläche oder den Grund? (beides wird erkannt)
 5. **Front-Laser**: vor einer Hauswand – kriecht er heran und setzt bei ca. 4 m zurück? An einem sanften Hügel
