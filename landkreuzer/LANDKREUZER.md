@@ -77,6 +77,9 @@ Gefundene **Fehler**, die im Spiel Ärger gemacht hätten (alle behoben und mit 
   2 leichte Stöße.
 - **Lenk-Variante:** Beim Rückwärtsfahren schlugen die Achsen falsch herum ein (Lenkung und Kettenlenkung arbeiteten
   gegeneinander). Behoben; im Simulator jetzt geprüft.
+- **Räder-Werkzeug:** Zweimal `raeder.py --schreiben` hätte jedes Rad doppelt gesetzt (zwei Räder im selben Platz)
+  und die Sicherung überschrieben. Jetzt bleiben Wellen mit Rad unberührt; Räder aus mehreren Teilen gehen auch;
+  eigene Sicherung je Datei; `--lenkung` für die Lenk-Variante. Neuer Prüfstand `test_raeder.py`.
 - Aussehen: Schlamm unten, Lüftungsgitter, Abzeichen; Bild `beschriftet.png` (was wo ist), `anzeigen.png` (Monitore).
 
 Ausprobiert und **verworfen**: zwei zusätzliche Eck-Laser für dichten Wald (im Simulator schlechter). Ein
@@ -161,13 +164,14 @@ haben denselben KI-Chip; die Lenk-Ausgänge sind in der einfachen Variante nur n
        auf die Radgröße ein (sie misst im Stand, wie hoch sie steht).
      - Platz: bis ca. 12 Blöcke Durchmesser passen zwischen die Achsen (Abstand 15 Blöcke).
    - Im Repo-Ordner: `python landkreuzer/tools/raeder.py`. Das ist ein Probelauf: Er zeigt, welche 13 Räder
-     dazukommen. Für die Lenk-Variante: `--datei "%APPDATA%\Stormworks\data\vehicles\KI Landkreuzer Lenkung.xml"`
-     anhängen. Dort sitzt der vorderste linke Stummel außen am Gelenk, und die gelenkten Räder kommen auf ihre
-     Gelenk-Körper.
+     dazukommen. Für die Lenk-Variante `--lenkung` anhängen. Dort sitzt der vorderste linke Stummel außen am
+     Gelenk, und die gelenkten Räder kommen auf ihre Gelenk-Körper. (Eine andere Datei: `--datei "<Pfad>"`.)
    - Dann `python landkreuzer/tools/raeder.py --schreiben`. Es kopiert das Rad an alle Wellen (rechts
      gespiegelt) und legt vorher eine Sicherung an.
    - Im Spiel das Fahrzeug **neu laden, ohne vorher zu speichern**.
    - Wenn du rechts ein anderes Rad willst: auch rechts vorn eines setzen, dann nimmt das Programm dieses für rechts.
+   - Zweimal laufen lassen schadet nicht: Wellen, die schon ein Rad haben, bleiben, wie sie sind. Ein Rad aus
+     mehreren Teilen (z. B. mit Kappe) wird als Ganzes kopiert. Nur rechts gesetzt geht auch (links wird gespiegelt).
 4. Spawnen. Er ist groß und braucht eine große Werkbank bzw. einen großen Platz.
 5. **Einsteigen:** Leiter hinten (links der Mitte) aufs Deck. Die unterste Sprosse hängt je nach Rad etwa 1 m über
    dem Boden (das Heck ist unten abgeschrägt): hinlaufen und hochspringen. Nach vorn zur Plattform hinter der Brücke,
@@ -350,7 +354,7 @@ Alle Eigenschaften stehen im **KI-Chip** (im Editor anklicken). Nach dem Ändern
 | `tools/fz.py` | Fahrzeugdatei lesen/schreiben (Teile, Körper, Kabel); Lesen und Schreiben ergibt byte-gleich dieselbe Datei |
 | `tools/build_mc.py` | Chip-Baukasten (Nachbau des fehlenden Originals; baut alle Schiffs-Chips byte-gleich nach, siehe `tools/test_build_mc.py`) |
 | `tools/build_ki.py` | KI-Chip (5×5) |
-| `tools/raeder.py` | Räder kopieren |
+| `tools/raeder.py` | Räder kopieren (`--lenkung` für die Lenk-Variante; Prüfstand `tools/test_raeder.py`) |
 | `tools/pruefen.py` | Prüfungen der Datei (läuft nach jedem Bau) |
 | `tools/ki_log.py` | wertet einen Fahrtenschreiber-Log aus (`python landkreuzer/tools/ki_log.py logs/waffen_...`): Zusammenfassung und Bild der Fahrt |
 | `tools/kabel_vergleich.py` | jedes Kabel des Schiffs, dessen Quelle im Panzer fehlt (fand den dunklen Monitor 2×3) |
