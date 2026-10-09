@@ -78,11 +78,17 @@ selbst (Halbautomatik mit Master Arm).
 - **Bugstrahlruder** (Elektromotor Medium im Bug).
 - **Kühlung/Pumpen:** 96 Wasserpumpen, 48 Kühler-Lüfter, 48 kleine Kühlwassertanks (schaltet „Motor L/R an“).
 
-### 3.2 Chip „Figet Marena Schiffsführung“ v3.3 (6×6, vp (0,−12,−41))
-Skripte: `lua/schiff.lua` (v3.2), `lua/shud.lua` (Helm, v2.5), `lua/wellen.lua` (v2). Bau: `tools/build_schiff.py`.
+### 3.2 Chip „Figet Marena Schiffsführung“ v3.4 (6×6, vp (0,−12,−41))
+Skripte: `lua/schiff.lua` (v3.4), `lua/shud.lua` (Helm, v2.5), `lua/wellen.lua` (v2). Bau: `tools/build_schiff.py`.
 
-- **Fahrhebel = Leistung** (Anteil der vollen Treibstoffmenge). Grenze ist die Temperatur: bis `Temp Ziel` 95 °C
-  volles Gas, darüber so viel weniger, dass sie dort bleibt; über `Motor heiss Grad` 115 °C auskuppeln.
+- **Fahrhebel = Leistung** (Anteil der vollen Treibstoffmenge). Grenze ist die Temperatur, über `Motor heiss Grad`
+  115 °C auskuppeln.
+- **Temperatur-Regler (v3.4, 09.10.):** eine Gas-Grenze für alle 4 Motoren (Schiff fährt gerade), nach dem Motor, der
+  am stärksten über dem erlaubten Anstieg liegt. Erlaubter Anstieg = (`Temp Ziel` 70 − Temperatur) / `Temp Anflug s`
+  60; `Temp Regel` 0,2. Kalt knapp 3 min volles Gas, dann weich auf Dauerleistung (Modell: ca. 22 % Gas bei 70 °C).
+  Warum 70 statt 95: bis 75 °C volle Leistung, bei 80–85 °C nur noch etwa die Hälfte (Gang 7 Vollgas 60 → 48 kn,
+  Fahrt 07.10.). v3.3 regelte jeden Motor allein auf 95 °C und schaukelte (Seiten abwechselnd 10 % / 55 % Gas,
+  18–29 kn, Schiff zog hin und her). Prüfstand: `tools/test_schiff.py` test_temperatur (Wärmemodell nach 07.10.).
 - **Gemisch:** Treibstoff = Luft × Q / Luftverhältnis, Q fest 7,1 (Andre: „soll immer gleich bleiben“); mit
   `Gemisch Regler` > 0 würde Q wieder nachgeregelt.
 - **Anlasser:** sofort nach Hotkey 1, bis der Motor 0,5 s läuft; höchstens 8 s am Stück, dann 2 s Pause; startet nach
@@ -233,7 +239,7 @@ Skript `lua/flossen.lua`, Bau `tools/build_flossen.py`, Kabel `tools/kabel_floss
 
 | Chip | Version | Größe | Lage (vp) | Aufgabe | Skripte |
 |---|---|---|---|---|---|
-| Figet Marena Schiffsführung | v3.3 | 6×6 | (0,−12,−41) | Motoren, Gänge, Ruder, Bugstrahl, Helm | schiff, shud, wellen |
+| Figet Marena Schiffsführung | v3.4 | 6×6 | (0,−12,−41) | Motoren, Gänge, Ruder, Bugstrahl, Helm, Temperatur-Regler | schiff, shud, wellen |
 | Figet Marena Flossen | v1.7 | 3×4 | (0,−5,−44) | 12 Steuerflossen, Heck-Wasser | flossen |
 | Figet Marena Lage | v3.3 | 4×4 | (−4,9,−59) | 6 Mast-Radare → 5 Ziele in der Welt | 6× mastradar, lage |
 | Figet Marena Bildschirm | v3.3 | 4×3 | (1,9,−59) | Monitor 9×5, Zielverteilung, Master Arm | bild |

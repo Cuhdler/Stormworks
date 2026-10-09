@@ -6,6 +6,8 @@
 - test_gemisch: andere Luft/Treibstoff-Verhaeltnisse, Diagnose-Seite
 - test_gaenge: 8 Gaenge im Schiffsmodell (Hand, Automatik hoch/runter, rueckwaerts)
 - test_schreiber: Fahrtenschreiber (shud.lua -> HTTP -> logger.entpacke) lueckenlos und richtig entpackt
+- test_temperatur (v3.4): Waermemodell nach der Fahrt 07.10. - gemeinsame Gas-Grenze, sanft auf 'Temp Ziel', ohne
+  Schaukeln, auch mit traeger Kuehlung
 """
 import os
 import sys
@@ -64,9 +66,14 @@ class Motor:
     """Motormodell: der Zylinder sieht die Drosseln 5 Ticks spaeter (Luft ka*A, Treibstoff ka*F/6.88), Drehmoment aus
     dem Treibstoff, Anlasser, Reibung, Schraube ueber die Kupplung. fehlt: nichts angeschlossen (alles 0)."""
 
-    def __init__(self, anlasser=1.5, ka=0.1, fehlt=False, zuendet=True, kreal=6.88, traeg=0, luftgrenze=0.0):
+    def __init__(self, anlasser=1.5, ka=0.1, fehlt=False, zuendet=True, kreal=6.88, traeg=0, luftgrenze=0.0, waerme=None):
         self.rps, self.hist, self.anl, self.ka, self.fehlt, self.zuendet = 0.0, [(0.0, 0.0)] * 5, anlasser, ka, fehlt, zuendet
-        self.tmp, self.kreal, self.sto = 80.0, kreal, 0.0
+        self.tmp, self.kreal, self.sto = 60.0, kreal, 0.0
+        # waerme = (Anstieg Grad/s bei Vollgas, Kuehlung je Grad ueber 20, Verzoegerung s): Waerme aus dem Treibstoff.
+        # Fahrt 07.10. Gang 7 Vollgas: 15 Grad/min ab kalt, bei 95 Grad hielten im Mittel ca. 35 % Gas -> (0.27, 0.00124)
+        self.wm, self.hq = waerme, 0.0
+        if waerme:
+            self.tmp = 20.0
         # traeg > 0: Zylinder-Inhalt folgt den Drosseln traege (Ticks, wie die 3x3-Motoren im Spiel: Fahrt 01.10.), die
         # Kraft faellt mit dem Gemisch weich ab statt hart (das Spiel lief auch bei MIX 3 und -1.3 noch, schwaecher)
         self.traeg, self.zl = traeg, (0.0, 0.0)
@@ -92,6 +99,10 @@ class Motor:
         tq = (90 * wg * min(fd * 6.88 / self.kreal, ad * 6.88 / 12.9) if brennt else 0.0) + (self.anl * 0.4 if anl else 0.0)
         self.rps = max(0.0, self.rps + (tq - 0.4 * self.rps - last * kup * 0.03 * self.rps ** 2) / 60)
         self.hist = self.hist[1:] + [(luft, treib)]
+        if self.wm:
+            a, b, lag = self.wm
+            self.hq += (min(treib / 0.55, 1.0) * (self.rps > 1) - self.hq) / (lag * 60)
+            self.tmp += (a * self.hq - b * (self.tmp - 20)) / 60
         ad, fd = self.hist[-5]
         if self.lg:
             ad *= min(1.0, self.lg / max(self.rps, 1e-3))
@@ -164,14 +175,14 @@ def test_motor():
     log, rmax_frei = {}, 0.0
     for k in range(60 * 95):
         sek = k / 60
-        mo.tmp = 105.0 if 45 <= sek < 60 else 80.0
+        mo.tmp = 105.0 if 45 <= sek < 60 else 60.0
         ws = 1.0 if 20 <= sek < 24 else (-1.0 if 35 <= sek < 37 else (1.0 if 62 <= sek < 64 else 0.0))
         last = 0.0 if 62 <= sek < 75 else 1.0
         o = sch.tick(ws=ws, h1=(1 <= sek < 1.05) or (85 <= sek < 85.05), last=last)
         if 62 <= sek < 75: rmax_frei = max(rmax_frei, mo.rps)
         log[round(sek, 2)] = o
     at = lambda s: log[round(s, 2)]
-    fx = 7.1 / (14 + 0.8 - 2 * 0.5 - 0.03 * 80 * 0.5)    # v3.2: Q fest 7.1
+    fx = 7.1 / (14 + 0.6 - 2 * 0.5 - 0.03 * 60 * 0.5)    # v3.2: Q fest 7.1
     return pruefe([
         ("aus: Drosseln zu, kein Anlasser, Pumpen aus", at(0.5)[1] < 1e-6 and at(0.5)[2] < 1e-6 and at(0.5)[102] is False and at(0.5)[101] is False),
         ("an: Anlasser dreht sofort, Pumpen an", at(1.1)[102] is True and at(1.1)[101] is True),
@@ -204,7 +215,7 @@ def test_system():
         ("Hotkey 1: alle 3 Motoren laufen", all(at(8)["rps"][i] > 3 for i in (0, 2, 3))),
         ("fehlender Motor L2: Anzeige ---", entpacke(at(8), 2)["z"] == 6),
         ("laufende Motoren ausgekuppelt: Anzeige LEER", entpacke(at(8), 1)["z"] == 4 and entpacke(at(8), 4)["z"] == 4),
-        ("Anzeige RPS/Temperatur entpackt richtig", abs(entpacke(at(8), 1)["rps"] - round(at(8)["rps"][0], 1)) < 0.11 and entpacke(at(8), 1)["tmp"] == 80),
+        ("Anzeige RPS/Temperatur entpackt richtig", abs(entpacke(at(8), 1)["rps"] - round(at(8)["rps"][0], 1)) < 0.11 and entpacke(at(8), 1)["tmp"] == 60),
         ("W 4 s: Hebel 100 %", abs(at(20)[16] - 1) < 1e-6),
         ("eingekuppelt: L1, R1, R2 ganz ein, Anzeige OK", K(25, 0) == 1 and K(25, 2) == 1 and K(25, 3) == 1 and entpacke(at(25), 1)["z"] == 0),
         ("A (links): Ruder voll (%.2f), linke Motoren %.0f %% weniger Gas, Bugstrahl %+.1f" % (at(31.9)[13], PR["Lenk-Schub"] * 100, at(31.9)[14]),
@@ -484,11 +495,60 @@ def test_schreiber():
     ])
 
 
+def test_temperatur():
+    """v3.4: 4 Motoren mit Waermemodell (L2 wird 4 % waermer), kalt los, 12 min Vollgas, dann 2 min Hebel 30 %, dann
+    wieder Vollgas. Gemeinsame Grenze: alle gleich viel Gas; sanft auf 'Temp Ziel', kaum Ueberschwingen, kein Schaukeln.
+    Fahrt 07.10.: Gas weg -> Temperatur faellt erst 10-15 s spaeter. Falls das Spiel nur ganze Grad meldet, schwankt das
+    Gas mehr (alle Motoren gleich, Temperatur bleibt beim Ziel)."""
+    tz, ok = PR["Temp Ziel"], True
+    for lag, name, schw, ganz in ((15, "Kuehlung 15 s traege", 5, False), (25, "Kuehlung 25 s traege", 12, False),
+                                  (15, "nur ganze Grad", 30, True)):
+        mo = [Motor(waerme=(0.27 * f, 0.00124, lag)) for f in (1.0, 1.04, 1.0, 0.98)]
+        if ganz:
+            for m in mo:
+                m.schritt = (lambda alt: lambda *x: (lambda r: (r[0], float(round(r[1])), r[2], r[3]))(alt(*x)))(m.schritt)
+        sch = Schiff(mo)
+        T, gas, gleich, zust, voll = [], [], True, set(), 0.0
+        for k in range(60 * 17 * 60):
+            sek = k / 60
+            ws = 1.0 if 2 <= sek < 6 or 14 * 60 + 2 <= sek < 14 * 60 + 5 else (-1.0 if 12 * 60 <= sek < 12 * 60 + 2.8 else 0.0)
+            o = sch.tick(ws=ws, h1=1 <= sek < 1.05)
+            if k % 30:
+                continue
+            g = [entpacke(o, i)["gas"] for i in (1, 2, 3, 4)]
+            T.append((sek, max(m.tmp for m in mo)))
+            gas.append((sek, g[0]))
+            if sek > 20:
+                gleich &= max(g) - min(g) <= 1
+                zust |= {entpacke(o, i)["z"] for i in (1, 2, 3, 4)}
+            if g[0] >= 95:
+                voll = sek
+        im = lambda a, b, L: [v for t, v in L if a <= t < b]
+        tmax = max(im(0, 12 * 60, T))
+        ruhig = im(8 * 60, 12 * 60, gas)
+        tr = im(8 * 60, 12 * 60, T)
+        nach = max(im(14 * 60, 17 * 60, T))
+        print("   %s: Vollgas bis %.0f s, hoechstens %.1f Grad, ab 8 min %.1f-%.1f Grad bei %d-%d %% Gas, wieder Vollgas: hoechstens %.1f"
+              % (name, voll if voll < 600 else 0, tmax, min(tr), max(tr), min(ruhig), max(ruhig), nach))
+        voll_kalt = max(t for t, v in gas if v >= 95 and t < 600)
+        ok &= pruefe([
+            ("%s: ab kalt %.0f s volles Gas" % (name, voll_kalt), voll_kalt >= 150),
+            ("  ueberschiesst hoechstens 2 Grad (%.1f)" % tmax, tmax <= tz + 2),
+            ("  haelt %d +-1.5 Grad (%.1f..%.1f)" % (tz, min(tr), max(tr)), tz - 1.5 <= min(tr) and max(tr) <= tz + 1.5),
+            ("  Gas schwankt hoechstens %d %% (%d..%d)" % (schw, min(ruhig), max(ruhig)), max(ruhig) - min(ruhig) <= schw),
+            ("  alle 4 Motoren gleich viel Gas", gleich),
+            ("  Anzeige TEMP, nie HEISS", 3 in zust and 1 not in zust),
+            ("  Hebel 30 %% und wieder voll: hoechstens %.1f Grad" % nach, nach <= tz + 2),
+        ])
+    return ok
+
+
 if __name__ == "__main__":
     ok = test_motor()
     ok &= test_system()
     ok &= test_gemisch()
     ok &= test_gaenge()
     ok &= test_schreiber()
+    ok &= test_temperatur()
     print("ALLES OK" if ok else "FEHLER")
     sys.exit(0 if ok else 1)

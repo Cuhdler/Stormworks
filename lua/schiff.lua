@@ -1,4 +1,4 @@
--- SCHIFF v3.2 - Figet Marena: 4 Diesel ohne ZE-Regler (L1 unten links, L2 oben links, R1 unten rechts, R2 oben rechts),
+-- SCHIFF v3.4 - Figet Marena: 4 Diesel ohne ZE-Regler (L1 unten links, L2 oben links, R1 unten rechts, R2 oben rechts),
 -- je Motor Gemisch, Anlasser, Leerlauf, Kupplung, Temperatur-Regler; 8 Gaenge aus 3 Getrieben, Rueckwaertsgang je
 -- Seite, Lenk-Schub, Ruder, Bugstrahlruder
 -- Eingang (Composite, im Chip zusammengefuehrt):
@@ -20,8 +20,12 @@
 -- 'Rueckwaerts max'), A/D = Ruder, Lenk-Schub und Bugstrahlruder ('Bugstrahl beim Lenken'), Pfeil links/rechts =
 --  Bugstrahlruder von Hand
 -- Fahrhebel = Leistung (Anteil der vollen Treibstoffmenge), keine Drehzahl-Grenze im Betrieb; ausgekuppelt 'Leerlauf
---  RPS', 'RPS Notgrenze' nur gegen Durchdrehen. Grenze ist die Temperatur: bis 'Temp Ziel' volles Gas, darueber so viel
---  weniger, dass sie dort bleibt. Ueber 'Motor heiss Grad' auskuppeln.
+--  RPS', 'RPS Notgrenze' nur gegen Durchdrehen. Grenze ist die Temperatur, ueber 'Motor heiss Grad' auskuppeln.
+-- Temperatur-Regler v3.4: EINE Gas-Grenze fuer alle 4 Motoren (Schiff faehrt gerade). Erlaubter Anstieg je Motor =
+--  ('Temp Ziel' - Temperatur) / 'Temp Anflug s'; die Grenze folgt dem Motor, der am staerksten darueber liegt (Anstieg
+--  aus der ueber 2 s geglaetteten Temperatur, nochmals 3 s gemittelt). v3.3 regelte jeden Motor allein auf 95 Grad und schaukelte: Seiten abwechselnd 10 % / 55 %
+--  Gas, 18-29 kn, Schiff zog hin und her (Fahrt 07.10.). Ziel 70: bis 75 Grad volle Leistung, bei 80-85 nur noch
+--  ca. die Haelfte (Gang 7 Vollgas 60 -> 48 kn, gleiche Drosseln).
 -- Gemisch: Treibstoff = Luft * Q / Luftverhaeltnis. v3.2: Q fest 7.1 (darauf liefen alle 4 Motoren in ruhiger Fahrt;
 --  Andre: 'es soll immer gleich bleiben') - Ventile im festen Verhaeltnis. Mit 'Gemisch Regler' > 0 (z. B. 2e-4) regelt
 --  der Chip Q je Motor wieder so nach, dass die gemessene Stoechiometrie im Zylinder das Ziel 'Gemisch' trifft (0.5
@@ -59,9 +63,11 @@ lk=0
 -- je Motor: Kupplung, Zeit ohne Drehzahl, Ausfall, Gas-Grenze (Temperatur); Regler: I Integral, FS geglaettete
 -- Einspritzung, FM letzte Treibstoff-Drossel, Q Gemisch-Verhaeltnis (nachgeregelt), T1 Ticks seit Startversuch,
 -- T2 Ticks mit Drehzahl, ST Anlasser, LA/TA gemittelte Luft/Treibstoff im Zylinder
-K,Z,A,TL,I,FS,FM,Q,T1,T2,ST,LA,TA={},{},{},{},{},{},{},{},{},{},{},{},{}
+-- TP/TR je Motor: geglaettete Temperatur, Anstieg Grad/s; TL gemeinsame Gas-Grenze
+K,Z,A,TP,TR,I,FS,FM,Q,T1,T2,ST,LA,TA={},{},{},{},{},{},{},{},{},{},{},{},{},{}
+TL=1
 for i=1,4 do
-	K[i]=0 Z[i]=0 A[i]=false TL[i]=1 I[i]=0 FS[i]=0 FM[i]=1e-7 Q[i]=7.1 T1[i]=60 T2[i]=0 ST[i]=false LA[i]=0 TA[i]=0
+	K[i]=0 Z[i]=0 A[i]=false TP[i]=0 TR[i]=0 I[i]=0 FS[i]=0 FM[i]=1e-7 Q[i]=7.1 T1[i]=60 T2[i]=0 ST[i]=false LA[i]=0 TA[i]=0
 end
 
 function onTick()
@@ -80,6 +86,7 @@ function onTick()
 		hot=P('Motor heiss Grad')
 		az=P('Motor Ausfall s')*60
 		tz=P('Temp Ziel')
+		tf=P('Temp Anflug s')
 		tk=P('Temp Regel')/60
 		idl=P('Leerlauf RPS')
 		rn=P('RPS Notgrenze')
@@ -137,6 +144,19 @@ function onTick()
 	k6=a4>.5
 	k7=a4<-.5
 	for k=1,3 do O(8+k,m.floor(GR[G][2]/2^(k-1))%2==1) end
+	-- Temperatur-Regler: e = kleinster Spielraum (erlaubter minus gemessener Anstieg) aller laufenden Motoren
+	local e=1
+	for i=1,4 do
+		local rps,tmp=N(3+4*i),N(4+4*i)
+		if TP[i]==0 then TP[i]=tmp end
+		local d=(tmp-TP[i])/120
+		TP[i]=TP[i]+d
+		TR[i]=TR[i]+(d*60-TR[i])/180
+		if rps>=1 then e=m.min(e,(tz-TP[i])/tf-TR[i]) end
+	end
+	TL=cl(TL+e*tk,.1,1)
+	-- eingekuppelt nicht ueber dem gewuenschten Gas hochlaufen (sonst wirkt die Grenze nach dem Gasgeben erst spaet)
+	if ek then TL=m.min(TL,m.max(gs[1],gs[2])+.05) end
 	-- Rueckwaertsgang je Seite erst umlegen, wenn beide Kupplungen der Seite 0.1 s offen sind
 	for s=1,2 do
 		if RV[s]~=rw then
@@ -156,8 +176,6 @@ function onTick()
 		-- Ausfall: laeuft seit dem Anlassen (15 s) nicht, oder bleibt 'Motor Ausfall s' lang unter 2 RPS
 		if on and t>900 and rps<2 then Z[i]=Z[i]+1 else Z[i]=0 end
 		A[i]=Z[i]>az
-		-- Temperatur-Regler: Gas-Grenze sinkt, solange es waermer als 'Temp Ziel' ist, und steigt beim Abkuehlen
-		TL[i]=cl(TL[i]+(tz-tmp)*tk,.1,1)
 		-- Kupplung: Motor laeuft, nicht im Notfall heiss, Fahrt gewuenscht, richtiger Gang; langsam ein, sofort aus
 		if on and rps>=kab and tmp<hot and g>.02 and not A[i] and RV[s]==rw then K[i]=m.min(K[i]+1/kz,1) else K[i]=0 end
 		local am,fm,th,fx,mx=1e-7,1e-7,0,1,0
@@ -179,7 +197,7 @@ function onTick()
 			local e=(K[i]>0 and rn or idl)-rps
 			local u=e*.1*mu+I[i]
 			if u>0 and u<1 then I[i]=cl(I[i]+e*.002*mu,0,m.max(FM[i],.1)) end
-			th=m.min(cl(u,0,1),(K[i]>0 and m.min(gs[s],TL[i])*(1-N(24)) or TL[i])*fx)
+			th=m.min(cl(u,0,1),(K[i]>0 and m.min(gs[s],TL)*(1-N(24)) or TL)*fx)
 			am=cl(th*af/Q[i],1e-4,1)
 			fm=cl(th,1e-7,fx)
 		else
@@ -198,7 +216,7 @@ function onTick()
 		O(1+i,ST[i])
 		-- Anzeige gepackt (ganze Zahlen, bleiben im Composite exakt): RPS*10*1000+Temperatur und
 		-- Zustand*1e6+Gas%*1000+(Gemisch+2)*100. Zustand: 0 OK, 1 HEISS, 2 AUSFALL, 3 TEMP, 4 LEER, 5 KUPPELT, 6 ---
-		local z=(tmp==0 and rps==0) and 6 or A[i] and 2 or tmp>=hot and 1 or TL[i]<.99 and 3 or K[i]>=1 and 0 or K[i]>0 and 5 or 4
+		local z=(tmp==0 and rps==0) and 6 or A[i] and 2 or tmp>=hot and 1 or K[i]>0 and TL<gs[s]-.01 and 3 or K[i]>=1 and 0 or K[i]>0 and 5 or 4
 		S(19+2*i,m.floor(cl(rps,0,999)*10+.5)*1000+m.floor(cl(tmp,0,999)+.5))
 		S(20+2*i,z*1e6+m.floor(cl(th/fx,0,1)*100+.5)*1000+m.floor(cl(mx+2,0,9.99)*100+.5))
 		-- Diagnose: Q*10*1000+Luft-Drossel %

@@ -14,7 +14,7 @@ from build_mc import MC, minify, fmt, LUA_LIMIT  # noqa: E402
 
 LUA_DIR = os.path.join(ROOT, "lua")
 BUILD = os.path.join(ROOT, "build")
-MC_FILE = "Figet Marena Schiff v3.3.xml"
+MC_FILE = "Figet Marena Schiff v3.4.xml"
 
 # Name, Standardwert, Erklaerung
 PROPS = [
@@ -28,8 +28,9 @@ PROPS = [
     ("Lenk-Schub", 0.6, "Beim Lenken bekommt die kurveninnere Seite so viel weniger Gas (0 = aus; negativ, wenn das Schiff dadurch schlechter dreht)"),
     ("Kupplung ab RPS", 3, "Erst einkuppeln, wenn der Motor so schnell dreht (laeuft sicher)"),
     ("Kupplung Zeit s", 3, "So lange dauert das sanfte Einkuppeln von 0 auf voll"),
-    ("Temp Ziel", 95, "Bis zu dieser Motortemperatur volles Gas; darueber nimmt der Chip nur so viel Gas weg, dass sie hier bleibt (Schaden ab ca. 120)"),
-    ("Temp Regel", 0.01, "Wie schnell der Temperatur-Regler Gas wegnimmt bzw. freigibt (Anteil pro Grad und Sekunde)"),
+    ("Temp Ziel", 70, "Diese Temperatur haelt der Chip (alle 4 Motoren gleich, nach dem heissesten). Bis 75 Grad volle Leistung, bei 80-85 nur noch die Haelfte (07.10.)"),
+    ("Temp Anflug s", 60, "So sanft naehert sich die Temperatur dem Ziel: erlaubter Anstieg = Abstand zum Ziel / diese Zeit (10 Grad unter Ziel: 0.17 Grad/s)"),
+    ("Temp Regel", 0.2, "Wie schnell die Gas-Grenze nachregelt (Gas-Anteil pro Sekunde je 1 Grad/s zu schnellem Anstieg; kleiner = ruhiger)"),
     ("Motor heiss Grad", 115, "Notfall: ueber dieser Temperatur kuppelt der Chip den Motor aus"),
     ("Motor Ausfall s", 5, "Laeuft ein Motor so lange nicht (unter 2 RPS), gilt er als ausgefallen und bleibt ausgekuppelt"),
     ("Leerlauf RPS", 4, "Drehzahl ausgekuppelt (Fahrhebel auf null)"),
@@ -68,7 +69,7 @@ STOCK = {"1": "unterer", "2": "oberer"}
 
 def build(schiff_src, hud_src, wellen_src):
     # Beschreibung kurz halten: das Spiel kuerzt sie im Fahrzeug auf 128 Zeichen.
-    mc = MC("Figet Marena Schiffsfuehrung", "Schiff v3.3: 4 Motoren, 8 Gaenge, Wellen-Schutz, Schreiber, Helm schmal. H1 an/aus, H2 Stopp, H3 Automatik, H4 alle Werte", 6, 6)
+    mc = MC("Figet Marena Schiffsfuehrung", "Schiff v3.4: 4 Motoren, Temperatur 70 gemeinsam, 8 Gaenge, Wellen-Schutz, Schreiber. H1 an/aus, H2 Stopp, H3 Automatik, H4 Werte", 6, 6)
     sitz = mc.node("Sitz", 1, 5, "Steuersitz (Helm): Ausgang 'Seat data'", 0, 0, (-8, 6))
     phys = mc.node("Physik-Sensor", 1, 5, "Flossen-Chip 'Physik weiter' (Physics Sensor + Heck-Wasser auf Kanal 20; ohne Messer: Physics Sensor direkt)", 1, 0, (-8, 5))
     rps, zyl = {}, {}

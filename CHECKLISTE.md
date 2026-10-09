@@ -92,9 +92,9 @@ Dreht das Schiff mit **D nach links**: `Ruder Richtung` = -1. Drückt **Pfeil re
 Der Chip kuppelt erst ein, wenn ein Motor läuft (3 RPS), und dann sanft über 3 s. Er kuppelt sofort aus, wenn der
 Motor über 115 °C kommt (`Motor heiss Grad`) oder 5 s lang steht (Ausfall) – der andere Motor treibt weiter.
 
-**Temperatur-Regler (ab v0.9):** bis `Temp Ziel` (95 °C) volles Gas. Wird ein Motor wärmer, nimmt der Chip bei diesem
-Motor nur so viel Gas weg, dass er bei 95 °C bleibt, und gibt es beim Abkühlen wieder frei (`Temp Regel` = wie schnell).
-Im Helm steht dann **GAS xx %** und gelb **TEMP**.
+**Temperatur-Regler (ab v3.4, 09.10.):** eine Gas-Grenze für alle 4 Motoren; er hält den heißesten bei `Temp Ziel`
+(70 °C) und bremst schon vorher sanft (`Temp Anflug s`). Im Helm steht dann **GAS xx %** und gelb **TEMP**.
+(Bis v3.3: jeder Motor allein auf 95 °C – schaukelte, Schiff zog hin und her.)
 
 **Im Helm:** Motoren an/aus, Fahrhebel, Tempo (km/h und Knoten), Kurs, Ruder, Bugstrahl, je Motor Drehzahl,
 Temperatur, Kupplung, Gas-Grenze und Zustand (OK / TEMP / HEISS / AUSFALL).
@@ -138,8 +138,8 @@ Beide ZE-Regler sind ausgebaut; der Schiffs-Chip macht Gemisch, Anlasser und Lee
 | **Motor L / R Zylinder** | liest jetzt Luft, Treibstoff und Temperatur |
 
 - **Fahrhebel = Leistung** (Anteil der vollen Treibstoffmenge), keine Drehzahl-Grenze im Betrieb.
-- **Grenze ist die Temperatur:** bis `Temp Ziel` (95 °C) volles Gas, darüber nimmt der Chip so viel weg, dass sie dort
-  bleibt. Über `Motor heiss Grad` (115 °C) kuppelt er aus. Schaden laut Community ab ca. 120 °C.
+- **Grenze ist die Temperatur:** der Chip hält die Motoren bei `Temp Ziel` (70 °C, ab v3.4; darüber verlieren sie
+  stark Leistung). Über `Motor heiss Grad` (115 °C) kuppelt er aus. Schaden laut Community ab ca. 120 °C.
 - Ausgekuppelt hält er `Leerlauf RPS` (4). `RPS Notgrenze` (120) greift nur, wenn die Schraube aus dem Wasser kommt.
 - `Gemisch` = Stöchiometrie wie am Zylinder angezeigt: 0.5 kräftig (wie vorher beim ZE), 0.2 sparsam.
 - Anlasser (ab v1.1): dreht sofort nach Hotkey 1, bis der Motor 0.5 s über 3 RPS läuft; höchstens 8 s, dann 2 s

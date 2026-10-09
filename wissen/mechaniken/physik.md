@@ -49,6 +49,14 @@ Worten; bei Abweichungen im Spiel hier korrigieren und auf [G] setzen.
   einem anderen Körper sitzt.
 - Selbstgebaute Flügel liefern weniger Auftrieb als die fertigen.
 
+## Motorkühlung
+
+- Modulare Motoren brauchen einen Kühlkreis über die Coolant Manifolds (Pumpen, Kühler oder Wärmetauscher) [W].
+- Wiki-Tipp: statt Luft-Kühlern ein Liquid-Liquid Heat Exchanger, dessen zweite Seite über Fluid Ports Meerwasser
+  durchpumpt (bei Fluid Ports saugt der Motor nicht selbst → Pumpen in richtiger Richtung) [W].
+  **Meerwasser im Kühlkreis verschleißt Teile, wenn auch wenig** (Andre, 09.10.) – darum auf der Figet Marena nicht genutzt.
+- Wie stark Luft-Kühler sind und wovon die Motorleistung bei Hitze abhängt: `wissen/bauteile/README.md` (Modular-Diesel).
+
 ## Treibstoff [W]
 
 - Diesel (Dieselmotoren), Kerosin (Strahltriebwerke – brauchen für gleiche Kraft weniger als Diesel), Kohle

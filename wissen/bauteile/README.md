@@ -112,8 +112,16 @@ Spielregeln in `wissen/mechaniken/README.md`.
   (Fahrtenschreiber 02.10.) [G].
 - Drehkranz: dreht gespiegelt eingebaut andersherum [G].
 - Jet Exhaust Rotating: Bereich ±0,5 Umdrehungen [G].
-- Modular-Diesel: Leistung fällt ab ~75 °C; Temperatur-Regler je Motor kann eine Seite stärker drosseln (Schiff
-  lenkt dann) [G].
+- Modular-Diesel, Temperatur: **volle Leistung bis ~75 °C, darüber bricht sie ein** – Figet Marena Gang 7 Vollgas
+  (gleiche Drosseln): 25–75 °C 59–60 kn, 75–80 °C 54 kn, 80–85 °C 48 kn, 85–90 °C 45 kn; dabei wird das Gemisch im
+  Zylinder magerer (Luftverhältnis 12,6 → 15,5) [G 07.10.]. Wärme entsteht aus dem verbrannten Treibstoff, nicht aus
+  der Drehzahl [W – Wiki „Modular engine“]. Darum Temperatur-Regler auf ~70 °C, nicht höher.
+- Modular-Diesel, Kühlung: 18-Zylinder-3×3-Motor mit 12 Electric Radiator 3×3, 24 Pumpen: Vollgas ab kalt ~15 °C/min;
+  Gas weg → Temperatur fällt erst 10–15 s später [G 07.10.]. Getrennte Regler je Motor schaukeln sich gegenseitig auf
+  (Seiten abwechselnd gedrosselt, Schiff zieht) → eine gemeinsame Grenze für alle Motoren [G].
+- Elektromotoren (`motor_small/medium/large`): liefern Kraft ab 0 RPS, brauchen keine Kupplung; verbrauchen viel Strom,
+  laut Wiki reichen auch mehrere nicht als Hauptantrieb großer Schiffe [W]. Bei leerer Batterie werden sie langsamer [W].
+  Verbrauch noch nicht gemessen.
 - Getriebe (`modular_engine_gearbox_1x1`): `gear_ratio_2` = Index „Ratio On“: 0 = 1:−1, 1 = 1:1, 2 = 6:5, 3 = 3:2 [G].
   Pfeil zum Motor = Übersetzung ins Langsame; Kupplung 0..1; Motoren laufen ab ~2 RPS (Anlasser) [G].
 

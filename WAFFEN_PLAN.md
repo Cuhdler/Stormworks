@@ -627,6 +627,21 @@ ohne 'channel', also alle auf Bool 1 (fehlende Angabe = Kanal 0, wie in den Beis
   Steuerung (lua/jet_steuerung.lua), Pruefstand tools/test_jet.py (25 ok, mit Dreh-Modell 30/60/120 m/s).
 - Offen: Landung (Andre noch nicht entschieden), Test im Spiel (Ruder-Vorzeichen!).
 
+### 09.10. ~18:35: Schiff v3.4 - gemeinsamer Temperatur-Regler (Sicherung 'Figet Marena vor Schiff v3.4 (09.10.)', tools/chip_tauschen.py)
+- Auswertung Fahrt 07.10.: Vollgas Gang 7 ab kalt +15 Grad/min; bis 75 Grad 60 kn, darueber bricht die Leistung ein
+  (80-85 Grad 48 kn bei gleichen Drosseln). Ab 95 Grad drosselte jeder Motor allein und die Regler schaukelten: Seiten
+  abwechselnd 10 % / 55 % Gas, 18-29 kn, Schiff zog hin und her (= Andres 'nur noch 35 kn, lenkt komisch' vom 07.10.).
+  Die Luft-Kuehlung (48 Electric Radiator, alle mit Luefter und Strom) traegt dauerhaft nur ca. ein Drittel Gas.
+- v3.4: EINE Gas-Grenze fuer alle 4 Motoren; Ziel 70 Grad ('Temp Ziel'), sanft angefahren ('Temp Anflug s' 60,
+  'Temp Regel' 0.2), TEMP im Helm nur, wenn die Temperatur wirklich Gas wegnimmt. Pruefstand test_temperatur mit
+  Waermemodell (Verzoegerung 15/25 s, auch ganze Grad): haelt 70 +-1.5, alle Motoren gleich. chip_tauschen.py kann
+  jetzt Eigenschaften neu vorgeben ("Temp Ziel=70"), sonst blieben alte Werte.
+- Andre: B (Meerwasser-Waermetauscher) nein - Meerwasser verschleisst. C (E-Motoren zum Tempo-Halten) ja: Andre baut
+  die Motoren, dann Chip-Anbindung (Batterie-Schutz, Anschluesse durch Zusammenlegen von 'Motor L/R an' und
+  'Rueckwaerts L/R' frei machen).
+- Im Spiel zu pruefen: Dauer-Tempo bei 70 Grad (Modell ca. 22 % Gas), ob das Gas ruhig bleibt (liefert das Spiel nur
+  ganze Grad, schwankt es mehr), Fahrtenschreiber an.
+
 ### Reihenfolge (Andre 08.10.)
 1. Autopilot (v1.0 eingebaut 08.10., Test im Spiel steht aus): Kurs/Tempo halten, Karte (screen.drawMap) mit Wegpunkten zum Antippen, Ausweichen ueber 2-3 Laser am Bug
    (Lua kann das Gelaende der Karte nicht auslesen). Andre baut: Autopilot-Knopf, Karten-Monitor, Laser. Chip zwischen
@@ -635,7 +650,7 @@ ohne 'channel', also alle auf Bool 1 (fehlende Angabe = Kanal 0, wie in den Beis
 3. Liquid Meter je Abteil + Anzeige im Steuerraum, Schotten (noch zu bauen) alle schliessen. (08.10.: eingebaut)
 4. Mehr Lenzpumpen (automatisch je Abteil). (08.10.: Andres Lenzleitung + Automatik eingebaut)
 5. Ueberhitzung: Temperatur-Regler gleich fuer alle Motoren und sanft; danach ggf. Elektromotoren/Fluid Jets zum Halten
-   des Tempos waehrend des Abkuehlens.
+   des Tempos waehrend des Abkuehlens. (09.10.: Regler v3.4 eingebaut; E-Motoren: Andre baut, dann Chip)
 6. Raketen raus, dafuer Andres Flugzeug: ferngesteuert, Maussteuerung (Blick wie Swifter), Kamera; eigener Sitz, allein
    per Umschaltung am Hauptsitz. Claude: Steuerlogik mit Stabilisierung, Funkstrecke (Steuerung hin, Flugdaten zurueck),
    Sitz-Umschaltung, Kamerabild mit Anzeige. Andre baut zuerst.
