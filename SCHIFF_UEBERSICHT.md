@@ -382,25 +382,9 @@ Keine Schrift (stünde quer).
 
 ## 8. Erkenntnisse aus dem Spiel (bestätigt)
 
-- Lua: 8192 Zeichen je Skript; **kein `select`**, kein `unpack` (aber `table.unpack` geht, gemessen 05.10., siehe
-  `LUA_STORMWORKS.md`); Eingänge in `onDraw` lesen = „draw error 202“.
-- HTTP: höchstens eine Anfrage je Tick; Antwort braucht Content-Length; Ports ohne Lauscher blockieren 2–4 s.
-- Spiel lief im Gefecht mit ca. 21–37 Ticks/s.
-- Gespiegelte Teile (t-Attribut): Radare zählen gespiegelt; Drehkränze drehen andersherum; Steuerflossen: + =
-  Vorderkante hoch bei allen.
-- Phalanx-Radar: Winkel ab Sockel; meldet nur, solange der Strahl drüber ist.
-- Instrumentenblock: Elemente ohne `channel` schreiben alle auf Bool 1.
-- Camera Stabilized: Pivot/Pitch = Tempo mit Totzone 0,1; Laser ohne Treffer = 4000.
-- Robotic Pivot: Signal 1 = 90°; Ruder-Bauteil: 1 = 45°.
-- Munitions-Kennung im Spiel: `property_ammo_damage` 1 HE, 2 Fragmentation, 3 AP, 4 Incendiary.
-- Gemessene Zielhöhen: fahrende Schiffe ca. −2 m (Ausreißer bis +6), stehende Dinge im Wasser 3–6 m,
-  Bodenziele 14–16 m; fahrende Schiffe 6–13 m/s.
-- Battle Cannon: Verschluss öffnet 79 Ticks, „Loaded“ ca. 98 Ticks nach dem Schließen.
-- **Teile ohne r-Attribut** haben im Spiel die Drehung 0,0,1,−1,0,0,0,−1,0, nicht die Grunddrehung (aus den Kabeln
-  aller Fahrzeuge bestimmt: erklärt 122 Teile, die Grunddrehung 4). Spiegel-Flag t wirkt lokal vor der Drehung.
-- Laser Distance Sensor (Log 08.10.): sieht **durch das Wasser bis zum Meeresboden** (Wellen/Wasseroberfläche
-  zählen nicht). Pivot in Umdrehungen (höchstens 0,125); beim Bug-Laser kippt Pivot Y plus den Strahl nach unten.
-  Mit falschem Vorzeichen sah der Autopilot im Hafen den Boden 36–57 m tief als „Hindernis“.
+Seit 09.10. in der allgemeinen Wissensablage, weil sie für jedes Fahrzeug gelten:
+Spielregeln (Lua, HTTP, Ticks, Drehung, Spiegeln, Zielhöhen) in `wissen/mechaniken/README.md`, Verhalten einzelner
+Bauteile (Laser, Pivot, Kamera, Radar, Battle Cannon, Munition) in `wissen/bauteile/README.md` Abschnitt 3.
 
 ---
 

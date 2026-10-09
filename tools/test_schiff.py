@@ -18,7 +18,7 @@ PR = {n: v for n, v, _ in PROPS}
 
 
 # Lua-Funktionen, die es in Stormworks nicht gibt (04.10.: 'select' lief im Pruefstand und stuerzte im Spiel ab;
-# 05.10. im Spiel gemessen, LUA_STORMWORKS.md - table.unpack gibt es, debug nur mit debug.log)
+# 05.10. im Spiel gemessen, wissen/microcontroller/lua.md - table.unpack gibt es, debug nur mit debug.log)
 NICHT_IM_SPIEL = ("select", "unpack", "load", "loadstring", "dofile", "loadfile", "require", "rawget", "rawset",
                   "rawequal", "rawlen", "setmetatable", "getmetatable", "coroutine", "os", "io", "utf8", "package",
                   "print", "pcall", "xpcall", "error", "assert", "collectgarbage", "_G", "_VERSION")

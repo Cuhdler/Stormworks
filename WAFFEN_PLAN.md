@@ -535,7 +535,7 @@ ohne 'channel', also alle auf Bool 1 (fehlende Angabe = Kanal 0, wie in den Beis
   (Vorgabe hoeher als 'Land ab m' 7) -> Radar-Hoehe statt 'Ziel Hoehe fest m'.
 - Anstrich (tools/anstrich.py v2.2, Vorschau tools/anstrich_vorschau.py): Marine-Schema mit Platten-Schraffur, innen
   und aussen, auch Bauteile (sc + bc/bc2/bc3).
-- LUA_STORMWORKS.md: im Spiel gemessene Lua-Liste (kein select/print/pcall/setmetatable, table.unpack geht).
+- wissen/microcontroller/lua.md: im Spiel gemessene Lua-Liste (kein select/print/pcall/setmetatable, table.unpack geht).
 - Folgeschalter 54 (2 Chips, nur Bibliothek).
 
 ### Offen (Andre 07.10.)

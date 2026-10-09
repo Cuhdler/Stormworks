@@ -3,7 +3,7 @@
 Aufruf (Python mit lupa):  python landkreuzer/tools/test_ki.py  [Testname ...]
 
 Was nachgebildet wird:
-- Lua wie im Stormworks-Microcontroller: nur die Namen, die es im Spiel gibt (LUA_STORMWORKS.md); input nur in onTick,
+- Lua wie im Stormworks-Microcontroller: nur die Namen, die es im Spiel gibt (wissen/microcontroller/lua.md); input nur in onTick,
   screen/map nur in onDraw (sonst Fehler wie im Spiel); jeder Lua-Fehler = Test verloren.
 - Welt (x Ost, z Nord, Hoehe ueber dem Meer): Hoehenfeld (Ebene 20 m, Huegel, See mit Strand, Klippe) und Hindernisse
   (Kreise/Kaesten = Felsen/Gebaeude, Hoehe ueber dem Boden).
@@ -31,7 +31,7 @@ LUA_DIR = os.path.join(os.path.dirname(HIER), "lua")
 sys.path.insert(0, HIER)
 from ki_props import PROPS_FAHREN, PROPS_KARTE  # noqa: E402
 
-GRENZE = 8192          # im Spiel gemessen (LUA_STORMWORKS.md); das Bildschirm-Skript des Schiffs hat 8176 und laeuft
+GRENZE = 8192          # im Spiel gemessen (wissen/microcontroller/lua.md); das Bildschirm-Skript des Schiffs hat 8176 und laeuft
 DT = 1.0 / 60
 
 # ---------------------------------------------------------------------------------------------------------------

@@ -1,12 +1,12 @@
 """Holt die Bauteil-Daten aus dem Spiel (Stormworks/rom/data/definitions, eine XML-Datei je Bauteil) und schreibt sie
-kompakt nach daten/bauteile.json - damit Claude jedes Bauteil kennt (Name, Datei-Name fuer die Fahrzeugdatei,
+kompakt nach wissen/bauteile/bauteile.json - damit Claude jedes Bauteil kennt (Name, Datei-Name fuer die Fahrzeugdatei,
 Gewicht, Bloecke, Anschluesse mit Position und Art) und Teile wie Raeder oder Ketten selbst richtig einbauen und
 verkabeln kann.
 
 Aufruf auf dem PC (im Repo-Ordner, nur Python, keine Zusatzpakete):
     python tools/bauteile_holen.py                    findet Stormworks ueber Steam
     python tools/bauteile_holen.py -d "D:/SteamLibrary/steamapps/common/Stormworks/rom/data/definitions"
-Danach: git add daten/bauteile.json, committen, pushen.
+Danach: git add wissen/bauteile/bauteile.json, committen, pushen.
 
 Inhalt je Bauteil (Schluessel = Datei-Name ohne .xml, so heisst es auch im Fahrzeug: <c d="...">):
   name, kategorie, masse, preis, flags, tags, bloecke [[x,y,z],...], anschluesse [{label, ein (1 = Eingang,
@@ -22,7 +22,7 @@ import sys
 
 HIER = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HIER)
-AUS = os.path.join(ROOT, "daten", "bauteile.json")
+AUS = os.path.join(ROOT, "wissen", "bauteile", "bauteile.json")
 
 ATTR = re.compile(r'([^\s=<>/"\']+)\s*=\s*("([^"]*)"|\'([^\']*)\')')
 
@@ -144,7 +144,7 @@ def main():
         if d:
             print("  %s: %s, %d Bloecke, Anschluesse %s" % (probe, d["name"], len(d["bloecke"]),
                                                           [(k["label"], k["pos"]) for k in d["anschluesse"]]))
-    print("Jetzt: git add daten/bauteile.json, committen und pushen.")
+    print("Jetzt: git add wissen/bauteile/bauteile.json, committen und pushen.")
 
 
 if __name__ == "__main__":

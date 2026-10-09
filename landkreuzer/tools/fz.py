@@ -3,7 +3,7 @@
 Lesen: die Figet Marena vom 05.10. (landkreuzer/fahrzeug/Schiff Teilelager.xml) dient als Teile-Lager - jedes Teil, das der Landkreuzer benutzt,
 kommt als genaue Text-Kopie von dort (Art, Drehung, Farben, Einstellungen), nur an eine neue Stelle verschoben.
 
-Begriffe (wie im SCHIFFSDATEI_TUTORIAL.md):
+Begriffe (wie im wissen/fahrzeugdatei.md):
 - Position vp in Bloecken (0,25 m); x rechts, y oben, z vorn
 - r Drehung (9 Zahlen; fehlt sie, gilt 0,0,1,-1,0,0,0,-1,0), t Spiegelung (Bit 1 x, 2 y, 4 z; lokal vor der Drehung)
 - Kabel: (Typ, Ausgang-Position, Eingang-Position); Typ 0 An/Aus, 1 Zahl, 4 Strom, 5 Composite, 6 Video, 8 Riemen
