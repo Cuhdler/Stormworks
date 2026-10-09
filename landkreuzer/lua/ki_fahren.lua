@@ -1,7 +1,7 @@
 -- KI FAHREN v1.0 - KI Landkreuzer (08.10.2026): das Fahr-Gehirn des Radpanzers. Links und rechts je ein Antrieb
 -- (7 Raeder je Seite), gelenkt wird wie beim Kettenfahrzeug ueber den Unterschied. Panzer ca. 28 m lang, 9,5 m breit,
 -- 40-60 t: traege, langer Bremsweg, dreht auf der Stelle in einem Kreis von ca. 15 m Halbmesser.
--- Bedienung von einem Sitz: Schalter 'KI an' -> der Panzer merkt sich die Stelle als Heimat und faehrt allein:
+-- Bedienung von einem Sitz: Schalter 'KI an' -> der Panzer faehrt allein (Heimat = Ort 0,5 s nach dem Spawnen):
 --  - Wegpunkte (bis 8, auf der Karte angetippt, ki_karte.lua) der Reihe nach; im Revier-Modus danach wieder von vorn,
 --    sonst bleibt er am letzten stehen (Zustand 9).
 --  - ohne Wegpunkte im Revier-Modus: Zufallspunkte hoechstens 'Revier m' um die Heimat (nicht nahe gemerkter Gefahr,
@@ -110,7 +110,7 @@ end
 
 W={} X={} T={} H={} xn=0 tn=0
 wi,hn,mt,am,sd,kt,sk,lu,ph,l1,l2,av,vp,pb,od,c0=1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0
-lo,ro,si,vf,pw,ut,wt,qd,bn,bs,BH=0,0,0,0,0,0,0,1,0,0,1
+lo,ro,si,vf,pw,ut,wt,qd,bn,bs,BH,tc=0,0,0,0,0,0,0,1,0,0,1,0
 gx,gz,hx,hz,ex,ez,dh,xx,zz=0,0,0,0,0,0,0,0,0
 pm=true
 NG()
@@ -135,6 +135,9 @@ function onTick()
 	end
 	x,al,z=N(1),N(2),N(3)
 	xx,zz=x,z
+	-- Heimat: der Ort 0,5 s nach dem Spawnen - derselbe Tick wie die Schutzzone im Klebe-Skript
+	tc=tc+1
+	if tc==30 then hx,hz=x,z end
 	hd=wr(KR*N(4))
 	sn,cs=m.sin(hd*pi2),m.cos(hd*pi2)
 	pt,rl=N(5)*NR,N(6)*RR
@@ -164,8 +167,8 @@ function onTick()
 	end
 	l3,l5=b3,b5
 
-	-- KI eingeschaltet: Heimat hier
-	if kon and not ki then hx,hz,px,mt,kt,pb=x,z,nil,0,0,RL>0 and 120 or 0 NG() end
+	-- KI eingeschaltet (auch nach Pause): neues Ziel, kein altes Manoever
+	if kon and not ki then px,mt,kt,pb,mq=nil,0,0,RL>0 and 120 or 0,nil NG() end
 	ki=kon
 	-- Hand: jede Bewegung von W/S/A/D, danach 2 s Pause
 	hn=B(2) and (A(ws)>.05 or A(ad)>.05) and 120 or Z(hn-1,0)
@@ -181,10 +184,11 @@ function onTick()
 		if f then tn=tn%8+1 T[tn]={x,z} end
 	end
 
-	-- Bug-Laser, Grundwert BH: das Property, wenn > 0; sonst (0 = Automatik) der Mittelwert, solange er vor dem
-	-- KI-Start still steht (die Raeder waehlt Andre spaeter, je nach Rad misst er auf ebenem Boden 0,4-1 m); hat er
-	-- dafuer keine Zeit, gilt die erste Messung.
-	if BQ>0 then BH=BQ elseif dn>0 and dn<9 and (not kon and A(vf)<.1 or bn<1) then bn,bs=bn+1,bs+dn BH=bs/bn end
+	-- Bug-Laser, Grundwert BH: das Property, wenn > 0; sonst (0 = Automatik) der Mittelwert, solange er in den ersten
+	-- 10 s nach dem Spawnen still steht (Spawn-Platz = eben; die Raeder waehlt Andre spaeter, je nach Rad misst er
+	-- 0,4-1 m). Spaeter nicht mehr: ueber einer Mulde oder Kante wuerde er sonst falsch lernen. Ohne Messung bis
+	-- dahin gilt die erste.
+	if BQ>0 then BH=BQ elseif dn>0 and dn<9 and (tc<600 and A(vf)<.1 or bn<1) then bn,bs=bn+1,bs+dn BH=bs/bn end
 	-- Front-Laser und Physik-Sensor sitzen 3,2 bzw. 2,2 Bloecke ueber dem Bug-Laser: ihre Hoehe ueber dem Boden folgt
 	-- aus BH (0 = Automatik, passt dann zu jeder Radgroesse)
 	LH,SH=LQ>0 and LQ or BH+.8,SQ>0 and SQ or BH+.55
@@ -207,11 +211,11 @@ function onTick()
 	-- anderen, sonst haelt eine Gefahr, die immer wieder ausloest, ihn ewig fest
 	if fe>=3 then
 		NG()
-		if B(6) then elseif #W>0 then wi=wi%#W+1 else px=nil end
+		if B(6) then elseif #W>0 then if wi<#W or pm then wi=wi%#W+1 else fz=true end else px=nil end
 	end
 	if hn>0 then
 		-- Hand: links = W/S + A/D, rechts = W/S - A/D
-		zs,u,w,up=1,ws,ad,false
+		zs,u,w,up,mt,mq=1,ws,ad,false,0,nil
 	elseif not kon then
 		up=false
 	elseif bl then

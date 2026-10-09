@@ -8,14 +8,15 @@ Prüfstand im Rechner. Im Spiel noch **nicht** erprobt – alles unten unter „
 | `lua/ki_fahren.lua` | das Fahr-Gehirn (Antrieb links/rechts) |
 | `lua/ki_karte.lua` | Touch-Karte im Cockpit (Monitor 3×3 oder 5×3) |
 | `tools/ki_props.py` | alle Properties mit Standardwert und Erklärung (`PROPS_FAHREN`, `PROPS_KARTE`, `PROPS`) |
-| `tools/test_ki.py` | Prüfstand: Simulator + 57 Prüfungen (auch Wald, Damm, Tal, holpriger Boden, Lenk-Variante, 0,6 m höhere Räder, Stehen am Hang), am Ende „ALLES OK“ |
+| `tools/test_ki.py` | Prüfstand: Simulator + 61 Prüfungen (auch Wald, Damm, Tal, holpriger Boden, Lenk-Variante, 0,6 m höhere Räder, Stehen am Hang), am Ende „ALLES OK“ |
 
 ---
 
 ## 1. Was die KI macht
 
-- **Schalter „KI an“** (kommt mit Startverzögerung/Pause vom Klebe-Skript): der Panzer merkt sich die Stelle als
-  **Heimat** und fährt allein.
+- **Schalter „KI an“** (kommt mit Startverzögerung/Pause vom Klebe-Skript): der Panzer fährt allein. **Heimat** ist
+  der Ort 0,5 s nach dem Spawnen (derselbe wie die Mitte der Schutzzone im Klebe-Skript) – auch wenn er vor dem
+  KI-Start von Hand woanders hin fährt oder die Pause an- und ausgeht.
 - **Wegpunkte** (bis 8) tippt Andre auf der Karte an. Die KI fährt sie der Reihe nach ab. Im **Revier-Modus** (Knopf
   „Revier“, grün = an, beim Start an) geht es danach wieder von vorn los, sonst bleibt er am letzten stehen.
 - **Ohne Wegpunkte** im Revier-Modus: Zufallspunkte höchstens „Revier m“ um die Heimat. Am Punkt bleibt er
@@ -44,7 +45,8 @@ Prüfstand im Rechner. Im Spiel noch **nicht** erprobt – alles unten unter „
   voraus liegen; an Wänden hält sie früh und sanft Abstand (beim Wegdrehen schwenkt das lange Heck zur Wand).
 - **Sackgasse** (vorn zu, beide Seiten enger als „Breite m“): gerade zurück, bis der ganze Rumpf draußen ist; die
   ganze Sackgasse wird gemerkt und künftig umfahren.
-- **Bug-Laser** (senkrecht nach unten): Grundwert lernt er beim Stehen vor dem KI-Start („Boden Laser Hoehe m“ = 0).
+- **Bug-Laser** (senkrecht nach unten): Grundwert lernt er beim Stehen in den ersten 10 s nach dem Spawnen (der
+  Spawn-Platz ist eben; später nicht mehr, sonst lernt er über einer Mulde falsch) („Boden Laser Hoehe m“ = 0).
   Daraus folgen auch die Höhen der Front-Laser und des Physik-Sensors (Automatik) – die Radgröße ist also egal.
   - Boden unter dem Bug unter 0,5 m über dem Meer = **Wasser** → kräftig bremsen, zurück. Je tiefer der Boden unter
     dem Bug, desto langsamer (ab 10 m über „Wasser Hoehe m“), damit 50 t bergab rechtzeitig stehen.
@@ -58,7 +60,9 @@ Prüfstand im Rechner. Im Spiel noch **nicht** erprobt – alles unten unter „
   Tempo-Regler die Stelle mit den Motoren (im Simulator am 15°-Hang 30 s lang auf 0,1 m genau; vorher rollte er
   16 m zurück). Auf ebenem Boden kostet das fast keinen Strom.
 - Ein Ziel, das **3 Fehlschläge** bringt (festgefahren 1, Gefahr 2, 60 s ohne 5 m näher 1), wird übersprungen –
-  z. B. ein Wegpunkt im See oder unter einer Klippe.
+  z. B. ein Wegpunkt im See oder unter einer Klippe. Ist es der letzte Wegpunkt und der Revier-Modus aus, bleibt er
+  stehen (vorher fing er wieder bei 1 an und fuhr endlos hin und her).
+- **W/S/A/D** bricht ein laufendes Manöver (Zurücksetzen, Befreien) ab; nach dem Loslassen plant die KI neu.
 
 ### Rad-Richtung und Lernen
 „Rad Richtung links/rechts“ (1/−1) drehen die Ausgänge um (rechts ist gespiegelt eingebaut → −1). Mit „Richtung
@@ -146,7 +150,7 @@ leicht aus Versehen), „−“ weiter weg, „+“ näher dran, „Revier“ (a
 | Breite m | 9.5 | Breite mit Rädern |
 | Laenge m | 27.5 | Länge (Physik-Sensor in der Mitte, Bug-Laser vorn) |
 | Laser Hoehe m | 0 | Höhe der Front-Laser über dem Boden; 0 = Automatik (Bug-Laser-Grundwert + 0,8 m, passt zu jeder Radgröße) |
-| Boden Laser Hoehe m | 0 | Grundwert des Bug-Lasers; 0 = beim Stehen vor dem Start lernen |
+| Boden Laser Hoehe m | 0 | Grundwert des Bug-Lasers; 0 = beim Stehen in den ersten 10 s nach dem Spawnen lernen |
 | Sensor Hoehe m | 0 | Höhe des Physik-Sensors über dem Boden; 0 = Automatik (Bug-Laser-Grundwert + 0,55 m) |
 | Kampf Abstand m | 1500 | Ziel näher = anhalten |
 | Kampf Tempo m/s | 0 | Tempo im Kampf |

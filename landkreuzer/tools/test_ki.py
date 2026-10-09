@@ -1213,10 +1213,70 @@ def test_grosse_raeder():
         LASER, SENSOR_H, BUG_H = alt
 
 
+def test_nachtfunde():
+    """Fehler, die eine Durchsicht in der Nacht fand (09.10.): (1) letzter Wegpunkt unerreichbar, Revier aus: nicht
+    wieder von vorn; (2) Handbetrieb bricht ein Manoever ab (sonst faehrt die KI danach das alte Rueckwaerts-Manoever
+    weiter und merkt eine riesige 'Sackgasse'); (3) Heimat bleibt am Spawn-Ort, auch wenn er vor dem KI-Start von Hand
+    woanders hin faehrt (wie die Schutzzone im Klebe-Skript); (4) Bug-Laser-Grundwert lernt nur in den ersten 10 s."""
+    # (1) WP 1 an Land, WP 2 mitten im See, Revier aus
+    s = Sim(see())
+    s.befehl(2)
+    s.tippe(-150, 80)
+    s.tippe(0, 330)
+    s.lauf(600)
+    folge = [s.log[0][4]]
+    for l in s.log:
+        if l[4] != folge[-1]:
+            folge.append(l[4])
+    pruefe("letzter Wegpunkt im See, Revier aus: Wegpunkt-Folge %s (nicht wieder 1), nie im Wasser" % folge[:6],
+           folge[:2] == [1, 2] and 1 not in folge[2:] and s.chip.g.fz)
+    # (2) Sackgasse, mitten im Zuruecksetzen faehrt Andre von Hand weg
+    u = [("b", -14, 140, 14, 143, 10), ("b", -14, 95, -11, 143, 10), ("b", 11, 95, 14, 143, 10)]
+    s = Sim(Welt(hind=u, name="Sackgasse"))
+    s.tippe(0, 270)
+    s.lauf(420, bis=lambda s: s.chip.g.mq)
+    g = s.chip.g
+    s.lauf(1)
+    s.sitz, s.ws = True, -1.0
+    s.lauf(15)
+    s.ws, s.ad = 0.0, 1.0
+    s.lauf(4)
+    s.ws, s.ad = 1.0, 0.0
+    s.lauf(20)
+    s.ws, s.ad = 0.0, 0.0
+    manoever = (g.mt, g.mq)
+    s.lauf(30)
+    gross = [v[3] for v in g.X.values() if v and v[3] > 40] if hasattr(g.X, "values") else []
+    pruefe("Hand mitten im Zuruecksetzen: Manoever weg (mt %s, mq %s), keine Riesen-Sackgasse gemerkt %s" % (
+        manoever[0], manoever[1], gross), manoever == (0, None) and not gross)
+    # (3) KI Pause, von Hand 120 m nach Norden, dann KI an: Heimat bleibt der Spawn-Ort
+    s = Sim(eben(), ki=False)
+    s.sitz, s.ws = True, 1.0
+    s.lauf(40, bis=lambda s: s.pz.z > 120)
+    s.ws = 0.0
+    s.lauf(5)
+    s.ki = True
+    s.lauf(2)
+    g = s.chip.g
+    hz = (g.hx, g.hz)
+    s.heim = True
+    s.lauf(120, bis=lambda s: s.zs == 9 and abs(s.pz.v) < 0.2)
+    pruefe("von Hand 120 m weg, dann KI an: Heimat (%.0f, %.0f) = Spawn-Ort, 'Nach Hause' faehrt dorthin (%.0f m)" % (
+        hz[0], hz[1], math.hypot(s.pz.x, s.pz.z)), math.hypot(*hz) < 1 and math.hypot(s.pz.x, s.pz.z) < 30)
+    # (4) Bug-Laser lernt nur in den ersten 10 s
+    s = Sim(eben(), ki=False)
+    s.lauf(9)
+    n9 = s.chip.g.bn
+    s.lauf(20)
+    pruefe("Bug-Laser-Grundwert: %d Messungen in 9 s, danach keine mehr (%d)" % (n9, s.chip.g.bn),
+           n9 > 400 and s.chip.g.bn < 610)
+
+
 TESTS = [test_groesse, test_karte, test_aus, test_bodenlaser, test_hand, test_batterie, test_pause, test_heim, test_lernen, test_kampf,
          test_wegpunkte, test_wand,
          test_huegel, test_fest, test_sackgasse, test_see, test_klippe, test_revier, test_dauerlauf,
-         test_nie_falsch_gelernt, test_hang, test_gelaende, test_lenkvariante, test_holprig, test_grosse_raeder]
+         test_nie_falsch_gelernt, test_hang, test_gelaende, test_lenkvariante, test_holprig, test_grosse_raeder,
+         test_nachtfunde]
 
 if __name__ == "__main__":
     wahl = sys.argv[1:]

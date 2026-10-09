@@ -110,8 +110,13 @@ def test_lenkung():
     rueck.append(("Schwenk-Tempo 30 Grad/s: nach 0,5 s %.1f Grad" % (o[1] * 90), abs(o[1] * 90 - 10) < 0.6))
     # rueckwaerts: rechtsherum drehen = Achsen nach links einschlagen
     for _ in range(300):
-        o = tick(g, io, {29: 1.0, 30: -0.5, 32: 2.0})
+        o = tick(g, io, {28: -3.0, 29: 1.0, 30: -0.5, 32: 2.0})
     rueck.append(("rueckwaerts rechtsherum: vorn %.3f (links eingeschlagen)" % o[1], o[1] < -0.1 and o[2] > 0.1))
+    # auf der Stelle drehen (Soll-Tempo 0, Fahrbefehl vom Halte-Regler leicht negativ): wie vorwaerts einschlagen
+    for _ in range(300):
+        o = tick(g, io, {28: 0.0, 29: 1.0, 30: -0.08, 32: 0.3})
+    rueck.append(("auf der Stelle rechtsherum (Fahrbefehl -0,08): vorn %.3f (rechts eingeschlagen)" % o[1],
+                  o[1] > 0.1 and o[2] < -0.1))
     # schnell (20 m/s): halber Winkel
     for _ in range(300):
         o = tick(g, io, {29: 1.0, 30: 1.0, 32: 20.0})

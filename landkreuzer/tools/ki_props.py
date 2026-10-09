@@ -32,7 +32,7 @@ PROPS_FAHREN = [
     ("Breite m", 9.5, "Breite des Panzers mit Raedern (fuer Sicherheitsabstand und enge Gassen)"),
     ("Laenge m", 27.5, "Laenge des Panzers (der Physik-Sensor sitzt etwa in der Mitte, der Bug-Laser ganz vorn)"),
     ("Laser Hoehe m", 0, "Hoehe der drei Front-Laser ueber dem Boden; 0 = Automatik: Bug-Laser-Grundwert + 0,8 m (passt zu jeder Radgroesse)"),
-    ("Boden Laser Hoehe m", 0, "Normale Messung des Bug-Lasers (senkrecht nach unten) auf ebenem Boden; 0 = Automatik: lernt sie, solange der Panzer vor dem KI-Start still steht"),
+    ("Boden Laser Hoehe m", 0, "Normale Messung des Bug-Lasers (senkrecht nach unten) auf ebenem Boden; 0 = Automatik: lernt sie, solange der Panzer in den ersten 10 s nach dem Spawnen still steht"),
     ("Sensor Hoehe m", 0, "Hoehe des Physik-Sensors ueber dem Boden; 0 = Automatik: Bug-Laser-Grundwert + 0,55 m"),
     # Kampf
     ("Kampf Abstand m", 1500, "Ziel naeher als das: anhalten (stabile Plattform fuer die Tuerme)"),
