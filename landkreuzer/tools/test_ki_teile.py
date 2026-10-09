@@ -208,6 +208,12 @@ def test_status_vorzeichen():
             elif d[0] == "drawText" and farbe == (255, 60, 60) and str(d[3]):
                 rot.add(str(d[3])[:1] if str(d[3])[:1] in "NK" else str(d[3]))
         soll = {"N", "K", "D!"} if falsch else set()
+        io["w"], io["h"] = 288, 160
+        io["draw"] = []
+        g.onDraw()
+        helm = " ".join(str(d[3]) for d in io["draw"] if d[0] == "drawText")
+        rueck.append(("Helm-Zeile (%s): %s" % ("falsch" if falsch else "richtig", helm[-20:]),
+                      ("K! N! D!" in helm) == falsch and ("!" in helm) == falsch))
         rueck.append(("Vorzeichen im Status (%s): rot %s" % ("alles falsch" if falsch else "alles richtig",
                                                           sorted(rot) or "nichts"), rot == soll))
     return rueck

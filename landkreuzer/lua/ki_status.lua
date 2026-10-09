@@ -18,7 +18,7 @@
 -- Vorzeichen-Pruefung aus der eigenen Fahrspur (alle 0,5 s, nur beim Fahren): K-Zeile rot = Kurs passt gespiegelt zur
 -- Fahrtrichtung ('Kompass Richtung' falsch), N/R-Zeile rot = Bug geht bergauf runter ('Nick Richtung' falsch), rot
 -- 'D!' = bei Lenkbefehl rechts dreht die Spur links (Motor-Kabel 'Links'/'Rechts' vertauscht). Zaehler je Probe +1
--- passt / -1 falsch (+-10), rot ab -5.
+-- passt / -1 falsch (+-10), rot ab -5. Im Helm stehen dieselben Warnungen am Ende der Zeile (K! N! D! L! R!).
 N=input.getNumber
 B=input.getBool
 st=screen
@@ -132,7 +132,8 @@ function onDraw()
 		local b=W[16] or 0
 		local t=string.format('KI %s  WP %d/%d  V %.0f/%.0f  %s%s%s',ki and (ZN[z+1] or z) or 'PAUSE',math.floor(W[29] or 0),
 			math.floor(W[27] or 0),W[32] or 0,W[28] or 0,b>0 and string.format('BAT %.0f%%',b*100) or '',wa and '  WAFFEN FREI' or sz and '  SCHUTZZONE' or '',
-			zi and '  ZIEL' or '')
+			zi and '  ZIEL' or '')..(kz<-5 and ' K!' or '')..(nz<-5 and ' N!' or '')..(dd<-5 and ' D!' or '')..
+			(ul and ' L!' or '')..(ur and ' R!' or '')
 		st.setColor(0,0,0,160)
 		st.drawRectF(0,h-8,#t*5+4,8)
 		st.setColor(z==8 and 255 or 120,z==8 and 80 or 255,z==8 and 80 or 120)

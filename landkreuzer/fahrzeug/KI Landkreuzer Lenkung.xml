@@ -4272,7 +4272,8 @@ if w&gt;100 then
 local b=W[16] or 0
 local t=string.format('KI %s  WP %d/%d  V %.0f/%.0f  %s%s%s',ki and (ZN[z+1] or z) or 'PAUSE',math.floor(W[29] or 0),
 math.floor(W[27] or 0),W[32] or 0,W[28] or 0,b&gt;0 and string.format('BAT %.0f%%',b*100) or '',wa and '  WAFFEN FREI' or sz and '  SCHUTZZONE' or '',
-zi and '  ZIEL' or '')
+zi and '  ZIEL' or '')..(kz&lt;-5 and ' K!' or '')..(nz&lt;-5 and ' N!' or '')..(dd&lt;-5 and ' D!' or '')..
+(ul and ' L!' or '')..(ur and ' R!' or '')
 st.setColor(0,0,0,160)
 st.drawRectF(0,h-8,#t*5+4,8)
 st.setColor(z==8 and 255 or 120,z==8 and 80 or 255,z==8 and 80 or 120)

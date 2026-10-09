@@ -295,7 +295,7 @@ ankommt. Der Monitor zeigt:
 
 Vorschau beider Monitore: `bilder/anzeigen.png` (gezeichnet mit `tools/anzeige_bild.py`).
 
-Im Helm steht dasselbe kurz in einer Zeile unten.
+Im Helm steht dasselbe kurz in einer Zeile unten, am Ende auch die Warnungen (K! N! D! L! R!).
 
 ### Selbst fahren
 Hinsetzen und **W/S/A/D** drücken: Du fährst. 2 s nach dem Loslassen übernimmt die KI wieder, wenn sie nicht auf
