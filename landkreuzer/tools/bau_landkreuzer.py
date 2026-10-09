@@ -210,6 +210,12 @@ def chip_sc(w, l):
     return 2 * w * l + 2 * w + 2 * l
 
 
+def laser_zelle(t, k):
+    """k-ter Block des Laser-Sensors t in Strahlrichtung (lokal +y): 0 = vp, 1 = 'Laser an', 2 = Composite."""
+    d = fz.sub(t.lokal_zu_welt((0, 1, 0)), t.vp)
+    return fz.add(t.vp, tuple(k * c for c in d))
+
+
 class Bau:
     def __init__(self, schreiber=False, lenkung=False):
         self.F = fz.Fahrzeug.lesen()
@@ -375,6 +381,10 @@ class Bau:
             n = fz.Teil(xml).verschoben(fz.sub(p, t.vp))
             self.plus(n)
             self.laser_teile.append((name, n))
+            # Der Laser ist 3 Bloecke lang (lokal +y = Strahlrichtung): vp Entfernung + Strom, +1 'Laser an', +2
+            # Composite (Schwenk) - so am verkabelten Bug-Laser des Autopiloten (Schiff ab 08.10.)
+            for k in (1, 2):
+                self.teil_voxel.add(laser_zelle(n, k))
 
     # ---------------- Rumpf ----------------
     def deck(self, z):
@@ -770,9 +780,9 @@ class Bau:
         for name, t in self.laser_teile:
             neu.append((4, bat, t.vp))
             neu.append((1, t.vp, self.knoten("KI", name)))
-            # Einschalten: die Turm-Kamera des Schiffs hat fuer ihren Laser einen Eingang 'Laser an' - der einzelne
-            # Laser-Sensor sehr wahrscheinlich auch. Hat er keinen, findet das Kabel keinen Anschluss (schadet nicht).
-            neu.append((0, self.knoten("KI", "Immer an"), t.vp))
+            # Einschalten: 'Laser an' sitzt einen Block weiter in Strahlrichtung (am Bug-Laser des Autopiloten so
+            # verkabelt; ohne das Signal misst er nicht)
+            neu.append((0, self.knoten("KI", "Immer an"), laser_zelle(t, 1)))
         # Ladestand: von der kleinen Batterie im selben Netz (alle Anschluesse in ihrem einen Block); fehlt er, liest die
         # KI 0 = unbekannt
         neu.append((4, bat, self.bat_klein.vp))

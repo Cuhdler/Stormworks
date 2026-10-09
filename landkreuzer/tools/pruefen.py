@@ -12,6 +12,8 @@ Prueft:
 7. Kabel-Enden: keines auf einem Bau-Block (dort ist kein Anschluss), keines weit weg von jedem Bauteil;
    Chip-Anschluesse ohne Kabel werden als Hinweis genannt (erwartet: die im Schiff auch offenen und die Ausgaenge
    'Zustand', 'Pumpen' sowie in der einfachen Variante 'Lenkung vorn/hinten')
+8. Laser-Sensoren (3 Bloecke lang in Strahlrichtung, wie am Bug-Laser des Autopiloten im Schiff): nichts in ihren
+   Bloecken, verkabelte haben 'Laser an' im 2. Block
 """
 import collections
 import os
@@ -120,6 +122,20 @@ def pruefe(txt, schiff=None, laut=True):
                   and min(max(abs(e[i] - p[i]) for i in range(3)) for p in bauteile) > 3)
     if weit:
         fehler.append("%d Kabel-Enden ohne Bauteil in der Naehe, z. B. %s" % (len(weit), weit[:3]))
+    # 8. Laser-Sensoren: 3 Bloecke lang (lokal +y); verkabelt (Entfernung am vp) -> 'Laser an' (An/Aus) im 2. Block,
+    #    keine anderen Teile in Block 2 und 3
+    alle_vp = collections.Counter(t.vp for _, ts2 in F.koerper for t in ts2)
+    for _, ts2 in F.koerper:
+        for t in ts2:
+            if t.d != "laser_distance_sensor":
+                continue
+            d = fz.sub(t.lokal_zu_welt((0, 1, 0)), t.vp)
+            z1, z2 = fz.add(t.vp, d), fz.add(t.vp, tuple(2 * c for c in d))
+            if any(alle_vp[z] for z in (z1, z2)):
+                fehler.append("Laser bei %s: in seinen Bloecken %s/%s sitzt ein anderes Teil" % (t.vp, z1, z2))
+            if any(typ == 1 and a == t.vp for typ, a, _ in F.kabel) and \
+                    not any(typ == 0 and b == z1 for typ, _, b in F.kabel):
+                fehler.append("Laser bei %s: 'Laser an' (Block %s) ohne Kabel - er misst dann nicht" % (t.vp, z1))
     for nm, kn in chips.items():
         offen = [lab for lab, mode, typ, w in kn if w not in enden]
         if offen:

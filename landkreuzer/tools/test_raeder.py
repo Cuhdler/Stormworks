@@ -21,8 +21,9 @@ DATEIEN = {"Skid": "KI Landkreuzer.xml", "Lenkung": "KI Landkreuzer Lenkung.xml"
 RAD_R = "0,0,1,0,1,0,-1,0,0"
 
 
-def rad(d, vp, t=0):
-    return fz.Teil('<c d="%s"%s><o r="%s" sc="6">%s</o></c>' % (d, ' t="%d"' % t if t else "", RAD_R, fz.vox("vp", vp)))
+def rad(d, vp, t=0, ohne_r=False):
+    return fz.Teil('<c d="%s"%s><o%s sc="6">%s</o></c>' % (d, ' t="%d"' % t if t else "",
+                                                          "" if ohne_r else ' r="%s"' % RAD_R, fz.vox("vp", vp)))
 
 
 def koerper_von(F):
@@ -47,7 +48,7 @@ def lauf(pfad, args):
         sys.argv = alt
 
 
-def vorbereiten(ordner, name, rechts_auch=False, kappe=False, nur_rechts=False):
+def vorbereiten(ordner, name, rechts_auch=False, kappe=False, nur_rechts=False, ohne_r=False):
     txt = open(os.path.join(os.path.dirname(HIER), "fahrzeug", name), encoding="utf-8").read()
     F = fz.Fahrzeug(txt)
     st = raeder.stummel(F)
@@ -55,7 +56,7 @@ def vorbereiten(ordner, name, rechts_auch=False, kappe=False, nur_rechts=False):
     koerper = [(k, list(ts)) for k, ts in F.koerper]
     _, sl = max((q for q in st if q[0] == "L"), key=lambda q: q[1][2])
     if not nur_rechts:
-        koerper[kv[sl]][1].append(rad("wheel_test", fz.add(sl, (-2, 0, 0))))
+        koerper[kv[sl]][1].append(rad("wheel_test", fz.add(sl, (-2, 0, 0)), ohne_r=ohne_r))
     if kappe:
         koerper[kv[sl]][1].append(rad("wheel_test_kappe", fz.add(sl, (-4, 0, 0))))
     if rechts_auch or nur_rechts:
@@ -124,6 +125,24 @@ def pruefen(variante, name, ordner):
     k = {t.vp for _, ts in F.koerper for t in ts if t.d == "wheel_test_kappe"}
     rueck.append(("%s: Rad aus zwei Teilen ganz kopiert (%d Kappen)" % (variante, len(k)),
                   ok and k == {fz.add(s, (-4, 0, 0) if q == "L" else (4, 0, 0)) for q, s in st}))
+    os.remove(pfad)
+    # Rad ohne r-Attribut (im Spiel dann Drehung 0,0,1,-1,0,0,0,-1,0): rechts genau spiegelbildlich
+    pfad, F0, st, kv = vorbereiten(ordner, name, ohne_r=True)
+    ok, aus = lauf(pfad, ["--schreiben"])
+    F = fz.Fahrzeug(open(pfad, encoding="utf-8").read())
+    rs = [t for _, ts in F.koerper for t in ts if t.d == "wheel_test"]
+    links = next(t for t in rs if t.vp[0] < 0)
+
+    def achsen(t):
+        return [fz.sub(t.lokal_zu_welt(e), t.vp) for e in ((1, 0, 0), (0, 1, 0), (0, 0, 1))]
+    soll = [(-a[0], a[1], a[2]) for a in achsen(links)]
+    # ohne r zeigt die lokale y-Achse in Welt-x (0,0,1,-1,0,0,0,-1,0): Spiegel-Bit 2 (mit der falschen Annahme
+    # 'Grunddrehung' kaeme Bit 1 heraus - das spiegelt vorn/hinten, der Anschluss saesse aussen)
+    gut = ok and len(rs) == 14 and {t.t for t in rs if t.vp[0] > 0} == {2} and \
+        all(achsen(t) == soll for t in rs if t.vp[0] > 0) and \
+        all(achsen(t) == achsen(links) for t in rs if t.vp[0] < 0)
+    rueck.append(("%s: Rad ohne Drehungs-Angabe rechts spiegelbildlich (t=%s)" % (
+        variante, sorted({t.t for t in rs if t.vp[0] > 0})), gut))
     os.remove(pfad)
     # nur rechts gesetzt: links wird gespiegelt
     pfad, F0, st, kv = vorbereiten(ordner, name, nur_rechts=True)

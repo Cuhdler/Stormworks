@@ -28,8 +28,9 @@ fahren – quasi ein KI-Panzer“.
    = 600** eintragen (10 Minuten Ruhe), speichern, spawnen. Dann in der Brücke im Instrumentenblock **„Waffen
    sperren“ an** und **„KI Pause“ an**. (Ohne diese Änderung fährt er nach 30 s los, schießt nach 60 s.)
 5. Hinsetzen, W/A/S/D: fährt und lenkt er? Status-Monitor rechts vom Sitz: stehen bei allen 7 Lasern Zahlen
-   (nicht „--“)? **Zeigen die Laser in die richtige Richtung?** (Das ist noch nie im Spiel geprüft – die beiden
-   Laser-Sensoren im Schiff hängen an keinem Kabel.) Im Stand muss **UN** etwa 0,4–1,5 m zeigen (Boden unter dem
+   (nicht „--“)? **Zeigen die Laser in die richtige Richtung?** (Das Teil selbst ist im Spiel bestätigt: Der Bug-Laser
+   deines Autopiloten ist dasselbe Teil mit derselben Drehung wie die Front-Laser des Panzers.) Im Stand muss **UN**
+   etwa 0,4–1,5 m zeigen (Boden unter dem
    Bug). Langsam von Hand auf eine Wand oder ein Haus zufahren: **VM** muss kleiner werden; seitlich daneben **LI**
    bzw. **RE**; rückwärts auf etwas zu: **HI**. Zeigt ein Laser immer „>1K“, obwohl etwas davor ist, zeigt sein Strahl
    woandershin – bitte melden, dann drehe ich ihn.
@@ -116,6 +117,15 @@ Gefundene **Fehler**, die im Spiel Ärger gemacht hätten (alle behoben und mit 
   und die Sicherung überschrieben. Jetzt bleiben Wellen mit Rad unberührt; Räder aus mehreren Teilen gehen auch;
   eigene Sicherung je Datei; `--lenkung` für die Lenk-Variante. Neuer Prüfstand `test_raeder.py`.
 - Bilder `vorschau_raeder.png` / `vorschau_raeder_lenkung.png`: so etwa sieht er mit 11er-Rädern aus.
+- **Zusammengeführt mit deinem Update vom 08.10. abends** (Autopilot, Licht, Abteile, neue Schiffsdatei):
+  - Dein Autopilot hat einen verkabelten Laser-Sensor, und der misst im Spiel. Daran sah ich: Der Sensor ist
+    3 Blöcke lang, und **„Laser an“ sitzt im zweiten Block**. Mein Einschalt-Kabel ging an den ersten – alle 7 Laser
+    hätten nicht gemessen (die KI wäre mit LASER? stehen geblieben). Behoben, mit fester Prüfung in `pruefen.py`.
+  - Teile ohne Drehungs-Angabe haben im Spiel die Drehung 0,0,1,−1,0,0,0,−1,0 (dein Befund). `raeder.py` spiegelt
+    so ein Rad jetzt richtig (vorher wäre der Anschluss des rechten Rads außen gewesen).
+  - Der Panzer baut seine Teile jetzt aus einem festen Teilelager (`landkreuzer/fahrzeug/Schiff Teilelager.xml`, dein
+    Schiff vom 05.10.), damit Umbauten am Schiff ihn nicht mehr kaputt machen. Die Waffen-Chips kommen aus den
+    aktuellen Bau-Skripten (Flak v2.9, Kanone v1.7, Bildschirm v3.6) und bestehen alle Land-Prüfungen.
 - Aussehen: Schlamm unten, Lüftungsgitter, Abzeichen; Bild `beschriftet.png` (was wo ist), `anzeigen.png` (Monitore).
 
 Ausprobiert und **verworfen**: zwei zusätzliche Eck-Laser für dichten Wald (im Simulator schlechter), die
@@ -325,12 +335,11 @@ In dieser Reihenfolge. Anfangen jeweils mit **KI Pause an** und **Waffen sperren
    - Fährt er bei W vorwärts? Die Richtung je Seite stellen die Eigenschaften „Rad Richtung links/rechts“ im
      KI-Chip ein. Die KI lernt das auch selbst, solange „Richtung lernen“ 1 ist.
 4. **Laser:** Auf dem KI-Status-Monitor stehen alle 7 Entfernungen. Bei „--“ hängt ein Laser nicht richtig.
-   Annahme: Strom, Ausgang und Einschalten sitzen am Laser-Block selbst, der Strahl zeigt wie bei der Turm-Kamera.
-   Achtung: Die zwei Laser-Sensoren im Schiff haben keine Kabel – Anschlüsse und Strahlrichtung des einzelnen
-   Laser-Sensors sind also nirgends im Spiel bestätigt. Prüfung der Richtung: siehe Schnellstart Schritt 5.
-   Die Turm-Kamera hat für ihren Laser einen Eingang „Laser an“; darum bekommt jeder Laser vom KI-Chip
-   (Ausgang „Immer an“) ein Einschalt-Kabel. Zeigen trotzdem alle „--“: im Editor an einem Laser nachsehen,
-   welche Anschlüsse er hat, und mir sagen. Solange der mittlere Front-Laser oder der Bug-Laser 0 meldet, fährt die
+   Seit deinem Autopiloten (08.10.) ist der Laser-Sensor im Spiel bestätigt: Er ist **3 Blöcke lang** in
+   Strahlrichtung; am ersten Block sitzen Entfernung und Strom, am zweiten „Laser an“ (ohne dieses Signal misst er
+   nicht), am dritten ein Composite zum Schwenken. Jeder Panzer-Laser ist genau so angeschlossen („Laser an“ vom
+   KI-Chip, Ausgang „Immer an“). Prüfung der Richtung: siehe Schnellstart Schritt 5. Zeigen trotzdem alle „--“: im
+   Editor an einem Laser nachsehen und mir sagen. Solange der mittlere Front-Laser oder der Bug-Laser 0 meldet, fährt die
    KI nicht (Zustand LASER?) – sie fährt also nie blind los.
 5. **Türme:** wie auf dem Schiff (Test Rohre usw.). Die Richtungs-Eigenschaften sind die vom Schiff, weil die Türme
    genauso eingebaut sind.
@@ -407,6 +416,7 @@ Alle Eigenschaften stehen im **KI-Chip** (im Editor anklicken). Nach dem Ändern
 |---|---|
 | `tools/bau_landkreuzer.py` | baut die ganze Fahrzeugdatei neu und prüft sie (`python landkreuzer/tools/bau_landkreuzer.py`, Lenk-Variante mit `--lenkung`) |
 | `tools/fz.py` | Fahrzeugdatei lesen/schreiben (Teile, Körper, Kabel); Lesen und Schreiben ergibt byte-gleich dieselbe Datei |
+| `fahrzeug/Schiff Teilelager.xml` | festes Teilelager: die Figet Marena vom 05.10. (alle Positionen im Bau beziehen sich darauf; die aktuelle Schiffsdatei hat andere Teile) |
 | `tools/build_mc.py` | Chip-Baukasten (Nachbau des fehlenden Originals; baut alle Schiffs-Chips byte-gleich nach, siehe `tools/test_build_mc.py`) |
 | `tools/build_ki.py` | KI-Chip (5×5) |
 | `tools/raeder.py` | Räder kopieren (`--lenkung` für die Lenk-Variante; Prüfstand `tools/test_raeder.py`) |
