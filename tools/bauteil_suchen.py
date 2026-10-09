@@ -9,8 +9,8 @@ import sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DATEI = os.path.join(ROOT, "wissen", "bauteile", "bauteile.json")
-TYP = {0: "An/Aus", 1: "Zahl", 2: "Drehmoment", 3: "Wasser", 4: "Strom", 5: "Composite", 6: "Video", 7: "Ton",
-       8: "Seil"}
+TYP = {0: "An/Aus", 1: "Zahl", 2: "Drehmoment", 3: "Fluessigkeit/Gas", 4: "Strom", 5: "Composite", 6: "Video",
+       7: "Ton", 8: "Seil/Munition"}
 
 
 def main():

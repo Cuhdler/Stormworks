@@ -10,11 +10,11 @@ Claude-Sitzung (auf dem PC oder in der Cloud) den aktuellen Stand kennt.
 |---|---|---|
 | `SCHIFF_UEBERSICHT.md` | Gesamtübersicht (Stand 04.10.2026, 22:56) | da |
 | `CHECKLISTE.md`, `WAFFEN_PLAN.md`, `KONZEPT.md` | Details Antrieb, Waffen, Konzept | da |
-| `wissen/` | **Allgemeines Stormworks-Wissen** für alle Fahrzeuge: Bauteile, Microcontroller, Lua, Fahrzeugdatei, Spielmechaniken. Inhaltsverzeichnis `wissen/README.md` | da |
+| `wissen/` | **Gemeinsame Stormworks-Wissensdatenbank** für alle Fahrzeuge und alle Chats: alle Bauteile, Microcontroller, Lua, Fahrzeugdatei, Physik, Strom, Funk, Spielmechaniken. Inhaltsverzeichnis `wissen/README.md` | da |
 | `lua/` | alle Chip-Skripte | da |
 | `tools/` | Bau-, Einbau-, Prüfstand- und Logger-Programme | da |
 | `fahrzeug/Figet Marena.xml` | Kopie der Fahrzeugdatei (Stand 08.10. 22:40), nur zum Lesen; ohne Steam-Autorangaben | da |
-| `tools/bauteile_holen.py` → `wissen/bauteile/bauteile.json` | Alle Bauteile des Spiels (Datei-Name, Gewicht, Blöcke, Anschlüsse mit Position), aus `Stormworks\rom\data\definitions` auf Andres PC geholt; suchen mit `tools/bauteil_suchen.py` | Programm da, Daten fehlen noch (auf dem PC einmal laufen lassen) |
+| `tools/bauteile_holen.py` → `wissen/bauteile/` | Alle 759 Bauteile des Spiels (Datei-Name, Gewicht, Größe, Blöcke, Anschlüsse mit Position und Beschreibung) als `INDEX.md`, Seiten je Kategorie und `bauteile.json`, aus `Stormworks\rom\data\definitions` auf Andres PC geholt; suchen mit `tools/bauteil_suchen.py` | da (Stand 09.10.2026) |
 | `landkreuzer/` | **KI-Landkreuzer** (08./09.10.): autonomer Panzer aus Schiffsteilen, Fahr-KI (`KI_FAHREN.md`), Anleitung mit Schnellstart `landkreuzer/LANDKREUZER.md` | fertig gebaut, im Simulator geprüft, im Spiel noch ungetestet |
 
 `logs/`, `build/` und `backup/` werden nicht hochgeladen (groß bzw. erzeugt, siehe `.gitignore`). Einzelne Logs,

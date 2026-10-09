@@ -1,54 +1,68 @@
 # Spielmechaniken
 
 Was wir über das Spiel selbst wissen, unabhängig vom Fahrzeug. Wie sich einzelne Bauteile verhalten, steht in
-`wissen/bauteile/README.md`. Jede Zeile nennt ihre Quelle; *gemessen* heißt im Spiel bestätigt.
+`wissen/bauteile/README.md`. Kennzeichen wie in `wissen/README.md`.
+
+Weitere Dateien in diesem Ordner:
+- `physik.md`: Schwerkraft, Luftwiderstand, Auftrieb, Dichtigkeit und Lecks, Flüssigkeiten und Gase, Flügel, Treibstoff
+- `strom.md`: Batterien, Generatoren, Verbrauch, Stromausfall
+- `funk.md`: Funk, Video, Reichweiten, Fernsteuerung
 
 ## Maße und Koordinaten
 
-- 1 Block = 0,25 m. Positionen in der Fahrzeugdatei sind ganze Blöcke. *(Datei)*
+- 1 Block = 0,25 m. Positionen in der Fahrzeugdatei sind ganze Blöcke [S].
 - Achsen im Fahrzeug: x links − / rechts +, y oben +, z vorn + / hinten −. Alle Körper (auch Türme, Gelenke) und
-  alle Kabel benutzen dasselbe System. *(Datei, siehe `wissen/fahrzeugdatei.md` Abschnitt 2)*
+  alle Kabel benutzen dasselbe System [G] (siehe `wissen/fahrzeugdatei.md` Abschnitt 2).
+- Welt: x = Ost, z = Nord, y = Höhe über dem Meer (= Karten-/GPS-Koordinaten) [G].
 - Teile **ohne** `r`-Attribut haben die Drehung `0,0,1,-1,0,0,0,-1,0`, nicht die Grunddrehung. Aus den Kabeln aller
-  Fahrzeuge bestimmt: erklärt 122 Teile, die Grunddrehung nur 4. *(Datei)*
-- Spiegel-Flag `t` wirkt lokal, **vor** der Drehung. *(Datei)*
+  Fahrzeuge bestimmt: erklärt 122 Teile, die Grunddrehung nur 4 [G 08.10.].
+- Spiegel-Flag `t` wirkt lokal, **vor** der Drehung [G, 38 Kabel].
 
 ## Spiegeln
 
 - Gespiegelte Teile (`t`-Attribut) können ihre Wirkrichtung umdrehen: Radare zählen gespiegelt, Drehkränze drehen
-  andersherum. *(gemessen, Figet Marena)*
-- Steuerflossen: Signal + heißt bei **allen** Vorderkante hoch, auch gespiegelt (Fahrtenschreiber 02.10.).
-  *(gemessen)*
+  andersherum [G, Figet Marena].
+- Steuerflossen: Signal + heißt bei **allen** Vorderkante hoch, auch gespiegelt (Fahrtenschreiber 02.10.) [G].
 
 ## Zeit und Ticks
 
-- Ein Tick ist ein Spiel-Schritt. Ohne Gefecht gemessen: 61 Ticks/s (Fahrtenschreiber 02.10.). *(gemessen)*
+- Ein Tick ist ein Spiel-Schritt. Ohne Gefecht gemessen: 61 Ticks/s (Fahrtenschreiber 02.10.) [G].
 - Im Gefecht fiel das Spiel auf ca. 21–37 Ticks/s. Zeiten in Skripten darum in Ticks zählen (= Spielzeit), nicht in
-  echten Sekunden. *(gemessen)*
+  echten Sekunden [G].
 
 ## Microcontroller und Lua
 
-- Höchstens 8192 Zeichen je Lua-Skript. *(gemessen)*
-- Eingänge in `onDraw` lesen gibt „draw error 202“. Eingänge nur in `onTick` lesen. *(gemessen)*
+- Höchstens 8192 Zeichen je Lua-Skript [G].
+- Eingänge in `onDraw` lesen gibt „draw error 202“. Eingänge nur in `onTick` lesen [G].
 - Vollständige Liste der Lua-Befehle: `wissen/microcontroller/lua.md`.
 
 ## HTTP (Chip ↔ eigener PC)
 
-- Höchstens eine Anfrage je Tick. *(gemessen)*
-- Die Antwort braucht `Content-Length`. *(gemessen)*
+- Höchstens eine Anfrage je Tick [G].
+- Die Antwort braucht `Content-Length` [G].
 - Eine Anfrage an einen Port, an dem niemand lauscht, blockiert die HTTP-Warteschlange des Spiels unter Windows
-  2 s (127.0.0.1) bzw. 4,1 s (localhost). Darum nur an Ports senden, an denen ein Programm wartet. *(gemessen 04.10.)*
+  2 s (127.0.0.1) bzw. 4,1 s (localhost). Darum nur an Ports senden, an denen ein Programm wartet [G 04.10.].
+
+## Fahrzeuge laden und speichern
+
+- Das Spiel löscht beim Laden **stumm** Kabel, die auf keinen passenden Anschluss zeigen [G].
+- Beim Speichern schreibt der Editor die ganze Datei neu (z. B. fällt `offset="0"` weg) – Vergleiche daher inhaltlich [G].
+- Speichert man im Editor auf einem älteren geladenen Stand, sind Datei-Änderungen dazwischen weg → nach jeder
+  Änderung per Datei im Spiel **neu laden, nicht speichern** [G].
 
 ## Ziele und Welt
 
 - Zielhöhen (Radar/Laser): fahrende Schiffe ca. −2 m (Ausreißer bis +6), stehende Dinge im Wasser 3–6 m,
-  Bodenziele 14–16 m; fahrende Schiffe 6–13 m/s. *(gemessen)*
+  Bodenziele 14–16 m; fahrende Schiffe 6–13 m/s [G].
+- Weit entfernte Fahrzeuge werden evtl. nicht mehr simuliert → „Keep Active Block“ (`no_sleep`) [W], siehe `funk.md`.
 
 ## Offene Fragen
 
 Hier sammeln, was wir noch nicht wissen und im Spiel prüfen wollen:
 
-- Physik: Auftrieb, Wasserwiderstand, wie viel Gewicht ein Block Rumpf trägt.
+- Physik: wie viel Gewicht ein Block Rumpf trägt, Wasserwiderstand je Rumpfform (Grundlagen in `physik.md`, [W]).
 - Antrieb: Motor-Kennlinien, Getriebe, Kupplung, Treibstoffverbrauch.
-- Strom: Verbrauch und Erzeugung der wichtigsten Teile.
+- Strom: Verbrauch der eigenen Fahrzeuge messen (Wiki-Werte in `strom.md`, [W]).
 - Wetter, Wellen, Tageszeit und wie sie Sensoren beeinflussen.
 - Schaden, Feuer, Wassereinbruch.
+- Video- und Daten-Funk auf derselben Frequenz-Zahl: stören sie sich? (`funk.md`)

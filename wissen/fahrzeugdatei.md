@@ -1,7 +1,9 @@
-# Tutorial: Die Schiffsdatei „Figet Marena.xml“ lesen und richtig bearbeiten
+# Fahrzeugdatei (XML) lesen und richtig bearbeiten
 
-Für eine KI, die an Andres Stormworks-Schiff arbeiten soll. Hier steht nur, wie die Fahrzeugdatei aufgebaut ist,
-wie man sich darin zurechtfindet und wie man sie bearbeitet, ohne etwas kaputt zu machen.
+Für eine KI, die an Andres Stormworks-Fahrzeugen arbeiten soll. Hier steht, wie eine Fahrzeugdatei aufgebaut ist
+(`data_version="3"`), wie man sich darin zurechtfindet und wie man sie bearbeitet, ohne etwas kaputt zu machen.
+Die Beispiele stammen von der Figet Marena; die Regeln gelten für jedes Fahrzeug (belegt an Schiff, small Jet,
+Rescue Heli und allen Fahrzeugen in `dataehicles`).
 
 - **Original auf Andres PC:** `%APPDATA%\Stormworks\data\vehicles\Figet Marena.xml`
 - **Größe:** ca. 5 MB, rund 55 000 Teile, 52 Körper, knapp 900 Kabel.
@@ -61,7 +63,7 @@ Grob, verkürzt:
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?><vehicle data_version="3" bodies_id="889">
-  <editor_placement_offset .../><authors/>
+  <editor_placement_offset .../><authors/>      (im Original mit Steam-Namen; vor dem Hochladen ins Repo durch <authors/> ersetzen)
   <bodies>
     <body unique_id="657"><components> ...alle Teile des Rumpfs... </components></body>
     <body unique_id="791"><components> ... </components></body>      (Türme, Gelenke, Raketen ...)
@@ -85,7 +87,7 @@ Grob, verkürzt:
 |---|---|
 | `d="..."` | **Art des Teils** (Name der Spiel-Definition). Fehlt `d`, ist es ein normaler Block. |
 | `t="..."` | **Spiegelung** als Bitmaske: 1 = x, 2 = y, 4 = z gespiegelt. Fehlt `t`, ist nichts gespiegelt. |
-| `r="..."` | **Drehung** als 3×3-Matrix, zeilenweise (9 Zahlen). Fehlt `r`, ist es `1,0,0,0,1,0,0,0,1` (ungedreht). |
+| `r="..."` | **Drehung** als 3×3-Matrix, zeilenweise (9 Zahlen). **Fehlt `r`, ist es `0,0,1,-1,0,0,0,-1,0`, nicht ungedreht** (siehe unten). |
 | `bc`, `ac`, `sc` | Farben und interne Werte. **Nicht anfassen.** |
 | weitere Attribute | **Einstellungen** des Teils, z. B. `gear_ratio_2`, `m_fov_x`, `m_sweep_mode` |
 | `<vp .../>` | **Position** des Teils (Bezugsblock) |
@@ -103,6 +105,27 @@ Position allein reicht nicht, weil bei Gelenken und Drehkränzen zwei Teile auf 
   - Ohne `channel` schreibt das Element auf Bool 1. Deshalb lagen früher alle vier Schalter auf Bool 1.
 - **Gespiegelte Teile** verhalten sich teils anders: gespiegelte Radare zählen Winkel gespiegelt, gespiegelte
   Drehkränze drehen andersherum.
+- `custom_name="..."`: im Editor vergebener Name eines Knopfs oder Teils.
+
+**Drehung `r` genauer** [G]:
+- Zeile0 = wohin lokales x zeigt, Zeile1 = lokales y, Zeile2 = lokales z. Lokaler Punkt p → Welt:
+  `vp + p.x·Zeile0 + p.y·Zeile1 + p.z·Zeile2`.
+- **Fehlt `r`, ist die Drehung `0,0,1,-1,0,0,0,-1,0`** (08.10. aus den Kabeln aller Fahrzeuge bestimmt: erklärt
+  122 Teile, die Grunddrehung nur 4). Das Spiel schreibt die Grunddrehung ausdrücklich (`r="1,0,0,0,1,0,0,0,1"`).
+  Folge des alten Irrtums: ein Monitor ohne `r` stand senkrecht und kopfüber; Kabel an versetzten Anschlüssen
+  zeigten daneben und wurden vom Spiel beim Laden verworfen.
+- **Ausdehnung:** Teile aus mehreren Blöcken reichen von `vp + Drehung·voxel_min` bis `voxel_max` (Größen in
+  `wissen/bauteile/INDEX.md`). Ein Teil belegt mehr als seinen `vp` – bei der Platzsuche die ganze Ausdehnung rechnen.
+
+**Spiegeln `t` genauer** [G]: Bits 1 = x, 2 = y, 4 = z. Wirkt **lokal, vor der Drehung** (bestätigt an 38 Kabeln,
+0 widersprechen). Der Spiegel-Befehl im Editor setzt das Bit der lokalen Achse, die zur Welt-x zeigt.
+
+**Monitore** [G]: Bildseite = lokal +y, Bild-oben = lokal +z, Bild-rechts = lokal −x (von vorn gesehen). Monitore
+liegen um `vp` mittig (z. B. 5×3: x −2..2, z −1..1) → 180° um die Bildachse drehen ändert die belegte Fläche nicht.
+Auflösung 32 px je Block.
+
+**Anstrich** [G]: `sc="N,RRGGBB,..."` = Farben der Teilflächen; `bc`/`bc2`/`bc3` = Grundfarben (z. B. Rahmen, Türen),
+`ac` = Zusatzfarbe. Fenster nur `bc`; Lampen, Anzeigen und Monitore kein `bc`.
 
 ### 3.2 Kabel (`<logic_node_links>`)
 
@@ -123,7 +146,8 @@ Alle Kabel stehen am Ende der Datei, für alle Körper gemeinsam:
   | 4 | Strom |
   | 5 | Composite |
   | 6 | Video |
-  | 8 | kommt selten vor, nicht anfassen |
+  | 7 | Ton |
+  | 8 | Munitionsgurt / Seil (selten, nicht anfassen) |
 
 - **Mehrere Ausgänge zusammen:** Ein Ausgang darf an viele Eingänge gehen, ein Eingang hat höchstens ein Kabel
   seiner Art.
@@ -154,6 +178,9 @@ Ein Microcontroller ist ein Teil `d="microprocessor"`, in dessen `<o>` die ganze
 - **Eigenschaften** (die Werte, die man im Editor mit dem Auswahl-Werkzeug sieht):
   `<c type="34"><object id=".." n="Name"><v text="1.5" value="1.5"/></object></c>`.
   Andre ändert Chip-Eigenschaften nicht selbst. Neue Werte kommen per neuer Chip-Version.
+- **`sc` eines Chips** = 2·w·l + 2·(w+l) (w, l = Breite, Länge des Chips).
+- **Eingebettete Form:** ohne `component_states`/`component_bridge_states`, `mode="0"`/`type="0"` weggelassen.
+  Eigenschaften lassen sich direkt in der Datei ändern (`tools/chip_eigenschaft.py`).
 - **Lua-Skripte:** stehen im Attribut `script="..."` eines `<c type="56">`.
   - Escaping: `<` als `&lt;`, `>` als `&gt;`, `&` als `&amp;`.
   - Doppelte Anführungszeichen im Lua vermeiden und nur `'...'` benutzen.
@@ -215,7 +242,7 @@ def teile(s):
     out = []
     for m in re.finditer(r'<c(?: d="([^"]+)")?(?: t="(\d+)")?><o ([^>]*)>(?:(?!</c>).)*?<vp([^/]*)/>', ohne_mc, re.S):
         r = re.search(r'r="([^"]*)"', m.group(3))
-        rr = [int(float(v)) for v in (r.group(1) if r else "1,0,0,0,1,0,0,0,1").split(",")]
+        rr = [int(float(v)) for v in (r.group(1) if r else "0,0,1,-1,0,0,0,-1,0").split(",")]
         out.append((m.group(1) or "block", xyz(m.group(4)), rr, int(m.group(2) or 0)))
     return out
 
@@ -232,7 +259,7 @@ def chip_anschluesse(s, name):
     i = s.index('<microprocessor_definition name="%s"' % name)
     kopf = s[s.rindex('<c d="microprocessor"', 0, i):i]
     r = re.search(r'r="([^"]*)"', kopf)
-    r = [int(float(v)) for v in (r.group(1) if r else "1,0,0,0,1,0,0,0,1").split(",")]
+    r = [int(float(v)) for v in (r.group(1) if r else "0,0,1,-1,0,0,0,-1,0").split(",")]
     e = s.index("</microprocessor_definition>", i)
     vp = xyz(re.match(r"</microprocessor_definition><vp([^/]*)/>", s[e:]).group(1))
     out = {}

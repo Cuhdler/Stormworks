@@ -16,8 +16,8 @@ fahren – quasi ein KI-Panzer“.
 ## Nächster Schritt (Stand 09.10. vormittags)
 
 1. Pull Request https://github.com/Cuhdler/Stormworks/pull/1 mergen, auf dem PC pullen.
-2. `python tools/bauteile_holen.py` laufen lassen → `wissen/bauteile/bauteile.json` (alle Bauteile des Spiels mit Blöcken und
-   Anschluss-Positionen) committen und pushen.
+2. ~~`python tools/bauteile_holen.py` laufen lassen~~ – erledigt 09.10. abends: `wissen/bauteile/bauteile.json` (alle
+   759 Bauteile mit Blöcken und Anschluss-Positionen) liegt im Repo. PR #1 ist gemergt.
 3. Damit kann Claude die Räder selbst setzen (kein Rad mehr von Hand) und dem Landkreuzer **echte Ketten** bauen
    (Tank Drive Wheel + Tank Wheel bilden im Spiel automatisch eine Kette, bis 7×7 Blöcke).
 
