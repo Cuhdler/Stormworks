@@ -283,6 +283,8 @@ ankommt. Der Monitor zeigt:
   aufschreiben, dann kann ich Tempo und Pausen anpassen.
 - die **7 Laser-Entfernungen**: VL, VM, VR = vorn links/Mitte/rechts, LI, RE = Seiten, UN = unten, HI = hinten.
   „--“ heißt: der Laser meldet 0 (kein Kabel oder kein Strom), „>1K“ heißt: frei (nichts in 1 km).
+  **UN rot**: Der Bug-Laser hat 10 s nach dem Spawnen noch nie Boden gesehen – sein Strahl zeigt wohl nicht nach
+  unten (bitte melden).
 - **N** Nick (+ = Bug hoch), **R** Roll (+ = rechte Seite tief), **K** Kurs in Grad (0 Nord, 90 Ost) – so, wie die
   KI es sieht. Damit prüfst du die Vorzeichen: auf einen Hang stellen, rechte Seite tief → muss R+ zeigen; Bug bergauf
   → N+; nach Norden fahren → K um 0. Stimmt eins nicht, im KI-Chip „Roll Richtung“, „Nick Richtung“ bzw.

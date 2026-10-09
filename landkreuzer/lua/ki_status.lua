@@ -18,7 +18,7 @@
 -- Vorzeichen-Pruefung aus der eigenen Fahrspur (alle 0,5 s, nur beim Fahren): K-Zeile rot = Kurs passt gespiegelt zur
 -- Fahrtrichtung ('Kompass Richtung' falsch), N/R-Zeile rot = Bug geht bergauf runter ('Nick Richtung' falsch), rot
 -- 'D!' = bei Lenkbefehl rechts dreht die Spur links (Motor-Kabel 'Links'/'Rechts' vertauscht). Zaehler je Probe +1
--- passt / -1 falsch (+-10), rot ab -5. Im Helm stehen dieselben Warnungen am Ende der Zeile (K! N! D! L! R!).
+-- passt / -1 falsch (+-10), rot ab -5. 'UN' rot: der Bug-Laser hat 10 s nach dem Spawnen noch nie Boden gesehen. Im Helm stehen dieselben Warnungen am Ende der Zeile (K! N! D! L! R!).
 N=input.getNumber
 B=input.getBool
 st=screen
@@ -86,6 +86,8 @@ function onTick()
 	for i=1,32 do W[i]=N(i) end
 	ni,ro,ku=W[5]*NR*360,W[6]*RR*360,(W[4]*KR*360)%360
 	ul,ur=B(13),B(14)
+	-- Bug-Laser hat schon einmal Boden gesehen (0,2-9 m)? Sonst nach 10 s 'UN' rot: Strahl zeigt wohl nicht nach unten
+	if W[14]>.2 and W[14]<9 then ug=1 end
 	-- Vorzeichen aus der Spur: Fahrtrichtung c (aus dem Ort, bei Rueckwaerts-Befehl umgedreht) gegen Kurs, Steigung gegen
 	-- Nick, Drehung der Spur gegen Lenkbefehl
 	tk=(tk or 0)+1
@@ -155,10 +157,10 @@ function onDraw()
 	st.drawText(1,36,wa and 'WAFFEN FREI' or sz and 'SCHUTZZONE' or 'WAFFEN AUS')
 	if zi then st.setColor(255,160,0) st.drawText(1,43,'ZIEL') end
 	if hm then st.setColor(80,160,255) st.drawText(w-21,43,'HEIM') end
-	st.setColor(160,160,255)
 	for i=1,7 do
 		local y=50+((i-1)%4)*7
 		local x=(i<=4) and 1 or 33
+		if i==6 and not ug and tk>600 then st.setColor(255,60,60) else st.setColor(160,160,255) end
 		st.drawText(x,y,L[i]..' '..f(W[8+i] or 0))
 	end
 	st.setColor(200,200,120)

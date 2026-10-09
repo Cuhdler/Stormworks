@@ -197,7 +197,7 @@ def test_status_vorzeichen():
             steig = 0.1 * math.cos(math.radians(kurs))                       # Steigung in Fahrtrichtung
             kom = -kurs / 360 * (-1 if falsch else 1)                       # 'Kompass Richtung' -1: Kurs = -Kompass
             nick = math.degrees(math.atan(steig)) / 360 * (-1 if falsch else 1) * pr["Nick Richtung"]
-            tick(g, io, {1: x, 2: 40 + 0.1 * z, 3: z, 4: kom, 5: nick, 26: 2.0, 30: -0.5 if falsch else 0.5, 31: 0.6,
+            tick(g, io, {1: x, 2: 40 + 0.1 * z, 3: z, 4: kom, 5: nick, 14: 1.0, 26: 2.0, 30: -0.5 if falsch else 0.5, 31: 0.6,
                          32: 8.0}, {1: True})
         io["draw"] = []
         g.onDraw()
@@ -219,10 +219,31 @@ def test_status_vorzeichen():
     return rueck
 
 
+def test_status_bodenlaser():
+    """'UN' rot, wenn der Bug-Laser 10 s lang nie Boden (0,2-9 m) sah; mit 0,8 m nicht."""
+    rueck = []
+    pr = {n: v for n, v, _ in build_ki.props()}
+    for un, soll in ((0.8, False), (4000.0, True)):
+        g, io = lade("ki_status", pr)
+        io["w"], io["h"] = 64, 96
+        for _ in range(700):
+            tick(g, io, {1: 1.0, 3: 2.0, 14: un, 26: 0.0}, {})
+        io["draw"] = []
+        g.onDraw()
+        farbe, rot = None, False
+        for d in io["draw"]:
+            if d[0] == "setColor":
+                farbe = d[1:4]
+            elif d[0] == "drawText" and str(d[3]).startswith("UN"):
+                rot = farbe == (255, 60, 60)
+        rueck.append(("Bug-Laser %.1f m: UN %s" % (un, "rot" if rot else "normal"), rot == soll))
+    return rueck
+
+
 def main():
     ok = True
     for t in (test_kleber, test_lenkung, test_status, test_status_batterie, test_status_schreiber,
-              test_status_vorzeichen):
+              test_status_vorzeichen, test_status_bodenlaser):
         for txt, g in t():
             print("%-75s %s" % (txt, "ok" if g else "FEHLER"))
             ok &= bool(g)
