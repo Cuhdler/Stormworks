@@ -50,6 +50,11 @@ Es sagt dann, welche Eigenschaft im KI-Chip umzustellen ist.
 
 ## Was in der Nacht noch dazukam (nachdem du ins Bett bist)
 
+**Kurz:** Er ist fertig gebaut und im Simulator zuverlässig (12 von 12 Dauerläufen fehlerfrei). In der Nacht habe
+ich gut ein Dutzend Fehler gefunden und behoben, die im Spiel Ärger gemacht hätten. Für deinen ersten Test neu: Der
+**Status-Monitor prüft selbst die Vorzeichen** (rot = Eigenschaft umstellen, siehe Fehlersuche), und der
+**Fahrtenschreiber** zeichnet alles auf. Zu tun für dich: nur der Schnellstart oben.
+
 Gefundene **Fehler**, die im Spiel Ärger gemacht hätten (alle behoben und mit Prüfungen abgesichert):
 - **Laser einschalten:** Die Turm-Kamera des Schiffs braucht für ihren Laser ein „Laser an“-Signal. Die Laser des
   Panzers bekommen jetzt so ein Kabel vom KI-Chip. Und: Meldet ein wichtiger Laser 0, fährt die KI nicht los
@@ -106,7 +111,8 @@ Gefundene **Fehler**, die im Spiel Ärger gemacht hätten (alle behoben und mit 
 - Bilder `vorschau_raeder.png` / `vorschau_raeder_lenkung.png`: so etwa sieht er mit 11er-Rädern aus.
 - Aussehen: Schlamm unten, Lüftungsgitter, Abzeichen; Bild `beschriftet.png` (was wo ist), `anzeigen.png` (Monitore).
 
-Ausprobiert und **verworfen**: zwei zusätzliche Eck-Laser für dichten Wald (im Simulator schlechter). Ein
+Ausprobiert und **verworfen**: zwei zusätzliche Eck-Laser für dichten Wald (im Simulator schlechter), die
+äußeren Front-Laser weiter außen auf Radbreite (kein klarer Gewinn). Ein
 Diesel-Generator aus Schiffsteilen geht nicht sicher (im Schiff fehlen Kraftstoff-Teile, Kühlung mit Seewasser).
 
 ---
