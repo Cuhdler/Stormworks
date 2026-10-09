@@ -95,6 +95,8 @@ Gefundene **Fehler**, die im Spiel Ärger gemacht hätten (alle behoben und mit 
   - Lenk-Variante: Beim Drehen auf der Stelle schlugen die Achsen meist falsch herum ein (kleiner negativer Fahrbefehl
     des Halte-Reglers galt als „rückwärts“). Jetzt zählt das Soll-Tempo; im Simulator so auch schneller um die Wand
     (74 statt 79 s).
+- **Selbstprüfung im Status-Monitor:** Er vergleicht beim Fahren Kompass, Nick und Drehrichtung mit seiner eigenen
+  Fahrspur und zeigt rot, was falsch herum ist (K-Zeile, N/R-Zeile, „D!“ = Motor-Kabel links/rechts vertauscht).
 - **Fahrtenschreiber-Auswertung** (`ki_log.py`) prüft aus der Fahrspur die Vorzeichen von Kompass, Nick und
   Drehrichtung und sagt, was umzustellen ist (im Prüfstand mit absichtlich falschen Vorzeichen geprüft).
 - **Karte:** zeigt jetzt die **Fahrspur** (blasse Punkte alle 10 m, die letzten 600 m) – man sieht, wo er war.
@@ -278,6 +280,11 @@ ankommt. Der Monitor zeigt:
 - rot **L!** / **R!** hinter dem Kurs: Die KI hat gemerkt, dass die linke/rechte Radseite falsch herum dreht, und es
   selbst umgedreht. Das gilt nur bis zum nächsten Spawn – stell dann im KI-Chip „Rad Richtung links“ bzw. „rechts“
   dauerhaft um (1 ↔ −1).
+- **Selbstprüfung beim Fahren** (prüft die KI aus ihrer eigenen Fahrspur, alle 0,5 s): Wird die **K-Zeile rot**, passt
+  der Kurs gespiegelt zur Fahrtrichtung → „Kompass Richtung“ umdrehen. Wird die **N/R-Zeile rot**, senkt sich der Bug
+  beim Bergauffahren → „Nick Richtung“ umdrehen. Rot **D!**: Bei „rechts“ dreht er links herum → die Kabel „Links“ und
+  „Rechts“ am KI-Chip sind vertauscht (im Editor tauschen). Roll lässt sich so nicht prüfen (am Hang quer stellen,
+  siehe oben).
 - zwei Balken für die Motoren links und rechts (grün = vorwärts, rot = rückwärts, wie die KI es meint).
 
 Vorschau beider Monitore: `bilder/anzeigen.png` (gezeichnet mit `tools/anzeige_bild.py`).
@@ -333,8 +340,8 @@ Alle Eigenschaften stehen im **KI-Chip** (im Editor anklicken). Nach dem Ändern
 | Status-Monitor bleibt **dunkel** | hat der Monitor 2×3 einen Ein-Schalter-Eingang? Kabel vom KI-Chip „Immer an“ dorthin |
 | Bei W fährt er **rückwärts** | „Rad Richtung links“ und „Rad Richtung rechts“ umdrehen (1 ↔ −1) |
 | Er **dreht statt zu fahren**, rot **L!** oder **R!** | diese Seite in „Rad Richtung links/rechts“ umdrehen |
-| Fährt zum Wegpunkt in **falscher Richtung**/Spirale | Status K beim Fahren nach Norden ≈ 0? Sonst „Kompass Richtung“ umdrehen |
-| Am Hang **GEFAHR**, obwohl flach, oder dreht falsch | Status N/R prüfen (Bug hoch = N+, rechts tief = R+), sonst „Nick/Roll Richtung“ umdrehen |
+| Fährt zum Wegpunkt in **falscher Richtung**/Spirale | K-Zeile im Status rot? Dann „Kompass Richtung“ umdrehen. Rot **D!**: Kabel „Links“/„Rechts“ am KI-Chip tauschen |
+| Am Hang **GEFAHR**, obwohl flach, oder dreht falsch | N/R-Zeile rot = „Nick Richtung“ umdrehen; sonst N/R prüfen (Bug hoch = N+, rechts tief = R+), „Roll Richtung“ |
 | Bleibt vor jedem **sanften Hügel** stehen | „Steigung max Grad“ höher (30 → 35) |
 | **Fährt zu schnell** an Hindernisse | „Tempo m/s“ kleiner (8 → 6) |
 | **Dreht zu träge** | „Lenk Staerke“ höher; Lenk-Variante: „Lenk Faktor“ höher |

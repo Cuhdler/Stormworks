@@ -180,9 +180,43 @@ def test_status_schreiber():
     return rueck
 
 
+def test_status_vorzeichen():
+    """Vorzeichen aus der Spur (Status zeigt rot K / N / D!): Kreis rechtsherum am Hang, 20 s; einmal alles richtig,
+    einmal Kompass gespiegelt, Nick umgedreht und Lenkbefehl falsch herum."""
+    import math
+    rueck = []
+    pr = {n: v for n, v, _ in build_ki.props()}
+    for falsch in (False, True):
+        g, io = lade("ki_status", pr)
+        io["w"], io["h"] = 64, 96
+        x = z = 0.0
+        for t in range(1200):
+            kurs = (t / 60 * 6) % 360                 # 6 Grad/s rechtsherum, 8 m/s, Gelaende steigt nach Norden (10 %)
+            x += 8 / 60 * math.sin(math.radians(kurs))
+            z += 8 / 60 * math.cos(math.radians(kurs))
+            steig = 0.1 * math.cos(math.radians(kurs))                       # Steigung in Fahrtrichtung
+            kom = -kurs / 360 * (-1 if falsch else 1)                       # 'Kompass Richtung' -1: Kurs = -Kompass
+            nick = math.degrees(math.atan(steig)) / 360 * (-1 if falsch else 1) * pr["Nick Richtung"]
+            tick(g, io, {1: x, 2: 40 + 0.1 * z, 3: z, 4: kom, 5: nick, 26: 2.0, 30: -0.5 if falsch else 0.5, 31: 0.6,
+                         32: 8.0}, {1: True})
+        io["draw"] = []
+        g.onDraw()
+        farbe, rot = None, set()
+        for d in io["draw"]:
+            if d[0] == "setColor":
+                farbe = d[1:4]
+            elif d[0] == "drawText" and farbe == (255, 60, 60) and str(d[3]):
+                rot.add(str(d[3])[:1] if str(d[3])[:1] in "NK" else str(d[3]))
+        soll = {"N", "K", "D!"} if falsch else set()
+        rueck.append(("Vorzeichen im Status (%s): rot %s" % ("alles falsch" if falsch else "alles richtig",
+                                                          sorted(rot) or "nichts"), rot == soll))
+    return rueck
+
+
 def main():
     ok = True
-    for t in (test_kleber, test_lenkung, test_status, test_status_batterie, test_status_schreiber):
+    for t in (test_kleber, test_lenkung, test_status, test_status_batterie, test_status_schreiber,
+              test_status_vorzeichen):
         for txt, g in t():
             print("%-75s %s" % (txt, "ok" if g else "FEHLER"))
             ok &= bool(g)

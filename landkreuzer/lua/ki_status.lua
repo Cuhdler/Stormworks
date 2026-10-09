@@ -15,12 +15,19 @@
 -- Verbrauch noch etwa 45 Minuten bis leer (bis 'nach Hause' bei 'Heim Batterie' entsprechend weniger).
 -- Rot 'L!' / 'R!' hinter dem Kurs: die KI hat gemerkt, dass die linke/rechte Seite falsch herum dreht, und es selbst
 -- umgedreht (Bool 13/14) - dann im KI-Chip 'Rad Richtung links/rechts' dauerhaft umdrehen.
+-- Vorzeichen-Pruefung aus der eigenen Fahrspur (alle 0,5 s, nur beim Fahren): K-Zeile rot = Kurs passt gespiegelt zur
+-- Fahrtrichtung ('Kompass Richtung' falsch), N/R-Zeile rot = Bug geht bergauf runter ('Nick Richtung' falsch), rot
+-- 'D!' = bei Lenkbefehl rechts dreht die Spur links (Motor-Kabel 'Links'/'Rechts' vertauscht). Zaehler je Probe +1
+-- passt / -1 falsch (+-10), rot ab -5.
 N=input.getNumber
 B=input.getBool
 st=screen
 ZN={'AUS','HAND','WEGPUNKT','REVIER','AUSWEICHEN','ZURUECK','KAMPF','BATTERIE','GEFAHR','WARTET','LASER?'}
 L={'VL','VM','VR','LI','RE','UN','HI'}
 W={}
+kz,nz,dd=0,0,0
+function WI(a) return (a+180)%360-180 end
+function V(z,g,f) return math.max(-10,math.min(10,z+(g and 1 or f and -1 or 0))) end
 -- SCHREIBER v2 (in allen Waffen-Skripten gleich; Andre 04.10.: "der Log muss ALLES sagen, sonst ist es ein Ratespiel"):
 -- je Tick eine Zeile mit dem, was das Skript sieht und entscheidet (Tick + Werte, leer = 0); alle LT Ticks ein Paket
 -- an tools/waffen_logger.py. Der Bau-Schritt setzt LQ (Name), LT, LO. LG(Kennbuchstabe, Werte-Tabelle, Anzahl).
@@ -79,8 +86,26 @@ function onTick()
 	for i=1,32 do W[i]=N(i) end
 	ni,ro,ku=W[5]*NR*360,W[6]*RR*360,(W[4]*KR*360)%360
 	ul,ur=B(13),B(14)
-	-- Batterie-Verbrauch je Tick (alle 600 Ticks gemessen, geglaettet)
+	-- Vorzeichen aus der Spur: Fahrtrichtung c (aus dem Ort, bei Rueckwaerts-Befehl umgedreht) gegen Kurs, Steigung gegen
+	-- Nick, Drehung der Spur gegen Lenkbefehl
 	tk=(tk or 0)+1
+	if tk%30==0 then
+		local dx,dz,r=W[1]-(qx or W[1]),W[3]-(qz or W[3]),W[31]>0 and 1 or -1
+		local s=(dx*dx+dz*dz)^.5
+		if qx and s>.5 and s<30 and math.abs(W[31])>.2 then
+			local c=math.deg(math.atan(r*dx,r*dz))%360
+			kz=V(kz,math.abs(WI(ku-c))<30,math.abs(WI(-ku-c))<30)
+			local g=math.deg(math.atan(r*(W[2]-qh),s))
+			if math.abs(g)>3 then nz=V(nz,g*ni>0,g*ni<0) end
+			if qc and math.abs(W[30])>.3 then
+				local d=WI(c-qc)
+				if math.abs(d)>1 then dd=V(dd,d*W[30]>0,d*W[30]<0) end
+			end
+			qc=c
+		else qc=nil end
+		qx,qz,qh=W[1],W[3],W[2]
+	end
+	-- Batterie-Verbrauch je Tick (alle 600 Ticks gemessen, geglaettet)
 	if tk%600==0 then
 		local b=W[16]
 		if b0 and b>0 and b<=b0 then dv=dv and dv*.7+(b0-b)/600*.3 or (b0-b)/600 end
@@ -136,10 +161,14 @@ function onDraw()
 		st.drawText(x,y,L[i]..' '..f(W[8+i] or 0))
 	end
 	st.setColor(200,200,120)
+	if nz<-5 then st.setColor(255,60,60) end
 	st.drawText(9,81,string.format('N%+.0f R%+.0f',ni,ro))
+	st.setColor(200,200,120)
+	if kz<-5 then st.setColor(255,60,60) end
 	st.drawText(9,88,string.format('K%03.0f',ku))
 	st.setColor(255,60,60)
-	st.drawText(34,88,(ul and 'L!' or '')..(ur and 'R!' or ''))
+	local t=(ul and 'L!' or '')..(ur and 'R!' or '')..(dd<-5 and 'D!' or '')
+	st.drawText(math.min(34,w-7-#t*5),88,t)
 	-- Motoren: zwei Balken (links/rechts, + = vorwaerts, wie die KI es meint - unabhaengig von der Einbau-Richtung)
 	for k=0,1 do
 		local v=math.max(-1,math.min(1,(W[31] or 0)+(k==0 and 1 or -1)*(W[30] or 0)))
