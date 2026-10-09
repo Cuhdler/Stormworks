@@ -90,6 +90,7 @@ Gefundene **Fehler**, die im Spiel Ärger gemacht hätten (alle behoben und mit 
   - Lenk-Variante: Beim Drehen auf der Stelle schlugen die Achsen meist falsch herum ein (kleiner negativer Fahrbefehl
     des Halte-Reglers galt als „rückwärts“). Jetzt zählt das Soll-Tempo; im Simulator so auch schneller um die Wand
     (74 statt 79 s).
+- **Karte:** zeigt jetzt die **Fahrspur** (blasse Punkte alle 10 m, die letzten 600 m) – man sieht, wo er war.
 - **Räder-Werkzeug:** Zweimal `raeder.py --schreiben` hätte jedes Rad doppelt gesetzt (zwei Räder im selben Platz)
   und die Sicherung überschrieben. Jetzt bleiben Wellen mit Rad unberührt; Räder aus mehreren Teilen gehen auch;
   eigene Sicherung je Datei; `--lenkung` für die Lenk-Variante. Neuer Prüfstand `test_raeder.py`.
@@ -231,7 +232,8 @@ Die Schalter sind andersherum als auf dem Schiff. **Aus heißt: Die KI darf.**
 - Knopf **Loeschen** zweimal binnen 3 s tippen: alle Wegpunkte weg (einmal wäre zu leicht aus Versehen). Ohne
   Wegpunkte patrouilliert die KI im Revier (Zufallspunkte bis 400 m um den Startpunkt, an jedem 45 s Pause).
 - **+ / −**: Zoom. **Revier** (grün = an): nach dem letzten Wegpunkt wieder von vorn; aus = am letzten stehen bleiben.
-- Oben steht der Zustand der KI (siehe unten).
+- Oben steht der Zustand der KI (siehe unten). Auf der Karte: der Panzer als weißer Pfeil, **H** = Heimat
+  (Spawn-Ort), blasse Punkte = seine **Fahrspur** (letzte 600 m), gelber Strich = wohin er gerade will.
 
 ### KI-Status (Monitor 2×3 rechts vom Sitz und im Helm)
 Auf dem Schiff schaltete der Waffenwahl-Chip diesen Monitor ein. Im Panzer macht das der KI-Chip (Ausgang

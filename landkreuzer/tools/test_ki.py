@@ -969,6 +969,18 @@ def test_karte():
     pruefe("Karte: Zoom +/- halbiert/verdoppelt", zoom_ok)
     pruefe("Karte: Revier-Knopf = genau 1 Befehl 2; Knoepfe setzen keinen Wegpunkt", revier_ok and not t5)
     pruefe("Karte: Loeschen erst beim 2. Tippen binnen 3 s (Befehl 1), sonst nichts", loesch_ok)
+    # Fahrspur: 100 m nach Norden in 120 Ticks -> 10-11 Punkte (1x1), hoechstens 60 (Ring)
+    k2 = Chip(minify(quelle("ki_karte.lua")), pr)
+    for i in range(1200):
+        k2.n[29], k2.n[30] = 500.0, 1000.0 + i * (100 / 120 if i < 120 else 5)
+        k2.tick()
+        if i == 119:
+            k2.zeichne()
+            p100 = sum(1 for d in k2.draw if d[0] == "drawRectF" and d[3] == 1 and d[4] == 1)
+    k2.zeichne()
+    pend = sum(1 for d in k2.draw if d[0] == "drawRectF" and d[3] == 1 and d[4] == 1)
+    pruefe("Karte: Fahrspur nach 100 m %d Punkte, nach 5 km %d (hoechstens 60)" % (p100, pend),
+           10 <= p100 <= 11 and pend == 60)
 
     # Karte und Fahren zusammen wie im Chip: Tipp auf der Karte -> Wegpunkt in ki_fahren
     s = Sim(eben(), ki=False)

@@ -2,7 +2,8 @@
 -- Zeigt die Karte um den eigenen Ort (Norden oben), den Panzer als Pfeil in Fahrtrichtung, die Wegpunkte mit Nummer
 -- (der aktuelle gelb), die Route (im Revier-Modus zurueck zum ersten), den Revier-Kreis um die Heimat (nur im
 -- Revier-Modus), die Heimat (H), die Schutzzone um die Heimat (rot gestrichelt: Ziele darin beschiesst er nicht), das aktuelle Ziel
--- (Strich vom Panzer; Revier-Punkt lila Kreis; im Kampf der Feind als rotes Kreuz) und oben den Zustand der KI mit Tempo.
+-- (Strich vom Panzer; Revier-Punkt lila Kreis; im Kampf der Feind als rotes Kreuz), die Fahrspur (blasse Punkte alle
+-- 10 m, die letzten 600 m) und oben den Zustand der KI mit Tempo.
 -- Bedienung (ein Finger):
 --  - Karte kurz antippen = Wegpunkt an dieser Stelle (ki_fahren nimmt hoechstens 8; zaehlt beim Loslassen)
 --  - Finger 1,5 s auf der Karte halten (der blaue Kreis waechst) = Freund-Punkt: dort ist eine weitere Schutzzone wie
@@ -30,6 +31,8 @@ function M(a,b) return map.mapToScreen(x,z,zm,w,h,a,b) end
 NA={'AUS','HAND','WEGPUNKT','REVIER','AUSWEICHEN','ZURUECK','KAMPF','BATTERIE','GEFAHR','WARTET','LASER?'}
 W={}
 F={}
+Q={}
+qi,qx,qz=0,0,0
 x,z,hd,zs,gx,gz,hx,hz,rv,nw,wi,vf=0,0,0,0,0,0,0,0,0,0,1,0
 w,h,bh=96,96,13
 tl,lz,pm,zm,zr=false,0,false,1,0
@@ -41,6 +44,8 @@ function onTick()
 	nw,wi=m.floor(cl(N(10),0,8)),m.floor(N(11)+.5)
 	for i=1,8 do W[i]={N(10+2*i),N(11+2*i)} end
 	x,z,hd,vf=N(29),N(30),N(31),N(32)
+	-- Fahrspur: alle 10 m ein Punkt, die letzten 60 (Ring)
+	if (x-qx)^2+(z-qz)^2>100 then qi=qi%60+1 Q[qi]={x,z} qx,qz=x,z end
 	pm=B(3)
 	-- Beruehrung: nur auf die Flanke (Finger kommt auf)
 	local t,c=B(32),0
@@ -121,6 +126,12 @@ function onDraw()
 		st.drawText(c-2,d-2,'F')
 	end
 	if tp then st.drawCircle(tp[1],tp[2],2+th/9) end
+	-- Fahrspur
+	C(255,255,255,90)
+	for _,p in ipairs(Q) do
+		a,b=M(p[1],p[2])
+		st.drawRectF(a,b,1,1)
+	end
 	-- Route
 	for i=1,nw do
 		local j=i%nw+1

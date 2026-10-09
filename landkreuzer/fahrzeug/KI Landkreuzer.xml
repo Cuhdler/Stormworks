@@ -4032,6 +4032,8 @@ function M(a,b) return map.mapToScreen(x,z,zm,w,h,a,b) end
 NA={'AUS','HAND','WEGPUNKT','REVIER','AUSWEICHEN','ZURUECK','KAMPF','BATTERIE','GEFAHR','WARTET','LASER?'}
 W={}
 F={}
+Q={}
+qi,qx,qz=0,0,0
 x,z,hd,zs,gx,gz,hx,hz,rv,nw,wi,vf=0,0,0,0,0,0,0,0,0,0,1,0
 w,h,bh=96,96,13
 tl,lz,pm,zm,zr=false,0,false,1,0
@@ -4042,6 +4044,7 @@ zs,gx,gz,hx,hz,rv=m.floor(N(3)+.5),N(4),N(5),N(7),N(8),N(9)
 nw,wi=m.floor(cl(N(10),0,8)),m.floor(N(11)+.5)
 for i=1,8 do W[i]={N(10+2*i),N(11+2*i)} end
 x,z,hd,vf=N(29),N(30),N(31),N(32)
+if (x-qx)^2+(z-qz)^2&gt;100 then qi=qi%60+1 Q[qi]={x,z} qx,qz=x,z end
 pm=B(3)
 local t,c=B(32),0
 if t and not tl then
@@ -4113,6 +4116,11 @@ DK(c,d,r)
 st.drawText(c-2,d-2,'F')
 end
 if tp then st.drawCircle(tp[1],tp[2],2+th/9) end
+C(255,255,255,90)
+for _,p in ipairs(Q) do
+a,b=M(p[1],p[2])
+st.drawRectF(a,b,1,1)
+end
 for i=1,nw do
 local j=i%nw+1
 if i&lt;nw or pm and nw&gt;2 then
