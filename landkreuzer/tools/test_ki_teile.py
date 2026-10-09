@@ -117,6 +117,10 @@ def test_lenkung():
         o = tick(g, io, {28: 0.0, 29: 1.0, 30: -0.08, 32: 0.3})
     rueck.append(("auf der Stelle rechtsherum (Fahrbefehl -0,08): vorn %.3f (rechts eingeschlagen)" % o[1],
                   o[1] > 0.1 and o[2] < -0.1))
+    # von Hand rueckwaerts (Soll-Tempo 0, S gedrueckt = Fahrbefehl -1) und D: wie rueckwaerts einschlagen
+    for _ in range(300):
+        o = tick(g, io, {3: 1.0, 28: 0.0, 29: 1.0, 30: -1.0, 32: 2.0})
+    rueck.append(("von Hand rueckwaerts rechtsherum: vorn %.3f (links eingeschlagen)" % o[1], o[1] < -0.1 and o[2] > 0.1))
     # schnell (20 m/s): halber Winkel
     for _ in range(300):
         o = tick(g, io, {29: 1.0, 30: 1.0, 32: 20.0})

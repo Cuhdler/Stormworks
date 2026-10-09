@@ -102,8 +102,8 @@ Gefundene **Fehler**, die im Spiel Ärger gemacht hätten (alle behoben und mit 
     mit 150 m Radius. Jetzt bricht W/S/A/D das Manöver ab.
   - Der Bug-Laser lernte bei jedem Stehen mit KI Pause weiter (über einer Mulde falsch). Jetzt nur in den ersten 10 s.
   - Lenk-Variante: Beim Drehen auf der Stelle schlugen die Achsen meist falsch herum ein (kleiner negativer Fahrbefehl
-    des Halte-Reglers galt als „rückwärts“). Jetzt zählt das Soll-Tempo; im Simulator so auch schneller um die Wand
-    (74 statt 79 s).
+    des Halte-Reglers galt als „rückwärts“). Jetzt zählt das Soll-Tempo (beim Fahren von Hand die Taste S); im
+    Simulator so auch schneller um die Wand (74 statt 79 s).
 - **Selbstprüfung im Status-Monitor:** Er vergleicht beim Fahren Kompass, Nick und Drehrichtung mit seiner eigenen
   Fahrspur und zeigt rot, was falsch herum ist (K-Zeile, N/R-Zeile, „D!“ = Motor-Kabel links/rechts vertauscht).
 - **Fahrtenschreiber-Auswertung** (`ki_log.py`) prüft aus der Fahrspur die Vorzeichen von Kompass, Nick und
