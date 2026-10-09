@@ -7,6 +7,7 @@ Anschluesse (Feld x, z):
              (2,2) Batterie (Ladestand, darf fehlen)   Ausgaenge (3,2) Schutz (an den Schutz-Chip: Auto-Chaff),
              (4,2) Status (Video an den Monitor 2x3)   (0,4) Lenkung vorn, (1,4) Lenkung hinten (nur Lenk-Variante)
              (4,4) Immer an (Ausgang: schaltet alle Laser und den Monitor 2x3 ein)
+             (2,4) Licht (Lampen vorn, weiss)  (3,4) Statuslicht (Lampen am Mast und hinten, Farbe nach KI-Zustand)
   Ausgaenge  (0,3) Links (alle linken Motoren)  (1,3) Rechts  (2,3) Karte (Video)  (3,3) Wahl (an den Bildschirm-Chip:
              Bool 1 Master Arm)  (4,3) Zustand (Ausgang von KI_FAHREN)
 """
@@ -28,6 +29,8 @@ PROPS_KLEBER = [
     ("Waffen Verzoegerung s", 60, "Nach dem Spawnen so lange warten, bis die Waffen frei sind (die KI kennt keinen Freund)"),
     # 0,4: Elektromotoren werden mit sinkender Ladung schwaecher (Forum) - bei 20 % kaeme er nicht mehr den Hang hoch
     ("Heim Batterie", 0.4, "Batterie darunter (0 bis 1): die KI faehrt von selbst nach Hause (0 = aus)"),
+    ("Licht hell", 0.6, "Lampen vorn (weiss): Helligkeit 0-1 (0 = aus)"),
+    ("Statuslicht hell", 1, "Statuslicht am Mast und hinten: Helligkeit 0-1 (0 = aus)"),
     ("Schutzzone m", 300, "Ziele so nah am Startpunkt (Werkbank, eigene Basis): keine Waffe schiesst (0 = aus)"),
 ]
 PROPS_LENKUNG = [
@@ -159,6 +162,11 @@ def build(src=None, eigen=None):
             (status, 1))
     aus("Lenkung vorn", lenkung, 0, 1, "Lenk-Variante: Robotic Pivots der vorderen Achsen: Rotation Target", 0, -6, fz=4)
     aus("Lenkung hinten", lenkung, 1, 1, "Lenk-Variante: Robotic Pivots der hinteren Achsen: Rotation Target", 1, -7, fz=4)
+    # Lampen: Statuslicht = Ausgang des Status-Skripts (Zahl 1-3 Farbe nach Zustand), Licht = Zahl 4-6 nach 1-3 (weiss)
+    mc.node("Statuslicht", 0, 5, "Lampen am Mast und hinten: Color Data (Farbe nach KI-Zustand)", 3, 4, (8, -9),
+            (status, 0))
+    licht = mc.comp(40, (5, -10), {"count": 3}, [(rd(status, ch, (3, -10 - .5 * j)), 0) for j, ch in enumerate((3, 4, 5))])
+    mc.node("Licht", 0, 5, "Lampen vorn: Color Data (weiss, 'Licht hell')", 2, 4, (8, -10), (licht, 0))
     aus("Immer an", kleber, 12, 0, "immer an: alle Laser Distance Sensors (Laser an) und Monitor 2x3 (Power Switch)", 4, -8,
         typ=29, fz=4)
     mc.node("Schutz", 0, 5, "an den Schutz-Chip (Eingang 'Instrumente'): Bool 3 Auto-Chaff = Waffen frei + Ziel", 3, 2, (8, 1),

@@ -117,6 +117,8 @@ Gefundene **Fehler**, die im Spiel Ärger gemacht hätten (alle behoben und mit 
   und die Sicherung überschrieben. Jetzt bleiben Wellen mit Rad unberührt; Räder aus mehreren Teilen gehen auch;
   eigene Sicherung je Datei; `--lenkung` für die Lenk-Variante. Neuer Prüfstand `test_raeder.py`.
 - Bilder `vorschau_raeder.png` / `vorschau_raeder_lenkung.png`: so etwa sieht er mit 11er-Rädern aus.
+- **Lampen:** Deine RGB-Lampen aus dem Schiff gibt es jetzt auch am Panzer: Statuslicht oben am Mast und hinten
+  (Farbe = KI-Zustand, siehe „Lampen“), vorn 2 weiße.
 - **Zusammengeführt mit deinem Update vom 08.10. abends** (Autopilot, Licht, Abteile, neue Schiffsdatei):
   - Dein Autopilot hat einen verkabelten Laser-Sensor, und der misst im Spiel. Daran sah ich: Der Sensor ist
     3 Blöcke lang, und **„Laser an“ sitzt im zweiten Block**. Mein Einschalt-Kabel ging an den ersten – alle 7 Laser
@@ -146,6 +148,7 @@ Diesel-Generator aus Schiffsteilen geht nicht sicher (im Schiff fehlen Kraftstof
 | Brücke | die Brücke der Figet Marena: Steuersitz, Hauptmonitor 9×5 (Radar, Kamera, Zielliste), Monitor 3×3 = **Karte der KI**, Monitor 2×3 = **KI-Status**, Instrumentenblock; Aufstieg über Leitern hinten und hinter der Brücke |
 | Antrieb | 14 Elektromotoren (Medium), je einer pro Rad, 24 große Batterien im Fahrwerksraum; gelenkt wird wie bei einem Kettenfahrzeug (links und rechts verschieden schnell) |
 | KI | fährt Wegpunkte ab oder patrouilliert im Revier, weicht Hindernissen aus (7 Laser), meidet Wasser und Abhänge, befreit sich, wenn sie feststeckt, bleibt im Gefecht stehen (hält auch am Hang die Stelle), fährt auf Wunsch oder bei 40 % Batterie nach Hause, schießt nicht in die Schutzzone um ihre Basis |
+| Lampen | Statuslicht oben am Mast und hinten (Farbe = KI-Zustand), vorn 2 weiße Lampen |
 | Aussehen | Tarnanstrich (Wald: Oliv, Dunkelgrün, Braun, Schwarz) auf allen Blöcken, unten Schlamm-Spritzer, Bug als Keil (oben und unten 45°), Heck unten abgeschrägt, Kennung „KL-1“ weiß und ein Abzeichen (gelber Blitz) an beiden Seiten, Lüftungsgitter auf dem Heckdeck |
 
 ### Woher die Teile kommen
@@ -259,6 +262,22 @@ Die Schalter sind andersherum als auf dem Schiff. **Aus heißt: Die KI darf.**
 | **Aim correction** | Knopf, wie auf dem Schiff (Zielkorrektur per Blick) |
 | **KI Pause** | an = KI fährt nicht (steht); aus = KI fährt |
 | **Nach Hause** | an = fährt zum Spawn-Punkt zurück und bleibt dort stehen |
+
+### Lampen (Statuslicht)
+Oben auf dem Radarmast und hinten auf dem Heckdeck leuchtet das **Statuslicht** – so siehst du auch von draußen (oder
+aus dem Hubschrauber), was die KI gerade macht:
+
+| Farbe | heißt |
+|---|---|
+| blau | KI Pause (oder Startverzögerung) |
+| weiß | du fährst von Hand |
+| grün | KI fährt oder wartet, Waffen frei |
+| türkis | KI fährt oder wartet, Waffen gesperrt |
+| orange | Kampf |
+| rot blinkend | Gefahr, Batterie leer oder LASER? |
+
+Vorn auf dem Deck sind 2 weiße Lampen. Helligkeit: Eigenschaften „Licht hell“ und „Statuslicht hell“ im KI-Chip
+(0 = aus).
 
 ### Karte (Monitor 3×3 links vom Sitz)
 - Auf die Karte **kurz** tippen: Dort kommt ein **Wegpunkt** hin. Bis zu 8 Wegpunkte, die KI fährt sie der Reihe nach
@@ -403,10 +422,10 @@ Alle Eigenschaften stehen im **KI-Chip** (im Editor anklicken). Nach dem Ändern
   Einstellungen (Allgemein). Räder berühren den Boden nur an einem Punkt (dem untersten beim Bauen); darum sind die
   Lenk-Gelenke senkrecht, so bleibt dieser Punkt beim Lenken unten.
 - **Räder:** Welches Rad am besten passt, musst du ausprobieren (siehe oben).
-- **Licht:** Er hat keine Scheinwerfer, weil es im Schiff keine Licht-Teile gibt (siehe „Woher die Teile kommen“).
-  Die KI fährt nachts trotzdem, denn die Laser sehen im Dunkeln. Willst du ihn nachts sehen: im Editor 2–4
-  Scheinwerfer vorn an die Bug-Schräge setzen, Strom von einer Batterie, an einen Knopf in der Brücke. Laut Forum
-  machen viele Lichter große Fahrzeuge langsamer, also lieber wenige.
+- **Licht:** Er hat 5 kleine RGB-Lampen (dieselbe Art wie deine 55 im Schiff): vorn 2 weiß, oben am Mast und hinten
+  das Statuslicht (siehe „Lampen“). Richtige Scheinwerfer gibt es nicht, weil im Schiff keine stecken. Die KI fährt
+  nachts trotzdem, denn die Laser sehen im Dunkeln. Laut Forum machen viele Lichter große Fahrzeuge langsamer, darum
+  nur 5.
 
 ---
 

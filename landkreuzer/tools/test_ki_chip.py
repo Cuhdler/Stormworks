@@ -104,6 +104,12 @@ def main():
     # Ziel in 600 m: Kampf (Zustand 6)
     r = lauf(20, ziel=(0.0, 600.0))
     rueck.append(("Ziel der Kanonen 600 m voraus: Zustand %d (6 = Kampf)" % zustand(r[-1][1]), zustand(r[-1][1]) == 6))
+    # Lampen: im Kampf Statuslicht orange (Zahl 1-3), Lampen vorn weiss ('Licht hell')
+    sl = (r[-1][1].get("Statuslicht") or ({}, {}))[0]
+    li = (r[-1][1].get("Licht") or ({}, {}))[0]
+    rueck.append(("Lampen: Statuslicht im Kampf %s (orange), vorn %s (weiss)" % (
+        [round(sl.get(i, 0), 2) for i in (1, 2, 3)], [round(li.get(i, 0), 2) for i in (1, 2, 3)]),
+        [round(sl.get(i, 0), 2) for i in (1, 2, 3)] == [1.0, 0.35, 0.0] and all(li.get(i, 0) > 0.3 for i in (1, 2, 3))))
     ok = True
     for t, g in rueck:
         print("%-90s %s" % (t, "ok" if g else "FEHLER"))

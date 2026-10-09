@@ -22,6 +22,7 @@ ARTEN = [  # (Anfang des Namens, Farbe, Legende)
     (("battery",), "#e6c200", "Batterien"),
     (("window",), "#17becf", "Fenster"),
     (("seat", "monitor", "instrument", "button"), "#2ca02c", "Bruecke"),
+    (("small_light",), "#fff27a", "Lampen"),
 ]
 
 
@@ -160,6 +161,7 @@ BESCHRIFTUNG = [
     ("Laser Seite (je einer, auf Ausleger)", (-19, 6, -8), (-100, -90)),
     ("Wellen fuer die Raeder (7 je Seite)", (-15, -3, 5), (60, -100)),
     ("Kennung KL-1", (-15, 5, -16), (160, -90)),
+    ("Statuslicht (Farbe = KI-Zustand)", (0, 32, -24), (150, 60)),
 ]
 
 

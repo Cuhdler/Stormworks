@@ -3,7 +3,7 @@ sich auch einzeln aufrufen: python landkreuzer/tools/pruefen.py [Datei]
 
 Prueft:
 1. XML wohlgeformt (ein strenger XML-Leser liest die Datei)
-2. nur Teil-Arten, die es in der Figet Marena gibt (deren Spiel-Definitionen sind also auf Andres PC vorhanden)
+2. nur Teil-Arten, die es in der Figet Marena gibt (Teilelager oder seit 08.10. im Schiff) (deren Spiel-Definitionen sind also auf Andres PC vorhanden)
 3. je Koerper keine zwei Teile auf demselben Platz (ausser Gelenk-Paaren)
 4. Rumpf zusammenhaengend (Nachbar-Bloecke; Bauteile zaehlen mit 2 Bloecken Reichweite, weil sie groesser sind)
 5. Kabel: kein Eingang doppelt belegt (ausser Strom), jedes Kabel verbindet zwei verschiedene Orte
@@ -26,6 +26,8 @@ sys.path.insert(0, HIER)
 import fz  # noqa: E402
 
 LK = os.path.dirname(HIER)
+# Teil-Arten, die erst nach dem Teilelager (05.10.) ins Schiff kamen - also auch in Andres Spiel vorhanden
+NEU_IM_SCHIFF = {"small_light_rgb"}
 
 
 def pruefe(txt, schiff=None, laut=True):
@@ -34,7 +36,7 @@ def pruefe(txt, schiff=None, laut=True):
     F = fz.Fahrzeug(txt)
     # 2. Arten
     schiff = schiff or fz.Fahrzeug.lesen()
-    bekannt = {t.d for _, ts in schiff.koerper for t in ts}
+    bekannt = {t.d for _, ts in schiff.koerper for t in ts} | NEU_IM_SCHIFF
     arten = collections.Counter(t.d for _, ts in F.koerper for t in ts)
     neu = set(arten) - bekannt
     if neu:

@@ -9,6 +9,7 @@
 -- Schreiber v2 wie in den Waffen-Skripten (Messstelle 'ki', an tools/waffen_logger.py; Eigenschaft 'Schreiber Port',
 -- 0 = aus): je Tick eine Zeile mit allem, was die Fahr-KI sieht und tut - fuer die Auswertung der ersten Fahrten.
 -- Video: Monitor 2x3 (64 x 96 Pixel, hochkant) und Helm des Steuersitzes (breit: dort nur eine Zeile unten)
+-- Ausgang Composite: Zahl 1-3 Statuslicht (Farbe nach Zustand, siehe unten), 4-6 Lampen vorn (weiss) - an die Lampen
 -- Unten zwischen den Motor-Balken: N Nick (+ = Bug hoch), R Roll (+ = rechts tief), K Kurs (Grad, 0 Nord, 90 Ost) - so,
 -- wie die Fahr-KI sie sieht (mit 'Nick/Roll/Kompass Richtung'). Zum Pruefen der Vorzeichen am Hang.
 -- Batterie-Restzeit: alle 10 s wird gemessen, wie viel Ladung weg ist (geglaettet); 'BAT 83% 45M' = bei diesem
@@ -82,6 +83,7 @@ function onTick()
 	if not ini then
 		ini=1
 		NR,RR,KR=property.getNumber('Nick Richtung'),property.getNumber('Roll Richtung'),property.getNumber('Kompass Richtung')
+		SL,LH=property.getNumber('Statuslicht hell'),property.getNumber('Licht hell')
 	end
 	for i=1,32 do W[i]=N(i) end
 	ni,ro,ku=W[5]*NR*360,W[6]*RR*360,(W[4]*KR*360)%360
@@ -119,6 +121,15 @@ function onTick()
 		ni,ro,ki,wa,sz,sb,hm,ul,ur},28)
 	LF()
 	ki,sb,zi,hm,fa,wa,rv,sz=B(1),B(2),B(4),B(6),B(7),B(10),B(9),B(11)
+	-- Lampen: Statuslicht (Zahl 1-3) nach Zustand - blau Pause, weiss Hand, orange Kampf, rot blinkend Batterie/
+	-- Gefahr/Laser?, gruen faehrt/wartet (Waffen frei), tuerkis (Waffen gesperrt); Lampen vorn (Zahl 4-6) weiss
+	local z,c=math.floor(W[26]+.5)
+	if not ki then c={0,.2,1} elseif z==1 then c={1,1,1} elseif z==6 then c={1,.35,0}
+	elseif z==7 or z==8 or z==10 then c=tk%40<20 and {1,0,0} or {0,0,0} elseif wa then c={0,1,0} else c={0,.8,.8} end
+	for i=1,3 do
+		output.setNumber(i,c[i]*SL)
+		output.setNumber(3+i,LH)
+	end
 end
 function f(v)
 	if v<=0 then return '--' end

@@ -23,7 +23,8 @@ from bau_landkreuzer import RAD_Z, ACHSE_Y, X1  # noqa: E402
 
 BEKANNT = ("multibody", "gun_", "radar", "camera", "laser", "microprocessor", "motor_", "trans_", "battery",
            "window", "seat", "monitor", "instrument", "button", "physics", "gate_", "door", "railing", "stair",
-           "ladder", "flare", "rocket", "solid_", "warhead", "connector", "inventory", "sign", "control_fin")
+           "ladder", "flare", "rocket", "solid_", "warhead", "connector", "inventory", "sign", "control_fin",
+           "small_light")
 
 
 def stummel(F=None):

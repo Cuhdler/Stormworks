@@ -108,6 +108,12 @@ R_RECHTS = (0, 0, -1, 1, 0, 0, 0, -1, 0)
 R_HINTEN = (-1, 0, 0, 0, 0, -1, 0, -1, 0)
 R_UNTEN = (1, 0, 0, 0, -1, 0, 0, 0, -1)
 SEITEN_LASER_X = 19
+# Lampen (kleine RGB-Lampe wie die 55 im Schiff seit 08.10.; Anschluesse am vp: Strom 'Electric', Composite
+# 'Color Data' Zahl 1-3 = Rot/Gruen/Blau 0-1). Stehen auf Bloecken und leuchten nach oben.
+LAMPE = '<c d="small_light_rgb"><o r="1,0,0,0,1,0,0,0,1" sc="5">%s<logic_slots><slot/><slot/><slot/></logic_slots></o></c>'
+LAMPEN = [("Statuslicht", (0, 32, -24)),                                    # oben auf dem Radarmast
+          ("Licht", (-12, 7, 36)), ("Licht", (12, 7, 36)),                  # vorn auf dem Deck, weiss
+          ("Statuslicht", (-12, 10, -66)), ("Statuslicht", (12, 10, -66))]  # hinten auf dem Heckdeck
 LASER = [
     # Lage wie die Fahr-KI rechnet: aeussere Front-Laser 3,5 m seitlich, Seiten-Laser 4,75 m (= 'Breite m' / 2, aussen
     # ueber den Raedern auf einem kurzen Ausleger)
@@ -385,6 +391,11 @@ class Bau:
             # Composite (Schwenk) - so am verkabelten Bug-Laser des Autopiloten (Schiff ab 08.10.)
             for k in (1, 2):
                 self.teil_voxel.add(laser_zelle(n, k))
+        self.lampen = []
+        for art, p in LAMPEN:
+            t = fz.Teil(LAMPE % fz.vox("vp", p))
+            self.plus(t)
+            self.lampen.append((art, t))
 
     # ---------------- Rumpf ----------------
     def deck(self, z):
@@ -783,6 +794,10 @@ class Bau:
             # Einschalten: 'Laser an' sitzt einen Block weiter in Strahlrichtung (am Bug-Laser des Autopiloten so
             # verkabelt; ohne das Signal misst er nicht)
             neu.append((0, self.knoten("KI", "Immer an"), laser_zelle(t, 1)))
+        # Lampen: Strom und Farbe (Statuslicht = Farbe nach KI-Zustand, Licht = weiss) vom KI-Chip
+        for art, t in self.lampen:
+            neu.append((4, bat, t.vp))
+            neu.append((5, self.knoten("KI", art), t.vp))
         # Ladestand: von der kleinen Batterie im selben Netz (alle Anschluesse in ihrem einen Block); fehlt er, liest die
         # KI 0 = unbekannt
         neu.append((4, bat, self.bat_klein.vp))

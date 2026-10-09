@@ -244,10 +244,31 @@ def test_status_bodenlaser():
     return rueck
 
 
+def test_status_licht():
+    """Lampen: Statuslicht (Zahl 1-3) nach Zustand, Licht vorn (4-6) weiss mit 'Licht hell'."""
+    rueck = []
+    pr = {n: v for n, v, _ in build_ki.props()}
+    g, io = lade("ki_status", pr)
+    faelle = [("Pause", {26: 2.0}, {}, (0, .2, 1)), ("Hand", {26: 1.0}, {1: True}, (1, 1, 1)),
+              ("Kampf", {26: 6.0}, {1: True, 10: True}, (1, .35, 0)), ("faehrt, Waffen frei", {26: 2.0}, {1: True, 10: True},
+                                                                       (0, 1, 0)),
+              ("faehrt, Waffen gesperrt", {26: 2.0}, {1: True}, (0, .8, .8))]
+    for name, n, b, soll in faelle:
+        n = {**n, 14: 1.0}
+        tick(g, io, n, b)
+        o = tick(g, io, n, b)
+        farbe = tuple(round(o[i], 2) for i in (1, 2, 3))
+        rueck.append(("Statuslicht %s: %s" % (name, farbe), farbe == tuple(v * pr["Statuslicht hell"] for v in soll)
+                      and all(abs(o[i] - pr["Licht hell"]) < 1e-9 for i in (4, 5, 6))))
+    an = [tick(g, io, {26: 8.0, 14: 1.0}, {1: True})[1] for _ in range(80)]
+    rueck.append(("Statuslicht Gefahr: rot blinkend (%d von 80 Ticks an)" % sum(1 for v in an if v > 0), 30 <= sum(1 for v in an if v > 0) <= 50))
+    return rueck
+
+
 def main():
     ok = True
     for t in (test_kleber, test_lenkung, test_status, test_status_batterie, test_status_schreiber,
-              test_status_vorzeichen, test_status_bodenlaser):
+              test_status_vorzeichen, test_status_bodenlaser, test_status_licht):
         for txt, g in t():
             print("%-75s %s" % (txt, "ok" if g else "FEHLER"))
             ok &= bool(g)
