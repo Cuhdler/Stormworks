@@ -686,6 +686,14 @@ ohne 'channel', also alle auf Bool 1 (fehlende Angabe = Kanal 0, wie in den Beis
 - Nachbau mit der echten Datei: Hebel steht 0,25 s nach dem Loslassen; Autopilot-Knopf -> Bool 29 an/aus; 0 verworfene
   Kabel. Im Spiel: Drehrichtung der E-Motoren noch offen ('E-Motor Test').
 
+### 10.10. ~17:55: Hitze-Test ohne Regelung (Andre; 'Temp Ziel' 200, 'E-Motor Anteil' 0 per Datei, Notschutz 115 bleibt)
+- Vollgas nur Diesel: 67-68 kn bis ~75 Grad (3,7 min), dann 60 / 48 / 41 kn; nach 9,7 min 87/92/101/97 Grad, nur noch
+  +1 Grad/min - Gleichgewicht ~90-105 Grad, 115 nie erreicht. Mit Regler 70 Grad + E vorher: 28,5 kn. -> 70 Grad war zu
+  vorsichtig (Andre: "ab 90 Grad Sorgen"). R1 laeuft ~14 Grad heisser als L1 (Kuehlkreis R1 pruefen?).
+- Vorschlag an Andre: 'Temp Ziel' 105 (oder 95) nur als Schutz; E-Motoren auch bei Hitze-Leistungsverlust ab ~75 Grad
+  (Tempo halten). Offen: Drehrichtungs-Test ('E-Motor Richtung L' steht schon auf -1).
+- Stand der Datei bis zur Entscheidung: 'Temp Ziel' 200, 'E-Motor Anteil' 0, 'E-Motor Richtung L' -1.
+
 ### Reihenfolge (Andre 08.10.)
 1. Autopilot (v1.0 eingebaut 08.10., Test im Spiel steht aus): Kurs/Tempo halten, Karte (screen.drawMap) mit Wegpunkten zum Antippen, Ausweichen ueber 2-3 Laser am Bug
    (Lua kann das Gelaende der Karte nicht auslesen). Andre baut: Autopilot-Knopf, Karten-Monitor, Laser. Chip zwischen

@@ -122,6 +122,10 @@ Spielregeln in `wissen/mechaniken/README.md`.
   (gleiche Drosseln): 25–75 °C 59–60 kn, 75–80 °C 54 kn, 80–85 °C 48 kn, 85–90 °C 45 kn; dabei wird das Gemisch im
   Zylinder magerer (Luftverhältnis 12,6 → 15,5) [G 07.10.]. Wärme entsteht aus dem verbrannten Treibstoff, nicht aus
   der Drehzahl [W – Wiki „Modular engine“]. Darum Temperatur-Regler auf ~70 °C, nicht höher.
+- Modular-Diesel, Dauerbetrieb heiß (Figet Marena 10.10., Vollgas ohne Temperatur-Regler, nur Diesel): 67–68 kn bis
+  der heißeste Motor ~75 °C erreicht (nach 3,7 min), dann sinkt das Tempo (60 kn bei 78 °C, 48 kn bei ~90 °C, 41 kn
+  nach 9,7 min bei 87–101 °C); die Temperatur pendelt sich bei ~90–105 °C ein (zuletzt +1 °C/min), Notschutz 115 °C
+  nie erreicht [G]. Zum Vergleich mit Regler auf 70 °C (+ E-Motoren): 28,5 kn – Halten bei 70 °C kostet also Tempo.
 - Modular-Diesel, Kühlung: 18-Zylinder-3×3-Motor mit 12 Electric Radiator 3×3, 24 Pumpen: Vollgas ab kalt ~15 °C/min;
   Gas weg → Temperatur fällt erst 10–15 s später [G 07.10.]. Getrennte Regler je Motor schaukeln sich gegenseitig auf
   (Seiten abwechselnd gedrosselt, Schiff zieht) → eine gemeinsame Grenze für alle Motoren [G].
