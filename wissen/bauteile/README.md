@@ -129,6 +129,12 @@ Spielregeln in `wissen/mechaniken/README.md`.
 - Modular-Diesel, Kühlung: 18-Zylinder-3×3-Motor mit 12 Electric Radiator 3×3, 24 Pumpen: Vollgas ab kalt ~15 °C/min;
   Gas weg → Temperatur fällt erst 10–15 s später [G 07.10.]. Getrennte Regler je Motor schaukeln sich gegenseitig auf
   (Seiten abwechselnd gedrosselt, Schiff zieht) → eine gemeinsame Grenze für alle Motoren [G].
+- Modular-Diesel, Gemisch bei Hitze (Figet Marena 10.10., festes Luft/Treibstoff-Verhältnis der Drosseln): unter
+  75 °C bei jedem Gas normal; darüber wird es bei viel Gas schlagartig extrem mager (Treibstoff im Zylinder fast 0) –
+  75–80 °C: bis ~40 % Gas normal, 60 % zur Hälfte mager, 70 % fast immer; über 80 °C ab ~50 % Gas. Gas zurück → sofort
+  wieder normal. Mager wird der Motor kaum wärmer und kaum stärker: ein Temperatur-Regler gibt dann nutzlos Vollgas.
+  Dauerbetrieb: 75 °C halten = 36 % Gas (Nacht, 12 Kühler je Motor); heiß frei (Vollgas, mager) war auf Dauer
+  schneller (41–45 kn gegen ~35–37 kn) [G].
 - Maschinenraum-Luft (Figet Marena 10.10., 2 Temperature Probes, 4 Diesel Vollgas, 4 Air-Air Heat Exchanger an): vor
   dem Start 2,6 °C (Nacht), in 6 min gleichmäßig auf 7,4 °C (~0,8 °C/min, eher langsamer werdend), während die Motoren
   79–88 °C erreichen. Die Raumluft bleibt also kalt, die Kühler haben ~80 °C Unterschied zur Luft – warme Raumluft ist

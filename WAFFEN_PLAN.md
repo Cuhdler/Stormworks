@@ -726,6 +726,18 @@ ohne 'channel', also alle auf Bool 1 (fehlende Angabe = Kanal 0, wie in den Beis
 - Test: Schiff v3.7 'Temp Treppe' 1 (75/85/95 je 3 min, dann 'Temp Ziel' 105; E-Motoren aus). Andre: Vollgas
   geradeaus ~20 min. Danach 'Temp Treppe' wieder 0.
 
+### 10.10. 22:21-22:41: Ergebnis Temperatur-Treppe
+- 0-3,5 min Vollgas kalt: 65-66 kn, Gemisch normal. 75 Grad (R1) gehalten: 36 % Gas, Gemisch normal, 32 kn in Gang 5 -
+  aber mit viel Ruder (im Mittel 21 % Ausschlag, Kurven), gerade wohl ~35-37 kn.
+- Stufe 85: sobald Gas > ~50 % und Motor > 75 Grad: Gemisch sofort mager (MIX -2 bzw. 0,00 = fast kein Treibstoff im
+  Zylinder), Motor wird kaum waermer -> der Regler gibt Vollgas, ohne dass es etwas bringt: 38 kn (Gang 6), dann
+  Gang 5 und 35 -> 29 kn (Ruder 10 %). L1 kuehlte bei Vollgas sogar ab (78 -> 75 Grad).
+- Alle Fahrt-Logs 10.10.: unter 75 Grad nie mager (jedes Gas); 75-80 Grad: 40 % Gas normal, 60 % zur Haelfte mager,
+  70 % fast immer; ueber 80 Grad ab ~50 % Gas mager. Gas runter -> sofort wieder normal.
+- Schluss: die Kuehlung ist die Grenze, nicht die Temperatur-Zahl. Heiss frei fahren (Vollgas, mager) gab gerade
+  41-45 kn nach 10 min (17:55, 19:16), 75 Grad halten nur ~35-37 kn. -> 'Temp Ziel' bleibt 105 (Schutz), Treppe 0.
+  Mehr Dauer-Tempo nur mit mehr Kuehlung oder Hilfs-Dieseln.
+
 ### Reihenfolge (Andre 08.10.)
 1. Autopilot (v1.0 eingebaut 08.10., Test im Spiel steht aus): Kurs/Tempo halten, Karte (screen.drawMap) mit Wegpunkten zum Antippen, Ausweichen ueber 2-3 Laser am Bug
    (Lua kann das Gelaende der Karte nicht auslesen). Andre baut: Autopilot-Knopf, Karten-Monitor, Laser. Chip zwischen

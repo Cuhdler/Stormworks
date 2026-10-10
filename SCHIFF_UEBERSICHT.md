@@ -103,8 +103,9 @@ Skripte: `lua/schiff.lua` (v3.7), `lua/shud.lua` (Helm, v2.6), `lua/wellen.lua` 
   oder Motoren aus: Tempo halten vorbei.
 - **v3.7 (10.10.) Test „Temp Treppe“** (Andre: beste Dauer-Geschwindigkeit bei gehaltener Temperatur suchen): `Temp
   Treppe` 1 = der Regler hält nacheinander 75, 85, 95 Grad je 3 min (gezählt, solange der heißeste Motor höchstens
-  2 Grad darunter ist), danach `Temp Ziel`; E-Motoren dabei aus. **Steht seit 10.10. 20:35 auf 1** – nach dem Test
-  wieder 0 (Claude setzt es).
+  2 Grad darunter ist), danach `Temp Ziel`; E-Motoren dabei aus. Test 10.10. 22:21 gemacht, steht wieder auf 0.
+  Ergebnis: über ~75 Grad nehmen die Diesel nur noch ~die Hälfte Gas an (Gemisch wird mager), bei 75 Grad hält die
+  Kühlung 36 % Gas. 75 Grad halten ist darum langsamer als frei fahren → `Temp Ziel` bleibt 105 (nur Schutz).
 - **v3.6 Fahrhebel:** die Sitz-Achse W/S steigt beim Drücken in ca. 3 s an und fällt nach dem Loslassen langsam ab
   (Log 09.10.) – von Hand gilt jetzt: Achse steigt/steht = volle Hebel-Geschwindigkeit, fällt = Hebel steht (Nachbau:
   steht ca. 0,15 s nach dem Loslassen). Steuert der Autopilot (Bool 29 im Sitz-Composite vom Autopilot v1.3), schiebt
