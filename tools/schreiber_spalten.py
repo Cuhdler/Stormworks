@@ -75,6 +75,7 @@ SPALTEN = {
            "blick_mitte_x", "blick_mitte_y", "korrektur_an"],
     # Schutz (SCHUTZ v1.0): Auto-Chaff an, Ortung Radar Detector, Salve, Salven gesamt, Salven dieser Ortung, Ticks ohne
     # Ortung, Pumpen an, Master Arm, Zielkorrektur an
+    "mr": ["t_bb", "t_sb"],
     "sc": ["auto_chaff", "ortung", "salve", "salven", "salven_ortung", "ohne_ortung", "pumpen", "master_arm", "korrektur"],
     # Seeradar (SEERADAR v1.0, Radar 6 + Monitor 3x3): Strahl ab Bug (U), Gimbal-Befehl, frische Ortungen, neue
     # Kontakte, Kontakte See/Land/Luft, Reichweite m, Kurs U, Schirm hat den Befehl eingeholt

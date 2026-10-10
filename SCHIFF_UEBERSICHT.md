@@ -84,7 +84,9 @@ selbst (Halbautomatik mit Master Arm).
 - **Raumkühlung (10.10., Andre):** 4 Air-Air Heat Exchanger 3×9×9 (±3,−15,−103) und (±3,−15,−94), je Kreis A
   Maschinenraum und Kreis B Außenluft (Luftfilter), 10 Pumpen ((±4,−9,−91…−106), (0,−10,−101), (0,−9,−102)) an
   „Motoren an“ und Strom (tools/luftkuehlung_update.py). Ob der Raum vorher heiß wurde, ist ungeprüft – eine
-  Temperature Probe im Maschinenraum würde es zeigen.
+  Temperature Probe im Maschinenraum würde es zeigen. Seit 10.10. abends: 2 Probes (±2,−7,−82) → Chip „Figet Marena
+  Raumtemperatur“ 2×1 an der Decke des Chip-Raums (−4,13,−50), Strom „mr“ im Waffen-Schreiber (t_bb, t_sb).
+  Test 19:10 (mit Tauschern): Motortemperaturen genau wie ohne (87/92/101/97 Grad nach ~9 min).
 
 ### 3.2 Chip „Figet Marena Schiffsführung“ v3.6 (6×6, vp (0,−12,−41))
 Skripte: `lua/schiff.lua` (v3.6), `lua/shud.lua` (Helm, v2.6), `lua/wellen.lua` (v2). Bau: `tools/build_schiff.py`.

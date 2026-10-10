@@ -57,7 +57,9 @@ TAKT = {"la": (16, 0), "ba": (16, 1), "fLr": (8, 2), "fLf": (16, 3), "fRr": (8, 
         # Autopilot (Monitor 5x3, Laser am Bug, 08.10.)
         "ap": (16, 7),
         # Jet-Steuerung (zweiter Sitz, 08.10.)
-        "js": (16, 9)}
+        "js": (16, 9),
+        # Raumtemperatur Maschinenraum (10.10.; teilt den Takt mit Mast-Radar 3)
+        "mr": (16, 8)}
 _belegt = [lo + i * lt for lt, lo in TAKT.values() for i in range(16 // lt)]
 assert max(_belegt.count(t) for t in set(_belegt)) <= 2 and all(t < 16 for t in _belegt), "Schreiber-Takte zu voll"
 
