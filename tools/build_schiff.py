@@ -14,7 +14,7 @@ from build_mc import MC, minify, fmt, LUA_LIMIT  # noqa: E402
 
 LUA_DIR = os.path.join(ROOT, "lua")
 BUILD = os.path.join(ROOT, "build")
-MC_FILE = "Figet Marena Schiff v3.5.xml"
+MC_FILE = "Figet Marena Schiff v3.6.xml"
 
 # Name, Standardwert, Erklaerung
 PROPS = [
@@ -44,7 +44,9 @@ PROPS = [
     ("Getriebe B", 1.5, "Uebersetzung von Getriebe B, wenn an (3:2 = 1.5)"),
     ("Getriebe C", 2, "Uebersetzung von Getriebe C, wenn an (2:1 = 2)"),
     # v3.5 E-Motoren (Andre 10.10.: zwei grosse E-Motoren an der Welle vor den Getrieben)
-    ("E-Motor Anteil", 1, "E-Gas = so viel mal der Teil des Hebels, den die Temperatur den Dieseln wegnimmt (hoechstens 100 %; 0 = aus; ist der E-Motor schwaecher: groesser, z. B. 3)"),
+    ("E-Motor Anteil", 1, "Hoechstens so viel E-Gas (1 = 100 %, 0 = E-Motoren aus)"),
+    ("E Tempo P", 0.3, "Tempo halten: E-Gas je m/s, die das Schiff langsamer ist als beim Beginn der Drosselung"),
+    ("E Tempo I", 0.03, "Tempo halten: so viel E-Gas kommt je Sekunde und m/s Tempo-Verlust dazu (langsamer Ausgleich)"),
     ("E-Motor ab Batterie", 0.5, "Unter dieser Batterie-Ladung bleiben die E-Motoren aus (Anlasser, Pumpen, Luefter brauchen Strom); 5 % darueber wieder an"),
     ("E-Motor Test", 0, "1 = Diesel bleiben ausgekuppelt, E-Motoren fahren mit dem Fahrhebel (Drehrichtung pruefen); danach wieder 0"),
     ("Log Port", 8766, "Fahrtenschreiber: Port von tools/logger.py auf dem PC (0 = aus; Heli-Flugschreiber nutzt 8765)"),
@@ -73,7 +75,7 @@ STOCK = {"1": "unterer", "2": "oberer"}
 
 def build(schiff_src, hud_src, wellen_src):
     # Beschreibung kurz halten: das Spiel kuerzt sie im Fahrzeug auf 128 Zeichen.
-    mc = MC("Figet Marena Schiffsfuehrung", "Schiff v3.5: 4 Diesel + 2 E-Motoren, Temperatur 70, 8 Gaenge, Wellen-Schutz. H1 an/aus, H2 Stopp, H3 Automatik, H4 Werte", 6, 6)
+    mc = MC("Figet Marena Schiffsfuehrung", "Schiff v3.6: 4 Diesel + 2 E-Motoren (Tempo halten), Temperatur 70, 8 Gaenge. H1 an/aus, H2 Stopp, H3 Automatik, H4 Werte", 6, 6)
     sitz = mc.node("Sitz", 1, 5, "Steuersitz (Helm): Ausgang 'Seat data'", 0, 0, (-8, 6))
     phys = mc.node("Physik-Sensor", 1, 5, "Flossen-Chip 'Physik weiter' (Physics Sensor + Heck-Wasser auf Kanal 20; ohne Messer: Physics Sensor direkt)", 1, 0, (-8, 5))
     rps, zyl = {}, {}
@@ -109,7 +111,9 @@ def build(schiff_src, hud_src, wellen_src):
     abzug = mc.comp(31, (0, -4), {}, [(wellen, 0)])
     sperre = mc.comp(29, (0, -5), {}, [(wellen, 0)])
     w2 = mc.comp(40, (0, -2), {"count": 1, "offset": 23}, [("inc", (wbool, 0)), (abzug, 0)])
-    w2 = mc.comp(41, (0, -3), {"count": 1, "offset": 8}, [("inc", (w2, 0)), (sperre, 0)])
+    # v3.6: Bool 10 = Autopilot steuert (Sitz-Composite Bool 29 vom Autopilot-Chip v1.3) - dann schiebt W/S fein
+    apf = mc.comp(29, (-5, -5.5), {"i": 28}, [(sitz, 0)])
+    w2 = mc.comp(41, (0, -3), {"count": 2, "offset": 8}, [("inc", (w2, 0)), (sperre, 0), (apf, 0)])
     schiff = mc.comp(56, (1, 1), {"script": schiff_src}, [(w2, 0)])
     hud = mc.comp(56, (3, -3), {"script": hud_src}, [(schiff, 0)])
     for k, (name, val, desc) in enumerate(PROPS):

@@ -50,6 +50,12 @@ Spielregeln in `wissen/mechaniken/README.md`.
 
 - Seat data (Composite) bei Sitz und Control Handle: Zahl 1 A/D, 2 W/S, 3 Pfeil links/rechts, 4 Pfeil hoch/runter,
   **9/10 Blick X/Y (Umdrehungen)**; An/Aus 1–6 Hotkeys, **31 Leertaste (Trigger), 32 besetzt** [S].
+- **Tastatur-Achsen sind geglättet:** W/S am Steuersitz steigt beim Drücken in ca. 3 s von 0 auf ~1 und fällt nach dem
+  Loslassen genauso langsam ab (Log des Autopiloten 09.10.: 0,48 → 0,67 in 12 Ticks, danach −0,006/Tick) [G]. Wer
+  Tasten als „gedrückt/losgelassen“ braucht: auf steigend/fallend achten, nicht auf den Betrag.
+- Sitz-Beschriftung in der Datei: `hotkey_0_label`…`hotkey_5_label` (H1–H6), `trigger_label` (Leertaste),
+  `control_mode_0_label`…`control_mode_3_label` (A/D, W/S, Pfeil l/r, Pfeil hoch/runter), `custom_name` [G – Workshop-
+  Fahrzeuge auf Andres PC].
 - Pfeil hoch/runter am Control Handle: Zoom mit Schwelle 0,5 sprach nicht an, mit 0,2 schon (08.10.) – Tastatur-
   Achsen steigen vermutlich erst an [G/V].
 - Control Handle: Blick am Monitor als „Zeiger“ brauchbar (±0,09 U links/rechts, ±0,055 U oben/unten ≈ 5×3-Monitor

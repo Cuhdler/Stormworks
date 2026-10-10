@@ -8,7 +8,9 @@
 - test_schreiber: Fahrtenschreiber (shud.lua -> HTTP -> logger.entpacke) lueckenlos und richtig entpackt
 - test_temperatur (v3.4): Waermemodell nach der Fahrt 07.10. - gemeinsame Gas-Grenze, sanft auf 'Temp Ziel', ohne
   Schaukeln, auch mit traeger Kuehlung
-- test_emotor (v3.5): E-Motoren bekommen den Rest des Hebels, Batterie-Schutz, Test-Schalter (Diesel ausgekuppelt)
+- test_emotor (v3.6): E-Motoren halten das Tempo, wenn die Temperatur die Diesel drosselt (Tempo-Modell, E-Motor
+  verschieden stark), Batterie-Schutz, Test-Schalter (Diesel ausgekuppelt)
+- test_hebel (v3.6): W/S mit der langsam steigenden/fallenden Sitz-Achse - Hebel steht beim Loslassen; Autopilot anteilig
 """
 import os
 import sys
@@ -545,44 +547,97 @@ def test_temperatur():
     return ok
 
 
-def test_emotor():
-    """v3.5: 4 Motoren mit Waermemodell, Vollgas. E-Gas (Zahl 20) = Hebel minus Temperatur-Grenze; Batterie unter 50 %:
-    aus (erst ab 55 % wieder an), Bool 13; 'E-Motor Test' 1: Diesel ausgekuppelt, E-Gas = Hebel."""
-    ok = True
-    mo = [Motor(waerme=(0.27 * f, 0.00124, 15)) for f in (1.0, 1.04, 1.0, 0.98)]
-    sch = Schiff(mo)
+class SchiffV(Schiff):
+    """Schiff mit einfachem Tempo-Modell: Schub = Diesel-Gas (Mittel der 4 Motoren) + k * E-Gas, Widerstand ~ Tempo^2;
+    Vollgas Diesel = 30 m/s, Zeitkonstante ca. 30 s. k = wie stark der E-Motor im Vergleich zu allen Dieseln ist."""
+
+    def __init__(self, motoren, k):
+        super().__init__(motoren)
+        self.v, self.k = 0.0, k
+
+    def tick(self, ad=0.0, ws=0.0, bug=0.0, h1=False, h2=False, last=1.0, h4=False):
+        n = {1: ad, 2: ws, 3: bug, 5: self.v, 6: 0.25, 25: self.batt}
+        for i, mm in enumerate(self.mess):
+            for j in range(4):
+                n[7 + 4 * i + j] = mm[j]
+        b = {1: h1, 2: h2, 4: h4, 8: True}
+        self.wellen(n, b)
+        self.io["n"], self.io["b"] = n, b
+        self.io["on"].clear()
+        self.g.onTick()
+        o = dict(self.io["on"])
+        self.mess = [mo.schritt(o[3 * i + 1], o[3 * i + 2], o[3 * i + 3], o[102 + i], last) for i, mo in enumerate(self.mo)]
+        gas = sum(entpacke(o, i)["gas"] for i in (1, 2, 3, 4) if entpacke(o, i)["z"] in (0, 3)) / 400.0
+        schub = 900.0 * (gas + self.k * o.get(20, 0.0))
+        self.v = max(0.0, self.v + (schub - self.v ** 2) / 1800.0 / 60)
+        return o
+
+
+def warm(k):
+    sch = SchiffV([Motor(waerme=(0.27 * f, 0.00124, 15)) for f in (1.0, 1.04, 1.0, 0.98)], k)
     sch.batt = 0.9
+    return sch
+
+
+def test_emotor():
+    """v3.6: 4 Motoren mit Waermemodell, Vollgas, Tempo-Modell. Drosselt die Temperatur die Diesel, haelt das E-Gas das
+    Tempo vom Beginn der Drosselung (staerkerer E-Motor: weniger E-Gas; schwacher: voll). Batterie-Schutz, Test-Schalter."""
+    ok = True
+    for k, name in ((1.5, "E-Motor 150 % der Diesel"), (0.5, "E-Motor 50 %"), (0.2, "E-Motor 20 %")):
+        sch = warm(k)
+        V, E = [], []
+        for t in range(60 * 14 * 60):
+            sek = t / 60
+            o = sch.tick(ws=1.0 if 2 <= sek < 6 else 0.0, h1=1 <= sek < 1.05)
+            if t % 60 == 0:
+                V.append((sek, sch.v))
+                E.append((sek, o[20]))
+        vmax = max(v for t, v in V if t < 200)
+        spaet_v = [v for t, v in V if t >= 600]
+        spaet_e = [e for t, e in E if t >= 600]
+        ohne = 30.0 * 0.22 ** 0.5
+        print("   %s: vorher %.1f m/s, ab 10 min %.1f..%.1f m/s (ohne E ca. %.1f), E-Gas %.2f..%.2f" % (
+            name, vmax, min(spaet_v), max(spaet_v), ohne, min(spaet_e), max(spaet_e)))
+        if k >= 1:
+            ok &= pruefe([("%s: Tempo gehalten (hoechstens 1 m/s weniger), E-Gas ruhig" % name,
+                           min(spaet_v) >= vmax - 1.0 and max(spaet_e) - min(spaet_e) < 0.15 and max(spaet_e) < 0.95)])
+        else:
+            ok &= pruefe([("%s: E-Gas voll, schneller als ohne E" % name, min(spaet_e) > 0.95 and min(spaet_v) > ohne + 2)])
+    # Hebel zurueck waehrend Tempo halten: auf 40 % (Diesel immer noch gedrosselt) -> Soll-Tempo sinkt, weniger E-Gas;
+    # auf 15 % (Diesel nicht mehr gedrosselt) -> E-Gas weg
+    for ziel, dauer in ((40, 2.4), (15, 3.4)):
+        sch = warm(0.5)
+        e_vor = v_vor = v_kalt = 0.0
+        for t in range(60 * 13 * 60):
+            sek = t / 60
+            ws = 1.0 if 2 <= sek < 6 else (-1.0 if 600 <= sek < 600 + dauer else 0.0)
+            o = sch.tick(ws=ws, h1=1 <= sek < 1.05)
+            if t == 599 * 60:
+                e_vor, v_vor = o[20], sch.v
+            if sek < 200:
+                v_kalt = max(v_kalt, sch.v)
+        if ziel == 40:
+            soll = v_kalt * 0.4 ** 0.4          # Soll-Tempo (vom Beginn der Drosselung) mal (40 %)^0,4
+            ok &= pruefe([("Hebel auf 40 %%: Soll-Tempo sinkt (%.1f -> %.1f m/s, erwartet %.1f), E-Gas %.2f -> %.2f" % (
+                v_vor, sch.v, soll, e_vor, o[20]), e_vor > 0.95 and o[20] < 0.8 and abs(sch.v - soll) < 1.5)])
+        else:
+            ok &= pruefe([("Hebel auf 15 %% (Diesel schaffen das): E-Gas weg (%.2f -> %.2f)" % (e_vor, o[20]), o[20] < 0.02)])
+    # Batterie-Schutz mit Tempo halten
+    sch = warm(0.5)
     log = {}
-    for k in range(60 * 12 * 60):
-        sek = k / 60
+    for t in range(60 * 12 * 60):
+        sek = t / 60
         if sek >= 600:
             sch.batt = 0.4 if sek < 630 else (0.52 if sek < 660 else 0.6)
         o = sch.tick(ws=1.0 if 2 <= sek < 6 else 0.0, h1=1 <= sek < 1.05)
-        if k % 30 == 0:
-            log[round(sek, 1)] = (o[20], entpacke(o, 1)["gas"], bool(o.get(113)), o[3])
-    at = lambda t: log[round(t, 1)]
-    kalt = at(100)
-    heiss = at(540)
+        if t % 30 == 0:
+            log[round(sek, 1)] = (o[20], bool(o.get(113)))
+    at = lambda x: log[round(x, 1)]
     ok &= pruefe([
-        ("kalt (100 s): Diesel %d %% Gas, E-Motor %.0f %%" % (kalt[1], kalt[0] * 100), kalt[1] >= 95 and kalt[0] < 0.05),
-        ("heiss (540 s): Diesel %d %%, E-Motor %.0f %% = der Rest bis 100 %%" % (heiss[1], heiss[0] * 100),
-         heiss[1] < 40 and abs(heiss[0] * 100 + heiss[1] - 100) <= 3),
-        ("Batterie 40 %%: E-Motor aus (%.0f %%), Warnung (Bool 13) an" % (at(620)[0] * 100), at(620)[0] < 0.01 and at(620)[2]),
-        ("Batterie 52 %: bleibt aus (erst ab 55 %)", at(650)[0] < 0.01 and at(650)[2]),
-        ("Batterie 60 %%: wieder an (%.0f %%), Bool 13 aus" % (at(700)[0] * 100), at(700)[0] > 0.4 and not at(700)[2]),
+        ("Batterie 40 %%: E-Motor aus (%.0f %%), Warnung (Bool 13) an" % (at(620)[0] * 100), at(620)[0] < 0.01 and at(620)[1]),
+        ("Batterie 52 %: bleibt aus (erst ab 55 %)", at(650)[0] < 0.01 and at(650)[1]),
+        ("Batterie 60 %%: wieder an (%.0f %%), Warnung aus" % (at(700)[0] * 100), at(700)[0] > 0.4 and not at(700)[1]),
     ])
-    PR["E-Motor Anteil"] = 3
-    try:
-        mo = [Motor(waerme=(0.27 * f, 0.00124, 15)) for f in (1.0, 1.04, 1.0, 0.98)]
-        sch = Schiff(mo)
-        sch.batt = 0.9
-        emax = 0.0
-        for k in range(60 * 9 * 60):
-            o = sch.tick(ws=1.0 if 2 <= k / 60 < 6 else 0.0, h1=60 <= k < 63)
-            emax = max(emax, o[20])
-    finally:
-        PR["E-Motor Anteil"] = 1
-    ok &= pruefe([("'E-Motor Anteil' 3, heiss: E-Gas voll, nie ueber 100 %% (%.2f)" % emax, 0.99 <= emax <= 1.0)])
     PR["E-Motor Test"] = 1
     try:
         sch = Schiff([Motor() for _ in range(4)])
@@ -602,6 +657,36 @@ def test_emotor():
     return ok
 
 
+def test_hebel():
+    """v3.6: Sitz-Achse W/S wie im Spiel (Log 09.10.): steigt beim Druecken in ca. 3 s auf 1, faellt nach dem Loslassen
+    genauso ab. Von Hand: Hebel laeuft sofort mit voller Geschwindigkeit und bleibt beim Loslassen stehen. Autopilot
+    (Bool 10): W/S schiebt wie bisher anteilig."""
+    sch = Schiff([Motor() for _ in range(4)])
+    achse, H = 0.0, {}
+    for k in range(60 * 12):
+        sek = k / 60
+        druck = 2 <= sek < 4
+        achse = min(1.0, achse + 1 / 180) if druck else max(0.0, achse - 1 / 180)
+        o = sch.tick(ws=achse, h1=0.5 <= sek < 0.55)
+        H[k] = o[16]
+    ok = pruefe([
+        ("W 2 s gedrueckt: Hebel %.0f %% (2 s * 25 %%/s = 50 %%)" % (H[240] * 100), abs(H[240] - 0.5) < 0.03),
+        ("losgelassen: Hebel bleibt stehen (%.1f %% -> %.1f %% nach 5 s)" % (H[243] * 100, H[540] * 100), abs(H[540] - H[243]) < 0.002),
+        ("sofortiger Anlauf: nach 0,2 s schon %.0f %%" % (H[132] * 100), H[132] > 0.04),
+    ])
+    # Autopilot steuert (Bool 10): anteilig wie bisher
+    _, g, io = load("schiff.lua", PR)
+    for k in range(120):
+        io["n"] = {2: 0.5, 5: 8.0}
+        io["b"] = {10: True, 1: k == 5}
+        io["on"].clear()
+        g.onTick()
+    soll = 0.5 * PR["Hebel Tempo"] * 114 / 60
+    ok &= pruefe([("Autopilot (Bool 10): W/S 0,5 schiebt anteilig (%.1f %%, soll %.1f %%)" % (io["on"][16] * 100, soll * 100),
+                   abs(io["on"][16] - soll) < 0.02)])
+    return ok
+
+
 if __name__ == "__main__":
     ok = test_motor()
     ok &= test_system()
@@ -610,5 +695,6 @@ if __name__ == "__main__":
     ok &= test_schreiber()
     ok &= test_temperatur()
     ok &= test_emotor()
+    ok &= test_hebel()
     print("ALLES OK" if ok else "FEHLER")
     sys.exit(0 if ok else 1)

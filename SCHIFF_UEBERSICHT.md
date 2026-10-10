@@ -81,11 +81,21 @@ selbst (Halbautomatik mit Master Arm).
   (drehen also wie die Diesel, Gänge und Rückwärts gelten auch für sie); Strom von den großen Batterien (±4,−13,−46).
   Keine Generatoren mehr an Bord: die Batterien laden nur noch an der Werkbank.
 
-### 3.2 Chip „Figet Marena Schiffsführung“ v3.5 (6×6, vp (0,−12,−41))
-Skripte: `lua/schiff.lua` (v3.5), `lua/shud.lua` (Helm, v2.6), `lua/wellen.lua` (v2). Bau: `tools/build_schiff.py`.
+### 3.2 Chip „Figet Marena Schiffsführung“ v3.6 (6×6, vp (0,−12,−41))
+Skripte: `lua/schiff.lua` (v3.6), `lua/shud.lua` (Helm, v2.6), `lua/wellen.lua` (v2). Bau: `tools/build_schiff.py`.
 
 - **Fahrhebel = Leistung** (Anteil der vollen Treibstoffmenge). Grenze ist die Temperatur, über `Motor heiss Grad`
   115 °C auskuppeln.
+- **v3.6 (10.10.) Tempo halten:** drosselt die Temperatur die Diesel, gilt das Tempo dieses Moments als Soll (Hebel
+  währenddessen verstellt: Soll × (neu/alt)^0,4); ein langsamer PI-Regler (`E Tempo P` 0,3, `E Tempo I` 0,03) gibt so
+  viel E-Gas, dass es gehalten wird, höchstens `E-Motor Anteil`. Die E-Leistung muss man dafür nicht kennen (Modell:
+  starker E-Motor hält das Tempo mit halbem Gas, schwacher läuft voll). Hebel ohne Drosselung verstellt, ausgekuppelt
+  oder Motoren aus: Tempo halten vorbei.
+- **v3.6 Fahrhebel:** die Sitz-Achse W/S steigt beim Drücken in ca. 3 s an und fällt nach dem Loslassen langsam ab
+  (Log 09.10.) – von Hand gilt jetzt: Achse steigt/steht = volle Hebel-Geschwindigkeit, fällt = Hebel steht (Nachbau:
+  steht ca. 0,15 s nach dem Loslassen). Steuert der Autopilot (Bool 29 im Sitz-Composite vom Autopilot v1.3), schiebt
+  W/S anteilig wie bisher. Außerdem folgt die Temperatur-Grenze dem Hebel sofort, solange der heißeste Motor mehr als
+  8 Grad unter `Temp Ziel` liegt (vorher hing das echte Gas bei 60 Grad mit ca. 3 %/s hinterher).
 - **E-Motoren (v3.5, 10.10.):** bekommen den Teil des Fahrhebels, den die Temperatur-Grenze den Dieseln wegnimmt
   (`E-Motor Anteil` 1; nicht beim Gas-Abzug der Wellen-Schutzes). Batterie-Ladung kommt über den Flossen-Chip
   (Kanal 21 → 25); unter `E-Motor ab Batterie` 0,5 aus, erst ab 0,55 wieder an. Je Seite `E-Motor Richtung L/R` (±1).
@@ -129,6 +139,7 @@ Skript `lua/flossen.lua`, Bau `tools/build_flossen.py`, Kabel `tools/kabel_floss
   `Schraube tief min m` 1,5 → Heck runter. Ausgang „Physik weiter“ gibt das an die Schiffsführung (Wellen-Schutz).
 
 ### 3.4 Tasten (Steuersitz)
+Seit 10.10. stehen die Belegungen am Sitz selbst (Beschriftung im Spiel, `tools/sitz_beschriften.py`).
 
 | Taste | Wirkung |
 |---|---|
@@ -157,7 +168,8 @@ Skript `lua/flossen.lua`, Bau `tools/build_flossen.py`, Kabel `tools/kabel_floss
 | Auto Chaff (Schalter) | Bool 3 | Schutz-Chip |
 | Auto water pumps (Schalter) | Bool 4 | Abteil-Chip: Lenzpumpen automatisch, sobald Wasser in einem Abteil steht (seit 08.10.; vorher Schutz-Chip, Pumpen dauernd an) |
 
-### 3.6 Autopilot (Chip „Figet Marena Autopilot“ v1.2, 4×3, vp (−4,12,−59), seit 08.10.)
+### 3.6 Autopilot (Chip „Figet Marena Autopilot“ v1.3, 4×3, vp (−4,12,−59), seit 08.10.)
+- v1.3 (10.10.): setzt Bool 29 im Sitz-Composite, solange er steuert (für die Hebel-Logik der Schiffsführung v3.6).
 
 - **Lage:** Chip zwischen Fahrersitz und Schiffsführung. Ein Composite-Umschalter im Chip (nicht das Skript) lässt das
   Sitz-Signal unverändert durch, solange der Autopilot aus ist. Ist er an, kommen Achse 1 (Ruder) und Achse 2
@@ -253,7 +265,7 @@ Skript `lua/flossen.lua`, Bau `tools/build_flossen.py`, Kabel `tools/kabel_floss
 
 | Chip | Version | Größe | Lage (vp) | Aufgabe | Skripte |
 |---|---|---|---|---|---|
-| Figet Marena Schiffsführung | v3.5 | 6×6 | (0,−12,−41) | Motoren, Gänge, Ruder, Bugstrahl, Helm, Temperatur-Regler, E-Motoren | schiff, shud, wellen |
+| Figet Marena Schiffsführung | v3.6 | 6×6 | (0,−12,−41) | Motoren, Gänge, Ruder, Bugstrahl, Helm, Temperatur-Regler, E-Motoren | schiff, shud, wellen |
 | Figet Marena Flossen | v1.8 | 3×4 | (0,−5,−44) | 12 Steuerflossen, Heck-Wasser, Batterie weiter | flossen |
 | Figet Marena Lage | v3.4 | 4×4 | (−4,9,−59) | 6 Mast-Radare → 5 Ziele in der Welt | 6× mastradar, lage |
 | Figet Marena Bildschirm | v3.7 | 4×3 | (1,9,−59) | Monitor 9×5, Zielverteilung, Master Arm, Mehrspieler-Hilfe | mitspieler, bild |
@@ -269,7 +281,7 @@ Skript `lua/flossen.lua`, Bau `tools/build_flossen.py`, Kabel `tools/kabel_floss
 | Figet Marena Abteile | v1.6 | 4×8 | (−5,5,−59) | Monitor 9×5: Abteile, Sprit, Batterie, Pumpen; Schotten zu/auf, Lenzpumpen automatisch | abteile |
 | Figet Marena Abteile Sammler | v1.1 | 4×5 | (5,2,−58) | Liquid Meter 10–18 gepackt | abteile_sammler |
 | Figet Marena Licht | v1.0 | 2×2 | (1,12,−59) | 55 RGB-Lampen, Tag/Nacht, Steuerungsraum rot bei Bedrohung | licht |
-| Figet Marena Autopilot | v1.2 | 4×3 | (−4,12,−59) | Kurs/Tempo halten, Karte mit Wegpunkten (Control Handle), Anti-Kollision | autopilot |
+| Figet Marena Autopilot | v1.3 | 4×3 | (−4,12,−59) | Kurs/Tempo halten, Karte mit Wegpunkten (Control Handle), Anti-Kollision | autopilot |
 | Quarter Panel NO (3×) | – | 1×2 | Maschinenräume | Andres Anzeigen (alt) | – |
 | „Microcontroller“ (24×) | – | 3×3 | je Rakete | Raketen (Andre) | – |
 

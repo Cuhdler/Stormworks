@@ -15,7 +15,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from build_schiff import MC, minify, fmt, LUA_LIMIT, LUA_DIR, BUILD  # noqa: E402
 from build_lage import schreiber_props, kopf  # noqa: E402
 
-VERSION = "v1.2"
+VERSION = "v1.3"
 PROPS = [
     ("Kompass Richtung", -1, "-1: der Kompass des Physik-Sensors zaehlt gegen den Uhrzeigersinn (wie Lage)"),
     ("Kurs Band Grad", 25, "So viel Kursfehler = volles Ruder"),
@@ -86,7 +86,10 @@ def build(src):
     # Sitz mit Achse 1/2 vom Autopiloten; Umschalter: Autopilot an -> diese, aus -> Sitz unveraendert
     ws = mc.comp(40, (2, 3), {"count": 2, "offset": 0},
                  [("inc", (sitz, 0)), (rd(lua, 2, (1, 3)), 0), (rd(lua, 3, (1, 2.5)), 0)])
-    um = mc.comp(53, (4, 3), {}, [(ws, 0), (sitz, 0), (rd(lua, 0, (2, 1.5), 29), 0)])
+    # v1.3 (10.10.): Bool 29 im Sitz-Composite = Autopilot steuert - die Schiffsfuehrung (v3.6) schiebt den Hebel dann
+    # anteilig wie bisher; von Hand gilt dort: Taste gedrueckt = volle Hebel-Geschwindigkeit, losgelassen = steht
+    apf = mc.comp(41, (3, 3.5), {"count": 1, "offset": 28}, [("inc", (ws, 0)), (rd(lua, 0, (2, 2), 29), 0)])
+    um = mc.comp(53, (4, 3), {}, [(apf, 0), (sitz, 0), (rd(lua, 0, (2, 1.5), 29), 0)])
     for k, (name, val, desc) in enumerate(PROPS):
         mc.comp(34, (-10 - 2 * (k // 8), 8 - (k % 8)), {"n": name}, extra='<v text="%s" value="%s"/>' % (fmt(val), fmt(val)))
     schreiber_props(mc, -18, 8)

@@ -1,4 +1,4 @@
--- SCHIFF v3.5 - Figet Marena: 4 Diesel ohne ZE-Regler (L1 unten links, L2 oben links, R1 unten rechts, R2 oben rechts),
+-- SCHIFF v3.6 - Figet Marena: 4 Diesel ohne ZE-Regler (L1 unten links, L2 oben links, R1 unten rechts, R2 oben rechts),
 -- je Motor Gemisch, Anlasser, Leerlauf, Kupplung, Temperatur-Regler; 8 Gaenge aus 3 Getrieben, Rueckwaertsgang je
 -- Seite, Lenk-Schub, Ruder, Bugstrahlruder
 -- Eingang (Composite, im Chip zusammengefuehrt):
@@ -32,6 +32,14 @@
 --  Wellen); Zahl 20 = E-Gas 0..1 (der Chip gibt es je Seite mal 'E-Motor Richtung L/R' an die Motoren). Batterie (Zahl 25,
 --  ueber den Flossen-Chip) unter 'E-Motor ab Batterie': aus, erst 5 % darueber wieder an (Anlasser, Pumpen, Luefter
 --  brauchen den Strom); Bool 13 = E-Motor wuerde gebraucht, ist aber deshalb aus. 'E-Motor Test' 1: Diesel bleiben ausgekuppelt, E-Gas = Fahrhebel.
+-- v3.6 (Andre: "der E-Motor hat nicht gleich viel Power - kann der Chip merken, ob wir langsamer werden?"): Tempo halten
+--  statt fester Aufteilung - drosselt die Temperatur die Diesel, gilt das Tempo dieses Moments als Soll (Hebel waehrend-
+--  dessen verstellt: Soll mal (Hebel neu/alt)^0,4 - Fahrten 07./08.10.: 44 % Gas = 70 % Tempo), ein langsamer PI-Regler ('E Tempo P/I') gibt so viel E-Gas, dass es gehalten wird,
+--  hoechstens 'E-Motor Anteil'. Laeuft weiter, bis die Diesel nicht mehr gedrosselt sind und das E-Gas abgebaut ist.
+-- v3.6 Fahrhebel: die Sitz-Achse W/S steigt beim Druecken in ca. 3 s an und faellt nach dem Loslassen langsam ab (Log
+--  09.10.) - der Hebel lief zaeh an und nach dem Loslassen weiter. Von Hand jetzt: Achse steigt oder steht = Taste
+--  gedrueckt = volle Hebel-Geschwindigkeit, faellt = Hebel bleibt stehen. Der Autopilot (Bool 10, vom Autopilot-Chip)
+--  schiebt fein wie bisher.
 -- Gemisch: Treibstoff = Luft * Q / Luftverhaeltnis. v3.2: Q fest 7.1 (darauf liefen alle 4 Motoren in ruhiger Fahrt;
 --  Andre: 'es soll immer gleich bleiben') - Ventile im festen Verhaeltnis. Mit 'Gemisch Regler' > 0 (z. B. 2e-4) regelt
 --  der Chip Q je Motor wieder so nach, dass die gemessene Stoechiometrie im Zylinder das Ziel 'Gemisch' trifft (0.5
@@ -74,6 +82,11 @@ K,Z,A,TP,TR,I,FS,FM,Q,T1,T2,ST,LA,TA={},{},{},{},{},{},{},{},{},{},{},{},{},{}
 TL=1
 EM=0
 EA=false
+A2=0
+EI=0
+eh=0
+VR=0
+GV=0
 for i=1,4 do
 	K[i]=0 Z[i]=0 A[i]=false TP[i]=0 TR[i]=0 I[i]=0 FS[i]=0 FM[i]=1e-7 Q[i]=7.1 T1[i]=60 T2[i]=0 ST[i]=false LA[i]=0 TA[i]=0
 end
@@ -99,6 +112,8 @@ function onTick()
 		ea=P('E-Motor ab Batterie')
 		ef=P('E-Motor Anteil')
 		et=P('E-Motor Test')>0
+		ekp=P('E Tempo P')
+		eki=P('E Tempo I')
 		idl=P('Leerlauf RPS')
 		rn=P('RPS Notgrenze')
 		st=P('Gemisch')
@@ -123,7 +138,10 @@ function onTick()
 	k1=h1
 	t=t+1
 	-- Fahrhebel: W/S halten verstellt ihn, Hotkey 2 = Stopp
-	hb=cl(hb+a2*ht,-hr,1)
+	local wv=a2
+	if not B(10) then wv=(m.abs(a2)>.02 and m.abs(a2)>=m.abs(A2)-1e-4 and a2*A2>=0) and (a2>0 and 1 or -1) or 0 end
+	A2=a2
+	hb=cl(hb+wv*ht,-hr,1)
 	if h2 or not on then hb=0 end
 	local rw,g=hb<0,m.abs(hb)
 	-- Ruder mit begrenztem Tempo
@@ -156,22 +174,38 @@ function onTick()
 	k7=a4<-.5
 	for k=1,3 do O(8+k,m.floor(GR[G][2]/2^(k-1))%2==1) end
 	-- Temperatur-Regler: e = kleinster Spielraum (erlaubter minus gemessener Anstieg) aller laufenden Motoren
-	local e=1
+	local e,th=1,0
 	for i=1,4 do
 		local rps,tmp=N(3+4*i),N(4+4*i)
 		if TP[i]==0 then TP[i]=tmp end
 		local d=(tmp-TP[i])/120
 		TP[i]=TP[i]+d
 		TR[i]=TR[i]+(d*60-TR[i])/180
-		if rps>=1 then e=m.min(e,(tz-TP[i])/tf-TR[i]) end
+		if rps>=1 then e=m.min(e,(tz-TP[i])/tf-TR[i]) th=m.max(th,TP[i]) end
 	end
-	TL=cl(TL+e*tk,.1,1)
+	-- v3.6: heissester Motor mehr als 8 Grad unter dem Ziel: Grenze folgt dem Hebel sofort (vorher 3 %/s bei 60 Grad -
+	-- das echte Gas hing hinter dem Hebel her); naeher am Ziel regelt sie langsam
+	TL=cl(TL+(th<tz-8 and m.max(e,0)>0 and 1/60 or e*tk),.1,1)
 	-- eingekuppelt nicht ueber dem gewuenschten Gas hochlaufen (sonst wirkt die Grenze nach dem Gasgeben erst spaet)
 	if ek then TL=m.min(TL,m.max(gs[1],gs[2])+.05) end
 	-- E-Motoren: Rest des Hebels, den die Diesel wegen der Temperatur nicht duerfen; Batterie-Schutz; Test = nur E
 	local eb=N(25)
 	if eb<ea then EA=false elseif eb>ea+.05 then EA=true end
-	local es=on and m.min(et and g or ek and m.max(g-TL,0)*ef*(1-N(24)) or 0,1) or 0
+	-- Tempo halten: Soll = Tempo beim Beginn der Drosselung (oder nach einer Hebel-Aenderung), PI auf das Tempo
+	local v,lim=N(5),on and ek and not et and TL<g-.01
+	if lim and not LM then VR=v GV=g elseif lim and m.abs(g-GV)>.02 then VR=VR*(g/m.max(GV,.01))^.4 GV=g end
+	-- Hebel ohne Drosselung verstellt, ausgekuppelt oder Motoren aus: Tempo halten vorbei
+	if not lim and m.abs(g-GV)>.02 or not (on and ek) then EI=0 end
+	if lim or EI>.01 then
+		local ev=VR-v
+		EI=cl(EI+ev*eki/60,0,ef)
+		eh=cl(ev*ekp+EI,0,ef)
+	else
+		EI=0
+		eh=0
+	end
+	LM=lim
+	local es=on and m.min(et and g or eh*(1-N(24)),1) or 0
 	EW=not EA and es>.02
 	EM=EM+cl((EA and es or 0)-EM,-.02,.02)
 	-- Rueckwaertsgang je Seite erst umlegen, wenn beide Kupplungen der Seite 0.1 s offen sind
