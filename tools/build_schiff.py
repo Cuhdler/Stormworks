@@ -14,7 +14,7 @@ from build_mc import MC, minify, fmt, LUA_LIMIT  # noqa: E402
 
 LUA_DIR = os.path.join(ROOT, "lua")
 BUILD = os.path.join(ROOT, "build")
-MC_FILE = "Figet Marena Schiff v3.6.xml"
+MC_FILE = "Figet Marena Schiff v3.7.xml"
 
 # Name, Standardwert, Erklaerung
 PROPS = [
@@ -49,6 +49,8 @@ PROPS = [
     ("E Tempo I", 0.03, "Tempo halten: so viel E-Gas kommt je Sekunde und m/s Tempo-Verlust dazu (langsamer Ausgleich)"),
     ("E-Motor ab Batterie", 0.5, "Unter dieser Batterie-Ladung bleiben die E-Motoren aus (Anlasser, Pumpen, Luefter brauchen Strom); 5 % darueber wieder an"),
     ("E-Motor Test", 0, "1 = Diesel bleiben ausgekuppelt, E-Motoren fahren mit dem Fahrhebel (Drehrichtung pruefen); danach wieder 0"),
+    # v3.7 Test: beste Dauer-Temperatur suchen (Andre 10.10.)
+    ("Temp Treppe", 0, "Test: 1 = der Chip haelt nacheinander 75, 85, 95 Grad je 3 min (ab Erreichen), danach 'Temp Ziel'; E-Motoren dabei aus. Danach wieder 0"),
     ("Log Port", 8766, "Fahrtenschreiber: Port von tools/logger.py auf dem PC (0 = aus; Heli-Flugschreiber nutzt 8765)"),
     # v2.7 Wellen-Skript (lua/wellen.lua)
     ("Frei unter m", 0.3, "Wellen: Schrauben gelten als 'frei', wenn der Heck-Messer (mit Vorhalt) flacher meldet"),

@@ -1,4 +1,4 @@
--- SCHIFF v3.6 - Figet Marena: 4 Diesel ohne ZE-Regler (L1 unten links, L2 oben links, R1 unten rechts, R2 oben rechts),
+-- SCHIFF v3.7 - Figet Marena: 4 Diesel ohne ZE-Regler (L1 unten links, L2 oben links, R1 unten rechts, R2 oben rechts),
 -- je Motor Gemisch, Anlasser, Leerlauf, Kupplung, Temperatur-Regler; 8 Gaenge aus 3 Getrieben, Rueckwaertsgang je
 -- Seite, Lenk-Schub, Ruder, Bugstrahlruder
 -- Eingang (Composite, im Chip zusammengefuehrt):
@@ -40,6 +40,9 @@
 --  09.10.) - der Hebel lief zaeh an und nach dem Loslassen weiter. Von Hand jetzt: Achse steigt oder steht = Taste
 --  gedrueckt = volle Hebel-Geschwindigkeit, faellt = Hebel bleibt stehen. Der Autopilot (Bool 10, vom Autopilot-Chip)
 --  schiebt fein wie bisher.
+-- v3.7 Temperatur-Treppe (Test, Andre 10.10.: "die beste Dauer-Geschwindigkeit bei gehaltener Temperatur suchen"):
+--  'Temp Treppe' 1: der Regler haelt nacheinander 75, 85, 95 Grad je 3 min (gezaehlt, solange der heisseste Motor
+--  hoechstens 2 Grad darunter ist), danach 'Temp Ziel'; E-Motoren dabei aus (nur Diesel messen).
 -- Gemisch: Treibstoff = Luft * Q / Luftverhaeltnis. v3.2: Q fest 7.1 (darauf liefen alle 4 Motoren in ruhiger Fahrt;
 --  Andre: 'es soll immer gleich bleiben') - Ventile im festen Verhaeltnis. Mit 'Gemisch Regler' > 0 (z. B. 2e-4) regelt
 --  der Chip Q je Motor wieder so nach, dass die gemessene Stoechiometrie im Zylinder das Ziel 'Gemisch' trifft (0.5
@@ -80,6 +83,8 @@ lk=0
 -- TP/TR je Motor: geglaettete Temperatur, Anstieg Grad/s; TL gemeinsame Gas-Grenze
 K,Z,A,TP,TR,I,FS,FM,Q,T1,T2,ST,LA,TA={},{},{},{},{},{},{},{},{},{},{},{},{},{}
 TL=1
+TS=1
+TT=0
 EM=0
 EA=false
 A2=0
@@ -112,6 +117,9 @@ function onTick()
 		ea=P('E-Motor ab Batterie')
 		ef=P('E-Motor Anteil')
 		et=P('E-Motor Test')>0
+		tt=P('Temp Treppe')>0
+		tz0=tz
+		if tt then ef=0 tz=75 end
 		ekp=P('E Tempo P')
 		eki=P('E Tempo I')
 		idl=P('Leerlauf RPS')
@@ -182,6 +190,11 @@ function onTick()
 		TP[i]=TP[i]+d
 		TR[i]=TR[i]+(d*60-TR[i])/180
 		if rps>=1 then e=m.min(e,(tz-TP[i])/tf-TR[i]) th=m.max(th,TP[i]) end
+	end
+	-- v3.7 Treppe: je Stufe 3 min nahe am Ziel, dann 10 Grad hoeher; nach 95 Grad 'Temp Ziel'
+	if tt and TS<4 then
+		if th>=tz-2 then TT=TT+1 end
+		if TT>10800 then TS=TS+1 TT=0 tz=TS<4 and 65+10*TS or tz0 end
 	end
 	-- v3.6: heissester Motor mehr als 8 Grad unter dem Ziel: Grenze folgt dem Hebel sofort (vorher 3 %/s bei 60 Grad -
 	-- das echte Gas hing hinter dem Hebel her); naeher am Ziel regelt sie langsam

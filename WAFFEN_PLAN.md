@@ -711,6 +711,20 @@ ohne 'channel', also alle auf Bool 1 (fehlende Angabe = Kanal 0, wie in den Beis
 - Ergebnis: der Maschinenraum wird nicht heiss, die Raumkuehlung kann nichts bringen (Motorkurven mit/ohne gleich).
   Vorschlag an Andre: Tauscher + Pumpen ausbauen (Gewicht ~2 kn, Pumpen ziehen Batteriestrom der E-Motoren);
   Probes + Chip duerfen bleiben (leicht). Weiter mit Hilfs-Diesel je Seite.
+- Andre: Tauscher bleiben erstmal drin. Stattdessen: beste Dauer-Geschwindigkeit bei gehaltener Temperatur suchen.
+
+### 10.10. ~20:35: beste Dauer-Temperatur suchen (Schiff v3.7, Test 'Temp Treppe')
+- Auswertung aller Fahrt-Logs 07.-10.10. (60-s-Fenster je Motor, eingekuppelt): Waerme wie ein Topf - rein kommt
+  ~15 Grad/min mal Gas (aus dem Treibstoff), raus geht mehr, je heisser der Motor (Kuehler). Haltbares Gas grob:
+  70 Grad ~20-27 %, 80 ~28 %, 90 ~35 %, 100 ~43 %. Gemessen: 25-28 % Gas halten 65-75 Grad (29-30 kn).
+- Vollgas heiss (ueber 85 Grad): das Gemisch im Zylinder wird mager (MIX 0,5 -> -1,5), der Motor verbrennt nur
+  noch ~47 % - also so viel wie bei ~100 Grad haltbar; Tempo 38-43 kn. Mit 56 % Gas bleibt das Gemisch bis
+  80 Grad normal (47,7 kn ohne Verlust), mit 25 % Gas sogar bei 90-100 Grad.
+- Erwartung: je heisser der Regler halten darf, desto schneller auf Dauer (75 Grad ~31 kn, 85 ~34, 95 ~38,
+  frei/105 ~40-42 kn). Offen: haelt ein Regler bei 95-100 Grad mit ~45 % Gas (normales Gemisch) mehr als Vollgas
+  mager? Und waehlt die Automatik dabei den besten Gang?
+- Test: Schiff v3.7 'Temp Treppe' 1 (75/85/95 je 3 min, dann 'Temp Ziel' 105; E-Motoren aus). Andre: Vollgas
+  geradeaus ~20 min. Danach 'Temp Treppe' wieder 0.
 
 ### Reihenfolge (Andre 08.10.)
 1. Autopilot (v1.0 eingebaut 08.10., Test im Spiel steht aus): Kurs/Tempo halten, Karte (screen.drawMap) mit Wegpunkten zum Antippen, Ausweichen ueber 2-3 Laser am Bug

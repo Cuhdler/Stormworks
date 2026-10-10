@@ -91,8 +91,8 @@ selbst (Halbautomatik mit Master Arm).
   Der Raum wird nicht heiß → Raumkühlung bringt nichts; Vorschlag: Tauscher und Pumpen wieder ausbauen (Gewicht,
   Batteriestrom). Engpass sind die Kühler selbst → Hilfs-Diesel je Seite.
 
-### 3.2 Chip „Figet Marena Schiffsführung“ v3.6 (6×6, vp (0,−12,−41))
-Skripte: `lua/schiff.lua` (v3.6), `lua/shud.lua` (Helm, v2.6), `lua/wellen.lua` (v2). Bau: `tools/build_schiff.py`.
+### 3.2 Chip „Figet Marena Schiffsführung“ v3.7 (6×6, vp (0,−12,−41))
+Skripte: `lua/schiff.lua` (v3.7), `lua/shud.lua` (Helm, v2.6), `lua/wellen.lua` (v2). Bau: `tools/build_schiff.py`.
 
 - **Fahrhebel = Leistung** (Anteil der vollen Treibstoffmenge). Grenze ist die Temperatur, über `Motor heiss Grad`
   115 °C auskuppeln.
@@ -101,6 +101,10 @@ Skripte: `lua/schiff.lua` (v3.6), `lua/shud.lua` (Helm, v2.6), `lua/wellen.lua` 
   viel E-Gas, dass es gehalten wird, höchstens `E-Motor Anteil`. Die E-Leistung muss man dafür nicht kennen (Modell:
   starker E-Motor hält das Tempo mit halbem Gas, schwacher läuft voll). Hebel ohne Drosselung verstellt, ausgekuppelt
   oder Motoren aus: Tempo halten vorbei.
+- **v3.7 (10.10.) Test „Temp Treppe“** (Andre: beste Dauer-Geschwindigkeit bei gehaltener Temperatur suchen): `Temp
+  Treppe` 1 = der Regler hält nacheinander 75, 85, 95 Grad je 3 min (gezählt, solange der heißeste Motor höchstens
+  2 Grad darunter ist), danach `Temp Ziel`; E-Motoren dabei aus. **Steht seit 10.10. 20:35 auf 1** – nach dem Test
+  wieder 0 (Claude setzt es).
 - **v3.6 Fahrhebel:** die Sitz-Achse W/S steigt beim Drücken in ca. 3 s an und fällt nach dem Loslassen langsam ab
   (Log 09.10.) – von Hand gilt jetzt: Achse steigt/steht = volle Hebel-Geschwindigkeit, fällt = Hebel steht (Nachbau:
   steht ca. 0,15 s nach dem Loslassen). Steuert der Autopilot (Bool 29 im Sitz-Composite vom Autopilot v1.3), schiebt
@@ -275,7 +279,7 @@ Seit 10.10. stehen die Belegungen am Sitz selbst (Beschriftung im Spiel, `tools/
 
 | Chip | Version | Größe | Lage (vp) | Aufgabe | Skripte |
 |---|---|---|---|---|---|
-| Figet Marena Schiffsführung | v3.6 | 6×6 | (0,−12,−41) | Motoren, Gänge, Ruder, Bugstrahl, Helm, Temperatur-Regler, E-Motoren | schiff, shud, wellen |
+| Figet Marena Schiffsführung | v3.7 | 6×6 | (0,−12,−41) | Motoren, Gänge, Ruder, Bugstrahl, Helm, Temperatur-Regler, E-Motoren | schiff, shud, wellen |
 | Figet Marena Flossen | v1.8 | 3×4 | (0,−5,−44) | 12 Steuerflossen, Heck-Wasser, Batterie weiter | flossen |
 | Figet Marena Lage | v3.4 | 4×4 | (−4,9,−59) | 6 Mast-Radare → 5 Ziele in der Welt | 6× mastradar, lage |
 | Figet Marena Bildschirm | v3.7 | 4×3 | (1,9,−59) | Monitor 9×5, Zielverteilung, Master Arm, Mehrspieler-Hilfe | mitspieler, bild |

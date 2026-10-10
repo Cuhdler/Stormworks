@@ -11,6 +11,7 @@
 - test_emotor (v3.6): E-Motoren halten das Tempo, wenn die Temperatur die Diesel drosselt (Tempo-Modell, E-Motor
   verschieden stark), Batterie-Schutz, Test-Schalter (Diesel ausgekuppelt)
 - test_hebel (v3.6): W/S mit der langsam steigenden/fallenden Sitz-Achse - Hebel steht beim Loslassen; Autopilot anteilig
+- test_treppe (v3.7): Test-Schalter 'Temp Treppe' - 75/85/95 Grad je 3 min halten, danach 'Temp Ziel', E-Motoren aus
 """
 import os
 import sys
@@ -657,6 +658,38 @@ def test_emotor():
     return ok
 
 
+def test_treppe():
+    """v3.7 'Temp Treppe' 1: Vollgas ab kalt, der Regler haelt 75, 85, 95 Grad je 3 min (ab Erreichen), danach 'Temp
+    Ziel'; E-Motoren bleiben aus (auch wenn gedrosselt wird)."""
+    alt = dict(PR)
+    PR["Temp Treppe"], PR["Temp Ziel"] = 1, 105
+    try:
+        sch = warm(0.5)
+        T, E = [], 0.0
+        for k in range(60 * 26 * 60):
+            sek = k / 60
+            o = sch.tick(ws=1.0 if 2 <= sek < 6 else 0.0, h1=1 <= sek < 1.05)
+            E = max(E, o[20])
+            if k % 60 == 0:
+                T.append((sek, max(m.tmp for m in sch.mo), sch.v))
+    finally:
+        PR.clear()
+        PR.update(alt)
+    ok = True
+    t0 = 0
+    for ziel in (75, 85, 95):
+        an = next(t for t, x, _ in T if t >= t0 and x >= ziel - 2)
+        halt = [x for t, x, _ in T if an + 60 <= t < an + 175]
+        v = [v for t, _, v in T if an + 120 <= t < an + 175]
+        print("   %d Grad: erreicht nach %.0f s, gehalten %.1f..%.1f Grad, Tempo %.1f m/s" % (ziel, an, min(halt), max(halt), sum(v) / len(v)))
+        ok &= pruefe([("Stufe %d Grad: 3 min gehalten (+-2)" % ziel, ziel - 2 <= min(halt) and max(halt) <= ziel + 2)])
+        t0 = an + 180
+    ende = [x for t, x, _ in T if t >= 24 * 60]
+    ok &= pruefe([("danach 'Temp Ziel' 105 (%.1f..%.1f Grad)" % (min(ende), max(ende)), 103 <= min(ende) and max(ende) <= 107),
+                  ("E-Motoren dabei aus (hoechstens %.0f %%)" % (E * 100), E < 0.01)])
+    return ok
+
+
 def test_hebel():
     """v3.6: Sitz-Achse W/S wie im Spiel (Log 09.10.): steigt beim Druecken in ca. 3 s auf 1, faellt nach dem Loslassen
     genauso ab. Von Hand: Hebel laeuft sofort mit voller Geschwindigkeit und bleibt beim Loslassen stehen. Autopilot
@@ -696,5 +729,6 @@ if __name__ == "__main__":
     ok &= test_temperatur()
     ok &= test_emotor()
     ok &= test_hebel()
+    ok &= test_treppe()
     print("ALLES OK" if ok else "FEHLER")
     sys.exit(0 if ok else 1)
