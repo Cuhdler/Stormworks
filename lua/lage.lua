@@ -1,4 +1,4 @@
--- LAGE v3.3 - Figet Marena, Lagezentrale (Andre 03.10.): Radar 1 am Mast sucht (kreist), Radar 2-6 halten je ein
+-- LAGE v3.4 - Figet Marena, Lagezentrale (Andre 03.10.): Radar 1 am Mast sucht (kreist), Radar 2-6 halten je ein
 -- Ziel fest (Platz 1-5 = Radar 2-6). Hoechstens 5 Ziele, also passt immer alles auf den Bildschirm.
 -- v2.2: Plaetze nach Art (Andre: 5 Schiffe gelockt, die Helis daneben wurden ignoriert): Platz 1-2 nur Luftziele (fuer
 -- die Flaks), 3-4 nur Seeziele (fuer die Kanonen), 5 frei fuer Raketen (spaeter; bis dahin sucht Radar 6 mit).
@@ -76,7 +76,7 @@
 --  dem Meer + 100 (m); 15+k Kennung; 19+2k / 20+2k Richtung fuer Radar k+1 (U ab Bug / U gegen das Deck); 31 Kurs (U,
 --  im Uhrzeigersinn); 32 eigene Hoehe (m); Bool k lebt, 5+k Luftziel, 10+k Radar k+1 haelt, 15+k Ziel fuer die
 --  Waffen (bewegt, oder Luftziel hoeher als 'Stehend Ziel ab m'),
---  25 Bedrohung, 27 immer an
+--  25 Bedrohung, 27 immer an, v3.4: 21-24 Takt (zaehlt je Tick 0..15, fuer die Mehrspieler-Hilfe im Bildschirm-Chip)
 --  (Radare an), 28/29 ein Radar erkannte 'ab Strahl' / 'ab Sockel' (zurueck an alle Mast-Radare)
 N=input.getNumber
 B=input.getBool
@@ -436,6 +436,7 @@ function onTick()
 	local fs,fb=false,false
 	for i=1,6 do fs=fs or B(7+i) fb=fb or B(13+i) end
 	O(27,true) O(28,fs) O(29,fb)
+	TC=((TC or 0)+1)%16 O(21,TC%2>0) O(22,TC%4>1) O(23,TC%8>3) O(24,TC>7)
 	-- Schreiber: jeden Tick 'D' (was mit den Ortungen geschah); alle 4 Ticks die ganze Lage: Schiff (Ort, Kurs, Nick,
 	-- Roll, Tempo), Bedrohung, Zahl der Kandidaten; je Platz 1-5 Kennung, Ort relativ (Ost, Nord, Hoehe ueber dem Meer),
 	-- Tempo, Ticks ohne Ortung, Messdauer s, Art (1 Luft + 2 bewegt + 4 dicht bestaetigt + 8 nachweislich stehend); je

@@ -3,7 +3,8 @@
 - "Figet Marena Lage" (4 x 4): 6 x MASTRADAR (je ein Radar (Phalanx) am Mast, manueller Modus, kreist auf seiner
   Hoehe) + LAGE (8 Ziele mit festen Nummern in der Welt, Luft/See, Markierung, Bedrohung)
 - "Figet Marena Bildschirm" (4 x 3): BILD (Monitor 9x5: 3D-Radar | Kamera der gewaehlten Waffe | Zielliste, Touch)
-  + 3 Video Switchboxes fuer die 4 Waffen-Kameras
+  + 3 Video Switchboxes fuer die 4 Waffen-Kameras; v3.7 davor MITSPIELER (haelt beim Mitspieler die kurz ankommenden
+  Ziele des Hosts fest, beim Host reicht es alles unveraendert durch; malt 'MP' aufs Bild)
 
 - mit --install zusaetzlich nach %APPDATA%/Stormworks/data/microprocessors kopieren
 """
@@ -15,8 +16,8 @@ import sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from build_schiff import MC, minify, fmt, LUA_LIMIT, LUA_DIR, BUILD  # noqa: E402
 
-VERSION = "v3.3"          # Lage-Chip (v2.9 Tempo erst bestaetigt; v3.0 stehend Ziel ab 60 m; v3.1 Hafen: enger Fang, See vorn)
-VERSION_BILD = "v3.6"
+VERSION = "v3.4"          # Lage-Chip (v3.4 10.10.: Takt auf Bool 21-24) (v2.9 Tempo erst bestaetigt; v3.0 stehend Ziel ab 60 m; v3.1 Hafen: enger Fang, See vorn)
+VERSION_BILD = "v3.7"         # v3.7 (10.10.): Mehrspieler-Hilfe (lua/mitspieler.lua) vor BILD
 VERSION_WAHL = "v1.2"
 # Mast-Radare: Teil-Position (zum Verkabeln), Strahl-Hoehe (Grad gegen das Deck, Gimbal hoechstens 45), Startphase (U),
 # Seitenvorzeichen (-1 = gespiegelt eingebaut).
@@ -185,6 +186,13 @@ def bild_flak(s):
     return neu
 
 
+# v3.7 Mehrspieler-Hilfe (lua/mitspieler.lua)
+MP_PROPS = [
+    ("Mehrspieler-Hilfe", 1, "1: beim Mitspieler kurz ankommende Ziele des Hosts festhalten (beim Host nie aktiv); 0: aus"),
+    ("MP halten s", 10, "Mitspieler: so lange bleibt ein Ziel vom Host stehen, wenn danach nichts Neues kommt"),
+]
+
+
 def build_bild(src):
     mc = MC("Figet Marena Bildschirm",
             "Bildschirm %s: 3D-Radar | Kamera | Zielliste; Waffen waehlen Ziele selbst, Master Arm, Leertaste. H5 Waffe, Tippen = km"
@@ -218,12 +226,17 @@ def build_bild(src):
     s1 = mc.comp(57, (-5, 0), {}, [(kam[0], 0), (kam[1], 0)])
     s2 = mc.comp(57, (-5, -2), {}, [(kam[2], 0), (kam[3], 0)])
     s3 = mc.comp(57, (-3, -1), {}, [(s1, 0), (s2, 0)])
-    bild = mc.comp(56, (-1, 2), {"script": src["bild"]}, [(wb, 0), (s3, 0)])
+    # v3.7: MITSPIELER zwischen Composite und BILD; bekommt BILDs Video und malt darueber (Kreis wie bei den Switchboxes)
+    mit = mc.comp(56, (-3, 3), {"script": src["mitspieler"]}, [(wb, 0)])
+    bild = mc.comp(56, (-1, 2), {"script": src["bild"]}, [(mit, 0), (s3, 0)])
+    next(c for c in mc.comps if c[1] == mit)[3].append((bild, 1))
+    for k, (name, val, desc) in enumerate(MP_PROPS):
+        mc.comp(34, (-12, 3 - k), {"n": name}, extra='<v text="%s" value="%s"/>' % (fmt(val), fmt(val)))
     for k, s in enumerate((s1, s2, s3)):
         sw = rd(bild, k + 1, (1, -1 - k), 29)
         next(c for c in mc.comps if c[1] == s)[3].append((sw, 0))
     schreiber_props(mc, -12, 6)
-    mc.node("Monitor", 0, 6, "Monitor 9x5 am Steuersitz: Video Signal", 1, 2, (7, 2), (bild, 1))
+    mc.node("Monitor", 0, 6, "Monitor 9x5 am Steuersitz: Video Signal", 1, 2, (7, 2), (mit, 1))
     mc.node("Bedienung", 0, 5, "an Lage-Chip, Waffenwahl-Chip und Flak-Chips ('Lage'): Waffe, Ziele je Waffe, Feuer frei, AUTO",
             2, 2, (7, 1), (bild, 0))
     return mc
@@ -277,7 +290,7 @@ def build_wahl(src):
 def main():
     os.makedirs(BUILD, exist_ok=True)
     src = {}
-    for name in ("mastradar", "lage", "bild", "waffenwahl"):
+    for name in ("mastradar", "lage", "bild", "waffenwahl", "mitspieler"):
         with open(os.path.join(LUA_DIR, name + ".lua"), encoding="utf-8") as f:
             src[name] = minify(f.read())
     hw = umriss()

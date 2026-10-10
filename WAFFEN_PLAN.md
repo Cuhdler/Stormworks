@@ -642,6 +642,23 @@ ohne 'channel', also alle auf Bool 1 (fehlende Angabe = Kanal 0, wie in den Beis
 - Im Spiel zu pruefen: Dauer-Tempo bei 70 Grad (Modell ca. 22 % Gas), ob das Gas ruhig bleibt (liefert das Spiel nur
   ganze Grad, schwankt es mehr), Fahrtenschreiber an.
 
+### 10.10. ~14:30: Mehrspieler-Hilfe gebaut, NOCH NICHT EINGEBAUT (Spiel lief; Probe beider Chips sauber)
+- Befund 09.10. (Andre Host, Freund Mitspieler): beim Freund Zielliste leer, Pings/Kamera-Zoom nur ab und zu, Schuesse
+  ca. 10 %; Tuerme drehen richtig. Grund (Entwickler, Geometa #22188): Lua laeuft auf jedem PC selbst, ihr Zustand wird
+  nicht abgeglichen; Mitspieler laden nicht alle Fahrzeuge. Siehe wissen/mechaniken/README.md, Abschnitt Mehrspieler.
+- Lage v3.4: Takt auf Bool 21-24 (zaehlt je Tick 0..15), sonst nichts geaendert (test_lage.py alles ok; 8189 Zeichen).
+- Bildschirm v3.7: neues Skript lua/mitspieler.lua vor BILD (BILD selbst unveraendert, 8182 Zeichen voll). Beim Host
+  reicht es alles durch; springt der Takt (Zwischenstand vom Host beim Mitspieler), 4 Spruenge in 60 s = Mitspieler-
+  Modus: die 5 Plaetze + Bedrohung aus dem letzten Host-Stand gelten bis 'MP halten s' (10), Anzeige 'MP <s>S' oben auf
+  dem Radar. 'Mehrspieler-Hilfe' 0 = aus. Erste Idee (Kennung blitzt kurz auf) verworfen: Host-Logs zeigten 26-mal Ziele,
+  die zwischen Platz und Topf pendeln.
+- Pruefstand tools/test_mitspieler.py: alle 236 613 Lage-Logzeilen seit 04.10. als Host (4-mal enger) -> nie aktiv,
+  0 Abweichungen; Host-Stoerungen (Takt fehlt alle 30 s, Lage haengt 5 s) -> nie aktiv; Mitspieler-Modell (Stand alle
+  30/120/300/600 Ticks) -> erkannt nach 1/4/10/20 s, Host-Ziele zu 99/96/91/85 % sichtbar. Das Mitspieler-Modell ist
+  eine Annahme - erst der Test mit dem Freund zeigt, ob es so ist.
+- Einbau: tools/chip_tauschen.py "Figet Marena Lage" "Figet Marena Lage v3.4.xml" --schreiben, dann
+  "Figet Marena Bildschirm" "Figet Marena Bildschirm v3.7.xml" --schreiben (vorher sichern, Spiel aus/Schiff nicht geladen).
+
 ### Reihenfolge (Andre 08.10.)
 1. Autopilot (v1.0 eingebaut 08.10., Test im Spiel steht aus): Kurs/Tempo halten, Karte (screen.drawMap) mit Wegpunkten zum Antippen, Ausweichen ueber 2-3 Laser am Bug
    (Lua kann das Gelaende der Karte nicht auslesen). Andre baut: Autopilot-Knopf, Karten-Monitor, Laser. Chip zwischen
