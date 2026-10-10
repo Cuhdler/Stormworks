@@ -129,6 +129,11 @@ Spielregeln in `wissen/mechaniken/README.md`.
 - Modular-Diesel, Kühlung: 18-Zylinder-3×3-Motor mit 12 Electric Radiator 3×3, 24 Pumpen: Vollgas ab kalt ~15 °C/min;
   Gas weg → Temperatur fällt erst 10–15 s später [G 07.10.]. Getrennte Regler je Motor schaukeln sich gegenseitig auf
   (Seiten abwechselnd gedrosselt, Schiff zieht) → eine gemeinsame Grenze für alle Motoren [G].
+- Maschinenraum-Luft (Figet Marena 10.10., 2 Temperature Probes, 4 Diesel Vollgas, 4 Air-Air Heat Exchanger an): vor
+  dem Start 2,6 °C (Nacht), in 6 min gleichmäßig auf 7,4 °C (~0,8 °C/min, eher langsamer werdend), während die Motoren
+  79–88 °C erreichen. Die Raumluft bleibt also kalt, die Kühler haben ~80 °C Unterschied zur Luft – warme Raumluft ist
+  nicht der Engpass, sondern die Kühler selbst. Motortemperaturen mit und ohne Raumkühlung gleich [G].
+- Temperature Probe: der erste Wert nach dem Laden ist 20 (Startwert), ab ~Tick 30 stimmt er [G 10.10.].
 - Feststoff-Booster (`solid_rocket_nozzle_*`): einziger Eingang „Trigger“ (zünden); brennt dann ohne Unterbrechung, bis
   der Treibstoff leer ist. Die Brenngeschwindigkeit ist eine Editor-Einstellung (langsamer = weniger Schub, länger) [S].
   Treibstoff-Blöcke (`solid_rocket_*`) auf den Booster stapeln = längere Brenndauer [S]. Im Flug nicht regelbar [W].
@@ -136,7 +141,9 @@ Spielregeln in `wissen/mechaniken/README.md`.
 - Elektromotoren (`motor_small/medium/large`): liefern Kraft ab 0 RPS, brauchen keine Kupplung; verbrauchen viel Strom,
   laut Wiki reichen auch mehrere nicht als Hauptantrieb großer Schiffe [W]. Bei leerer Batterie werden sie langsamer [W].
   Verbrauch noch nicht gemessen. Figet Marena (10.10.): je ein Large Electric Motor per T-Stück an der Welle vor den
-  Getrieben – Drehrichtung eines gespiegelt eingebauten Motors noch ungeprüft [V].
+  Getrieben. Gespiegelt eingebaut dreht er bei gleichem Signal gleich herum wie der ungespiegelte (beide +1 richtig,
+  Test 10.10.) [G]. Leistung hängt an der Batterie-Ladung (100 % stärker als 80 %, Andre) [G]. Zwei Large Motors an
+  diesem Schiff: nur E ~15 kn, nach 2,5 min 11 kn – wenige Prozent der vier Diesel [G].
 - Getriebe (`modular_engine_gearbox_1x1`): `gear_ratio_2` = Index „Ratio On“: 0 = 1:−1, 1 = 1:1, 2 = 6:5, 3 = 3:2 [G].
   Pfeil zum Motor = Übersetzung ins Langsame; Kupplung 0..1; Motoren laufen ab ~2 RPS (Anlasser) [G].
 

@@ -704,6 +704,14 @@ ohne 'channel', also alle auf Bool 1 (fehlende Angabe = Kanal 0, wie in den Beis
 - Andre: 8 neue grosse Batterien (jetzt 12 + 2 mittlere, ein Netz); Hilfs-Diesel je Seite geplant (Chip 'Hilfsmotoren'
   von Claude, sobald gebaut); Raumkuehlung: 4 Air-Air Heat Exchanger + 10 Pumpen (verkabelt: 'Motoren an' + Strom).
 
+### 10.10. ~19:30: Raumtemperatur gemessen
+- 2 Temperature Probes (+-2,-7,-82) -> Chip 'Figet Marena Raumtemperatur' -> Strom 'mr' (Log waffen_20261010_192340).
+- Vollgas 6 min (fahrt_20261010_170327 ab 19:25): Raumluft 2,6 -> 7,4 Grad (BB und SB fast gleich), Motoren
+  L1/L2/R1/R2 dabei 79/83/88/86 Grad, Tempo 66 -> 52 kn wie immer ab ~75 Grad.
+- Ergebnis: der Maschinenraum wird nicht heiss, die Raumkuehlung kann nichts bringen (Motorkurven mit/ohne gleich).
+  Vorschlag an Andre: Tauscher + Pumpen ausbauen (Gewicht ~2 kn, Pumpen ziehen Batteriestrom der E-Motoren);
+  Probes + Chip duerfen bleiben (leicht). Weiter mit Hilfs-Diesel je Seite.
+
 ### Reihenfolge (Andre 08.10.)
 1. Autopilot (v1.0 eingebaut 08.10., Test im Spiel steht aus): Kurs/Tempo halten, Karte (screen.drawMap) mit Wegpunkten zum Antippen, Ausweichen ueber 2-3 Laser am Bug
    (Lua kann das Gelaende der Karte nicht auslesen). Andre baut: Autopilot-Knopf, Karten-Monitor, Laser. Chip zwischen

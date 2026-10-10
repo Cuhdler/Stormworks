@@ -87,6 +87,9 @@ selbst (Halbautomatik mit Master Arm).
   Temperature Probe im Maschinenraum würde es zeigen. Seit 10.10. abends: 2 Probes (±2,−7,−82) → Chip „Figet Marena
   Raumtemperatur“ 2×1 an der Decke des Chip-Raums (−4,13,−50), Strom „mr“ im Waffen-Schreiber (t_bb, t_sb).
   Test 19:10 (mit Tauschern): Motortemperaturen genau wie ohne (87/92/101/97 Grad nach ~9 min).
+  Test 19:25 (Probes): Raumluft 2,6 °C vor dem Start, nach 6 min Vollgas 7,4 °C (BB ≈ SB), Motoren dabei 79–88 °C.
+  Der Raum wird nicht heiß → Raumkühlung bringt nichts; Vorschlag: Tauscher und Pumpen wieder ausbauen (Gewicht,
+  Batteriestrom). Engpass sind die Kühler selbst → Hilfs-Diesel je Seite.
 
 ### 3.2 Chip „Figet Marena Schiffsführung“ v3.6 (6×6, vp (0,−12,−41))
 Skripte: `lua/schiff.lua` (v3.6), `lua/shud.lua` (Helm, v2.6), `lua/wellen.lua` (v2). Bau: `tools/build_schiff.py`.

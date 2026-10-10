@@ -56,6 +56,9 @@ Worten; bei Abweichungen im Spiel hier korrigieren und auf [G] setzen.
   durchpumpt (bei Fluid Ports saugt der Motor nicht selbst → Pumpen in richtiger Richtung) [W].
   **Meerwasser im Kühlkreis verschleißt Teile, wenn auch wenig** (Andre, 09.10.) – darum auf der Figet Marena nicht genutzt.
 - Wie stark Luft-Kühler sind und wovon die Motorleistung bei Hitze abhängt: `wissen/bauteile/README.md` (Modular-Diesel).
+- Raumluft kühlen bringt nichts, solange der Raum kalt bleibt: im Maschinenraum der Figet Marena stieg die Luft bei 4
+  Dieseln Vollgas nur von 2,6 auf 7,4 °C in 6 min; 4 Air-Air-Tauscher zur Außenluft änderten die Motortemperaturen
+  nicht (10.10.) [G]. Erst messen (Temperature Probe), dann Raumkühlung bauen.
 
 ## Treibstoff [W]
 
