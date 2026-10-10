@@ -204,10 +204,12 @@ Skript `lua/flossen.lua`, Bau `tools/build_flossen.py`, Kabel `tools/kabel_floss
   Auslass an Deck (0,14,−47)) + die zwei alten (±15,−19,−56). Schalter „Auto water pumps“ an und ein Abteil ab 0,3 %
   Wasser → alle drei an, 20 s Nachlauf. Fluss = Summe der Flow Rates.
 - Schotten = 10 Schiebetüren (Sliding Door (Electric), an = auf) in 5 Schottwänden (vom Bug: z 3, Oberdeck −13, −15,
-  −29, −53, je Backbord + Steuerbord). Chip „Figet Marena Schotten“ v1.0 (4×3, Decke des Chip-Raums (−2,13,−50)):
-  „alle zu/auf“ vom Abteil-Chip (Feld unten rechts antippen, Eingang „Knopf Schotten“ noch frei; Wasser ab 0,5 % in
-  einem Abteil = alle zu, nur beim Auftreten); Kippschalter (2 Seiten) an jeder Wand (Backbord-Seite) schaltet die
-  zwei Türen dieser Wand um. Beim Laden alle auf. Strom Monitor, Türen, Schalter von Batterie (−4,−13,−46).
+  −29, −53, je Backbord + Steuerbord). Chip „Figet Marena Schotten“ v2.0 (6×4, Decke des Chip-Raums (−2,13,−50),
+  x −2..3, z −53..−50): „alle zu/auf“ vom Abteil-Chip (Feld unten rechts antippen, Eingang „Knopf Schotten“ noch frei;
+  Wasser ab 0,5 % in einem Abteil = alle zu, nur beim Auftreten); **neben jeder Tür ein Kippschalter (2 Seiten, in der
+  Wand) für genau diese Tür** (v2.0, 10.10.: die 5 Steuerbord-Schalter an der gespiegelten Stelle der Backbord-Schalter
+  statt eines Wandblocks; bis v1.0 schaltete der Backbord-Schalter beide Türen der Wand). Beim Laden alle auf. Strom
+  Monitor, Türen, Schalter von Batterie (−4,−13,−46). Über dem Chip-Feld (0,13,−52) ist ein Loch in der Decke.
 - Monitor-Bild v1.5: links Abteile als Liste (Name nach Sensor-Lage: BUG, VORSCHIFF, MITTE, SEITE BB/SB, MASCHINE;
   „+“ = mit weiteren verbunden) mit Balken und Prozent, darunter TÜREN je Wand (1AUF/1ZU, vom Bug); rechts SPRIT,
   Tank-Balken, VERBR, BATTERIE, PUMPEN; unten rechts Feld „ALLE ZU/AUF“.
@@ -251,7 +253,7 @@ Skript `lua/flossen.lua`, Bau `tools/build_flossen.py`, Kabel `tools/kabel_floss
 | Figet Marena Kamera | v2.2 | 4×5 | (5,10,−53) | Dachkamera, Zoom, Blick-Korrektur | kamera |
 | Figet Marena Schutz | v1.0 | 2×3 | (−5,13,−51) | Auto-Chaff, Lenzpumpen | schutz |
 | Figet Marena Jet Steuerung | v1.0 | 4×3 | (−2,13,−54) Decke | Jet fernsteuern: Maus-Knüppel, Funk, Kamerabild Monitor 3×3 | jet_steuerung |
-| Figet Marena Schotten | v1.0 | 4×3 | (−2,13,−50) Decke | 5 Schottwände: alle zu/auf, Kippschalter je Wand | schotten |
+| Figet Marena Schotten | v2.0 | 6×4 | (−2,13,−50) Decke | 5 Schottwände, 10 Türen: alle zu/auf, Kippschalter je Tür | schotten |
 | Figet Marena Abteile | v1.6 | 4×8 | (−5,5,−59) | Monitor 9×5: Abteile, Sprit, Batterie, Pumpen; Schotten zu/auf, Lenzpumpen automatisch | abteile |
 | Figet Marena Abteile Sammler | v1.1 | 4×5 | (5,2,−58) | Liquid Meter 10–18 gepackt | abteile_sammler |
 | Figet Marena Licht | v1.0 | 2×2 | (1,12,−59) | 55 RGB-Lampen, Tag/Nacht, Steuerungsraum rot bei Bedrohung | licht |

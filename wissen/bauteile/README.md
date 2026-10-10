@@ -135,5 +135,7 @@ Spielregeln in `wissen/mechaniken/README.md`.
   Öffnungswinkel [G].
 - Phalanx-Radar: Winkel ab Sockel; meldet nur, solange der Strahl über dem Ziel ist; behält alte Ziele in der Liste [G].
 - Radar Detector springt evtl. auf eigene Radare an [V].
+- Sprengköpfe (`warhead_*`): Eingang „Arm“; explodieren beim Aufprall oder bei Beschädigung [S] – laut Andre beim
+  Aufprall auch ohne „Arm“ (10.10.). Darum geschützt aufstellen.
 - Battle Cannon: Verschluss öffnet nach 79 Ticks, „Loaded“ ca. 98 Ticks nach dem Schließen [G].
 - Munitions-Kennung `property_ammo_damage`: 1 HE, 2 Fragmentation, 3 AP, 4 Incendiary [G].

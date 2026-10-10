@@ -659,6 +659,13 @@ ohne 'channel', also alle auf Bool 1 (fehlende Angabe = Kanal 0, wie in den Beis
 - Einbau: tools/chip_tauschen.py "Figet Marena Lage" "Figet Marena Lage v3.4.xml" --schreiben, dann
   "Figet Marena Bildschirm" "Figet Marena Bildschirm v3.7.xml" --schreiben (vorher sichern, Spiel aus/Schiff nicht geladen).
 
+### 10.10. ~15:30: Schotten v2.0 - ein Kippschalter je Tuer (Sicherung 'Figet Marena vor Schotten v2.0 (10.10.)', tools/schotten2_update.py)
+- Andre: Knoepfe waren nur an Backbord, jeder oeffnete beide Tueren seiner Wand; gedacht war pro Tuer ein Knopf.
+- 5 Kippschalter (2 Seiten) an Steuerbord statt des Wandblocks an der gespiegelten Stelle (Drehung gespiegelt, zweiter
+  Block dahinter frei), Strom von Batterie (-4,-13,-46). Chip 4x3 -> 6x4 an derselben Decke (x -2..3, z -53..-50),
+  17 alte Kabel weg, 27 neu. Pruefstand tools/test_schotten.py (10 ok) und Nachbau sim/ mit der Probe-Datei: jeder
+  Knopf schaltet genau seine Tuer, 0 verworfene Kabel. Im Spiel zu pruefen: sitzen die neuen Schalter richtig (Seite).
+
 ### Reihenfolge (Andre 08.10.)
 1. Autopilot (v1.0 eingebaut 08.10., Test im Spiel steht aus): Kurs/Tempo halten, Karte (screen.drawMap) mit Wegpunkten zum Antippen, Ausweichen ueber 2-3 Laser am Bug
    (Lua kann das Gelaende der Karte nicht auslesen). Andre baut: Autopilot-Knopf, Karten-Monitor, Laser. Chip zwischen
