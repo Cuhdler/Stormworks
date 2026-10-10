@@ -12,6 +12,7 @@ Claude-Sitzung (auf dem PC oder in der Cloud) den aktuellen Stand kennt.
 | `CHECKLISTE.md`, `WAFFEN_PLAN.md`, `KONZEPT.md` | Details Antrieb, Waffen, Konzept | da |
 | `wissen/` | **Gemeinsame Stormworks-Wissensdatenbank** für alle Fahrzeuge und alle Chats: alle Bauteile, Microcontroller, Lua, Fahrzeugdatei, Physik, Strom, Funk, Spielmechaniken. Inhaltsverzeichnis `wissen/README.md` | da |
 | `lua/` | alle Chip-Skripte | da |
+| `sim/` | **Nachbau von Stormworks** (10.10.): lädt die echte Fahrzeugdatei und führt alle Chips Tick für Tick aus (Logik-Bausteine, Lua, Kabel zwischen Chips, Host + Mitspieler). Keine Physik. Anleitung `sim/README.md`, Prüfstand `python sim/test_sim.py` | da |
 | `tools/` | Bau-, Einbau-, Prüfstand- und Logger-Programme | da |
 | `fahrzeug/Figet Marena.xml` | Kopie der Fahrzeugdatei (Stand 10.10. 14:40, Schiff v3.4, Lage v3.4, Bildschirm v3.7), nur zum Lesen; ohne Steam-Autorangaben | da |
 | `tools/bauteile_holen.py` → `wissen/bauteile/` | Alle 759 Bauteile des Spiels (Datei-Name, Gewicht, Größe, Blöcke, Anschlüsse mit Position und Beschreibung) als `INDEX.md`, Seiten je Kategorie und `bauteile.json`, aus `Stormworks\rom\data\definitions` auf Andres PC geholt; suchen mit `tools/bauteil_suchen.py` | da (Stand 09.10.2026) |

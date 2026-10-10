@@ -5,6 +5,8 @@
 - Projekt: Andres Stormworks-Schiff „Figet Marena“. Gesamtstand und alle Regeln: `SCHIFF_UEBERSICHT.md` (zuerst lesen).
 - Spiel und Fahrzeugdatei liegen auf Andres PC. Dieses Repo ist der gemeinsame Speicher; `fahrzeug/` ist nur eine
   Kopie zum Lesen. Änderungen erreichen das Spiel erst, wenn Andre auf dem PC pullt und die `tools/` laufen lässt.
+- Chips testen: neben den `tools/test_*.py` gibt es den Nachbau `sim/` (ganze Chip-Ketten aus der Fahrzeugdatei,
+  auch Host + Mitspieler); Anleitung `sim/README.md`.
 - Mitschriften (Übersicht, Checklisten, Pläne) nach jeder Arbeitssitzung aktualisieren und pushen.
 - Antworten auf Deutsch, einfache Worte. Andre spielt allein, alles muss von einem Sitz aus bedienbar sein.
 - Lua im Spiel (im Spiel gemessen, Liste in `wissen/microcontroller/lua.md`): höchstens 8192 Zeichen je Skript; es fehlen u. a.

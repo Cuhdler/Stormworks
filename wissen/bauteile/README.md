@@ -119,6 +119,10 @@ Spielregeln in `wissen/mechaniken/README.md`.
 - Modular-Diesel, Kühlung: 18-Zylinder-3×3-Motor mit 12 Electric Radiator 3×3, 24 Pumpen: Vollgas ab kalt ~15 °C/min;
   Gas weg → Temperatur fällt erst 10–15 s später [G 07.10.]. Getrennte Regler je Motor schaukeln sich gegenseitig auf
   (Seiten abwechselnd gedrosselt, Schiff zieht) → eine gemeinsame Grenze für alle Motoren [G].
+- Feststoff-Booster (`solid_rocket_nozzle_*`): einziger Eingang „Trigger“ (zünden); brennt dann ohne Unterbrechung, bis
+  der Treibstoff leer ist. Die Brenngeschwindigkeit ist eine Editor-Einstellung (langsamer = weniger Schub, länger) [S].
+  Treibstoff-Blöcke (`solid_rocket_*`) auf den Booster stapeln = längere Brenndauer [S]. Im Flug nicht regelbar [W].
+  Groß ab Medium mit Ausgang „Fuel Remaining“; der kleine Booster ist 1×1×1 [S].
 - Elektromotoren (`motor_small/medium/large`): liefern Kraft ab 0 RPS, brauchen keine Kupplung; verbrauchen viel Strom,
   laut Wiki reichen auch mehrere nicht als Hauptantrieb großer Schiffe [W]. Bei leerer Batterie werden sie langsamer [W].
   Verbrauch noch nicht gemessen.
