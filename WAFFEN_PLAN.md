@@ -676,7 +676,7 @@ ohne 'channel', also alle auf Bool 1 (fehlende Angabe = Kanal 0, wie in den Beis
 - Im Spiel zu pruefen: Drehrichtung (linker Motor ist gespiegelt eingebaut!) mit 'E-Motor Test' 1; wie lange die
   Batterien halten (keine Generatoren mehr); bringt der E-Motor bei heissen Dieseln wirklich mehr Tempo?
 
-### 10.10. ~18:15: Schiff v3.6 (Tempo halten, Hebel), Autopilot v1.3, Sitz beschriftet (Sicherung 'Figet Marena vor Schiff v3.6 + Sitz (10.10.)')
+### 10.10. ~17:26: Schiff v3.6 (Tempo halten, Hebel), Autopilot v1.3, Sitz beschriftet (Sicherung 'Figet Marena vor Schiff v3.6 + Sitz (10.10.)')
 - Andre: E-Motor hat nicht dieselbe Leistung -> v3.6 haelt stattdessen das Tempo vom Beginn der Drosselung (PI auf das
   Tempo, Soll folgt dem Hebel mit ^0,4). Modell: E 150 % -> Tempo exakt, E-Gas 0,51; E 50 % / 20 % -> voll.
 - Andre: Hebel-Anzeige lief nach dem Loslassen von W weiter. Ursache (Log ap 09.10.): Sitz-Achse W/S steigt/faellt
