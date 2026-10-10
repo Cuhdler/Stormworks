@@ -80,6 +80,11 @@ selbst (Halbautomatik mit Master Arm).
 - **E-Motoren (10.10.):** 2 × Large Electric Motor (±8,−13,−96), je über ein T-Stück an der Welle vor den Getrieben
   (drehen also wie die Diesel, Gänge und Rückwärts gelten auch für sie); Strom von den großen Batterien (±4,−13,−46).
   Keine Generatoren mehr an Bord: die Batterien laden nur noch an der Werkbank.
+- **Batterien (10.10.):** 12 große (±4, y −13/−8/−3, z −46/−39) + 2 mittlere, alle in einem Netz (vorher 4 große).
+- **Raumkühlung (10.10., Andre):** 4 Air-Air Heat Exchanger 3×9×9 (±3,−15,−103) und (±3,−15,−94), je Kreis A
+  Maschinenraum und Kreis B Außenluft (Luftfilter), 10 Pumpen ((±4,−9,−91…−106), (0,−10,−101), (0,−9,−102)) an
+  „Motoren an“ und Strom (tools/luftkuehlung_update.py). Ob der Raum vorher heiß wurde, ist ungeprüft – eine
+  Temperature Probe im Maschinenraum würde es zeigen.
 
 ### 3.2 Chip „Figet Marena Schiffsführung“ v3.6 (6×6, vp (0,−12,−41))
 Skripte: `lua/schiff.lua` (v3.6), `lua/shud.lua` (Helm, v2.6), `lua/wellen.lua` (v2). Bau: `tools/build_schiff.py`.

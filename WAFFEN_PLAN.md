@@ -694,6 +694,16 @@ ohne 'channel', also alle auf Bool 1 (fehlende Angabe = Kanal 0, wie in den Beis
   (Tempo halten). Offen: Drehrichtungs-Test ('E-Motor Richtung L' steht schon auf -1).
 - Stand der Datei bis zur Entscheidung: 'Temp Ziel' 200, 'E-Motor Anteil' 0, 'E-Motor Richtung L' -1.
 
+### 10.10. ~19:10: E-Tests, Batterien, Raumkuehlung
+- E-Motor-Tests (Test-Modus): Richtung L -1 = Linksdreh (links rueckwaerts); nur links +1 = Rechtsdreh -> beide +1
+  richtig. Beide +1, nur E: hoechstens ~15 kn, faellt in 2,5 min auf 11 kn (Leistung haengt an der Batterie-Ladung,
+  Andre). E-Motoren = wenige Prozent der Diesel-Leistung - als Notantrieb und kleiner Zuschuss. Test-Modus wieder aus,
+  'Temp Ziel' 105.
+- R1 ~14 Grad heisser als L1: Kuehlteile je Motor gleich (12 Kuehler, 24 Pumpen); rechte Welle dreht schneller
+  (15,9 / 15,3 RPS) seit dem E-Motor-Umbau - Verdacht: gespiegelter linker E-Motor bremst leicht.
+- Andre: 8 neue grosse Batterien (jetzt 12 + 2 mittlere, ein Netz); Hilfs-Diesel je Seite geplant (Chip 'Hilfsmotoren'
+  von Claude, sobald gebaut); Raumkuehlung: 4 Air-Air Heat Exchanger + 10 Pumpen (verkabelt: 'Motoren an' + Strom).
+
 ### Reihenfolge (Andre 08.10.)
 1. Autopilot (v1.0 eingebaut 08.10., Test im Spiel steht aus): Kurs/Tempo halten, Karte (screen.drawMap) mit Wegpunkten zum Antippen, Ausweichen ueber 2-3 Laser am Bug
    (Lua kann das Gelaende der Karte nicht auslesen). Andre baut: Autopilot-Knopf, Karten-Monitor, Laser. Chip zwischen
