@@ -642,7 +642,7 @@ ohne 'channel', also alle auf Bool 1 (fehlende Angabe = Kanal 0, wie in den Beis
 - Im Spiel zu pruefen: Dauer-Tempo bei 70 Grad (Modell ca. 22 % Gas), ob das Gas ruhig bleibt (liefert das Spiel nur
   ganze Grad, schwankt es mehr), Fahrtenschreiber an.
 
-### 10.10. ~14:30: Mehrspieler-Hilfe gebaut, NOCH NICHT EINGEBAUT (Spiel lief; Probe beider Chips sauber)
+### 10.10. ~14:30: Mehrspieler-Hilfe gebaut, ~14:40 eingebaut (Sicherung 'Figet Marena vor Mehrspieler-Hilfe (10.10.)')
 - Befund 09.10. (Andre Host, Freund Mitspieler): beim Freund Zielliste leer, Pings/Kamera-Zoom nur ab und zu, Schuesse
   ca. 10 %; Tuerme drehen richtig. Grund (Entwickler, Geometa #22188): Lua laeuft auf jedem PC selbst, ihr Zustand wird
   nicht abgeglichen; Mitspieler laden nicht alle Fahrzeuge. Siehe wissen/mechaniken/README.md, Abschnitt Mehrspieler.

@@ -241,8 +241,8 @@ Skript `lua/flossen.lua`, Bau `tools/build_flossen.py`, Kabel `tools/kabel_floss
 |---|---|---|---|---|---|
 | Figet Marena Schiffsführung | v3.4 | 6×6 | (0,−12,−41) | Motoren, Gänge, Ruder, Bugstrahl, Helm, Temperatur-Regler | schiff, shud, wellen |
 | Figet Marena Flossen | v1.7 | 3×4 | (0,−5,−44) | 12 Steuerflossen, Heck-Wasser | flossen |
-| Figet Marena Lage | v3.3 | 4×4 | (−4,9,−59) | 6 Mast-Radare → 5 Ziele in der Welt | 6× mastradar, lage |
-| Figet Marena Bildschirm | v3.3 | 4×3 | (1,9,−59) | Monitor 9×5, Zielverteilung, Master Arm | bild |
+| Figet Marena Lage | v3.4 | 4×4 | (−4,9,−59) | 6 Mast-Radare → 5 Ziele in der Welt | 6× mastradar, lage |
+| Figet Marena Bildschirm | v3.7 | 4×3 | (1,9,−59) | Monitor 9×5, Zielverteilung, Master Arm, Mehrspieler-Hilfe | mitspieler, bild |
 | Figet Marena Waffenwahl | v1.2 | 3×2 | (−4,5,−59) | Monitor 2×3: Waffe wählen | waffenwahl |
 | Figet Marena Flak L | v2.8 | 4×5 | (−5,9,−58) | linker Flak-Turm | flakradar, flak |
 | Figet Marena Flak R | v2.8 | 4×5 | (5,6,−58) | rechter Flak-Turm | flakradar, flak |
@@ -266,7 +266,7 @@ Alle Waffen-Chips nutzen denselben Physik-Sensor (0,27,−38). Lua-Grenze im Spi
 
 ## 5. Waffensystem
 
-### 5.1 Lagezentrale (Chip „Lage“ v3.3)
+### 5.1 Lagezentrale (Chip „Lage“ v3.4)
 **Mast-Radare** (Radar Phalanx, manueller Modus per Gimbal, Strahl FOV 0,1):
 
 | Radar | Position | Aufgabe |
@@ -289,7 +289,10 @@ Alle Waffen-Chips nutzen denselben Physik-Sensor (0,27,−38). Lua-Grenze im Spi
   auch stehend); nachweislich stehende Dinge kommen auf eine Merkliste (24 Orte) und werden ignoriert.
 - **Bedrohung:** Luftziel näher als 1,5 km, kommt mit mehr als 5 m/s näher.
 
-### 5.2 Hauptbildschirm (Chip „Bildschirm“ v3.3, Monitor 9×5)
+### 5.2 Hauptbildschirm (Chip „Bildschirm“ v3.7, Monitor 9×5)
+- **Mehrspieler-Hilfe (v3.7, 10.10.):** `lua/mitspieler.lua` vor BILD. Beim Host reicht es alles durch. Beim Mitspieler
+  (erkannt am springenden Takt der Lage, Bool 21–24) hält es die 5 Ziele aus dem letzten Stand des Hosts bis
+  `MP halten s` (10) fest; oben auf dem Radar steht dann „MP <Alter>S“. `Mehrspieler-Hilfe` 0 = aus.
 - **Links:** 3D-Radar (Bug oben, Luftziele auf Strichen je nach Höhe, zoomt selbst, ferne Ziele als Pfeil am Rand,
   rotes Quadrat = wird beschossen, graue = stehend, dunkelorange = Luftziel, das keine Flak erreicht).
 - **Mitte:** Bild der Dachkamera (nur das mittlere Drittel des Monitors zeigt Video) mit Fadenkreuz/Korrektur-Kreis.
