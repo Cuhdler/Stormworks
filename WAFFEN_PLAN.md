@@ -666,6 +666,16 @@ ohne 'channel', also alle auf Bool 1 (fehlende Angabe = Kanal 0, wie in den Beis
   17 alte Kabel weg, 27 neu. Pruefstand tools/test_schotten.py (10 ok) und Nachbau sim/ mit der Probe-Datei: jeder
   Knopf schaltet genau seine Tuer, 0 verworfene Kabel. Im Spiel zu pruefen: sitzen die neuen Schalter richtig (Seite).
 
+### 10.10. ~17:30: E-Motoren (Plan C gegen Ueberhitzung) - Schiff v3.5, Flossen v1.8 (Sicherung 'Figet Marena vor E-Motoren (10.10.)', tools/emotor_update.py)
+- Andre: 2 grosse E-Motoren (±8,-13,-96) per T-Stueck an der Welle vor den Getrieben, statt der kleinen Generatoren.
+- E-Gas = Hebel minus Temperatur-Grenze (mal 'E-Motor Anteil'), Batterie-Schutz 50/55 %, Richtung je Seite, Test-Modus.
+  Kanaele: Zahl 20 (vorher Bugstrahl-Anzeige) = E-Gas; Batterie ueber Flossen-Chip Kanal 21 -> Schiff Kanal 25;
+  'Motor L/R an' und 'Rueckwaerts L/R' je zusammengelegt (72 + 1 Kabel umgelegt), dort jetzt 'E-Motor L/R'.
+- Pruefstand: heiss Diesel 22 % + E 78 %, Batterie-Schwelle, Test-Modus, ohne Batterie aus. Nachbau mit der Probe-Datei:
+  96 Pumpen + 48 Luefter an, E-Gas an beiden Motoren gleich, beide Rueckwaerts-Getriebe, 0 verworfene Kabel.
+- Im Spiel zu pruefen: Drehrichtung (linker Motor ist gespiegelt eingebaut!) mit 'E-Motor Test' 1; wie lange die
+  Batterien halten (keine Generatoren mehr); bringt der E-Motor bei heissen Dieseln wirklich mehr Tempo?
+
 ### Reihenfolge (Andre 08.10.)
 1. Autopilot (v1.0 eingebaut 08.10., Test im Spiel steht aus): Kurs/Tempo halten, Karte (screen.drawMap) mit Wegpunkten zum Antippen, Ausweichen ueber 2-3 Laser am Bug
    (Lua kann das Gelaende der Karte nicht auslesen). Andre baut: Autopilot-Knopf, Karten-Monitor, Laser. Chip zwischen

@@ -60,7 +60,7 @@ selbst (Halbautomatik mit Master Arm).
 | | Sonar | (0,−19,16) |
 | Strom | 2 Batterien Medium | (±8,−19,−65) |
 | | 4 Batterien Large | (±4,−13,−39) und (±4,−13,−46) |
-| | 2 Generatoren (an der Welle) | (±8,−15,−96) |
+| | 2 große E-Motoren (an der Welle vor den Getrieben, seit 10.10. statt der 2 kleinen Generatoren) | (±8,−13,−96) |
 | Lenzen | 2 Large Fluid Pumps | (±15,−19,−56) |
 | Chaff | 2 Ketten zu je 60 Flare Launchern, erster Werfer | (−8,17,−37) / (8,17,−37) |
 | Raketen | 24 Plätze in 4 Reihen × 6 (Heck) | x −11/−4/4/11, z −112…−137 |
@@ -76,13 +76,24 @@ selbst (Halbautomatik mit Master Arm).
   ×1,0 / 1,2 / 1,5 / 1,8 / 2,0 / 2,4 / 3,0 / 3,6.
 - **Ruder:** 2 Ruder-Bauteile, Signal 1 = 45° am Ruder (90° am Robotic Pivot). E-Motoren an den Power-Pivots.
 - **Bugstrahlruder** (Elektromotor Medium im Bug).
-- **Kühlung/Pumpen:** 96 Wasserpumpen, 48 Kühler-Lüfter, 48 kleine Kühlwassertanks (schaltet „Motor L/R an“).
+- **Kühlung/Pumpen:** 96 Wasserpumpen, 48 Kühler-Lüfter, 48 kleine Kühlwassertanks (schaltet „Motoren an“).
+- **E-Motoren (10.10.):** 2 × Large Electric Motor (±8,−13,−96), je über ein T-Stück an der Welle vor den Getrieben
+  (drehen also wie die Diesel, Gänge und Rückwärts gelten auch für sie); Strom von den großen Batterien (±4,−13,−46).
+  Keine Generatoren mehr an Bord: die Batterien laden nur noch an der Werkbank.
 
-### 3.2 Chip „Figet Marena Schiffsführung“ v3.4 (6×6, vp (0,−12,−41))
-Skripte: `lua/schiff.lua` (v3.4), `lua/shud.lua` (Helm, v2.5), `lua/wellen.lua` (v2). Bau: `tools/build_schiff.py`.
+### 3.2 Chip „Figet Marena Schiffsführung“ v3.5 (6×6, vp (0,−12,−41))
+Skripte: `lua/schiff.lua` (v3.5), `lua/shud.lua` (Helm, v2.6), `lua/wellen.lua` (v2). Bau: `tools/build_schiff.py`.
 
 - **Fahrhebel = Leistung** (Anteil der vollen Treibstoffmenge). Grenze ist die Temperatur, über `Motor heiss Grad`
   115 °C auskuppeln.
+- **E-Motoren (v3.5, 10.10.):** bekommen den Teil des Fahrhebels, den die Temperatur-Grenze den Dieseln wegnimmt
+  (`E-Motor Anteil` 1; nicht beim Gas-Abzug der Wellen-Schutzes). Batterie-Ladung kommt über den Flossen-Chip
+  (Kanal 21 → 25); unter `E-Motor ab Batterie` 0,5 aus, erst ab 0,55 wieder an. Je Seite `E-Motor Richtung L/R` (±1).
+  `E-Motor Test` 1: Diesel bleiben ausgekuppelt, E-Motoren fahren mit dem Hebel (Drehrichtung prüfen, danach 0).
+  Helm: schmale Zeile „E45“ = E-Gas 45 %, Warnung „E-MOTOR: BATTERIE“, wenn er gebraucht würde, aber die Batterie zu
+  leer ist; H4-Seite „E-MOTOR xx %“ (statt Bugstrahl). Anschlüsse: „Motoren an“ und „Rückwaerts“ gelten jetzt für beide
+  Seiten (die Signale waren schon gleich), auf den frei gewordenen Plätzen „E-Motor L/R“. Schreiber: Spalten
+  `e_motor_pct`, `e_motor_aus_batterie`. Prüfstand `test_schiff.py` test_emotor; Nachbau `sim/` mit der Probe-Datei.
 - **Temperatur-Regler (v3.4, 09.10.):** eine Gas-Grenze für alle 4 Motoren (Schiff fährt gerade), nach dem Motor, der
   am stärksten über dem erlaubten Anstieg liegt. Erlaubter Anstieg = (`Temp Ziel` 70 − Temperatur) / `Temp Anflug s`
   60; `Temp Regel` 0,2. Kalt knapp 3 min volles Gas, dann weich auf Dauerleistung (Modell: ca. 22 % Gas bei 70 °C).
@@ -104,7 +115,8 @@ Skripte: `lua/schiff.lua` (v3.4), `lua/shud.lua` (Helm, v2.5), `lua/wellen.lua` 
 - **Helm (Headset Video):** normal eine Zeile unten (Gang, Hebel, Tempo, Kurs, Ruder) + HEISS/AUSFALL; Hotkey 4 =
   alle Werte je Motor (RPS, Temperatur, Gas, Gemisch, Zustand).
 
-### 3.3 Chip „Figet Marena Flossen“ v1.7 (3×4, vp (0,−5,−44))
+### 3.3 Chip „Figet Marena Flossen“ v1.8 (3×4, vp (0,−5,−44))
+- v1.8 (10.10.): neuer Eingang „Batterie“ (Charge der Batterie (−4,−13,−46)), geht auf Kanal 21 von „Physik weiter“ an die Schiffsführung.
 Skript `lua/flossen.lua`, Bau `tools/build_flossen.py`, Kabel `tools/kabel_flossen.py`.
 
 - **12 Steuerflossen:** 8 Control Fin Medium (vorn (±1,−21,25/28), Mitte (±9,−21,−92), hinten (±10,−16,−120))
@@ -241,8 +253,8 @@ Skript `lua/flossen.lua`, Bau `tools/build_flossen.py`, Kabel `tools/kabel_floss
 
 | Chip | Version | Größe | Lage (vp) | Aufgabe | Skripte |
 |---|---|---|---|---|---|
-| Figet Marena Schiffsführung | v3.4 | 6×6 | (0,−12,−41) | Motoren, Gänge, Ruder, Bugstrahl, Helm, Temperatur-Regler | schiff, shud, wellen |
-| Figet Marena Flossen | v1.7 | 3×4 | (0,−5,−44) | 12 Steuerflossen, Heck-Wasser | flossen |
+| Figet Marena Schiffsführung | v3.5 | 6×6 | (0,−12,−41) | Motoren, Gänge, Ruder, Bugstrahl, Helm, Temperatur-Regler, E-Motoren | schiff, shud, wellen |
+| Figet Marena Flossen | v1.8 | 3×4 | (0,−5,−44) | 12 Steuerflossen, Heck-Wasser, Batterie weiter | flossen |
 | Figet Marena Lage | v3.4 | 4×4 | (−4,9,−59) | 6 Mast-Radare → 5 Ziele in der Welt | 6× mastradar, lage |
 | Figet Marena Bildschirm | v3.7 | 4×3 | (1,9,−59) | Monitor 9×5, Zielverteilung, Master Arm, Mehrspieler-Hilfe | mitspieler, bild |
 | Figet Marena Waffenwahl | v1.2 | 3×2 | (−4,5,−59) | Monitor 2×3: Waffe wählen | waffenwahl |

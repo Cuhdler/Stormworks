@@ -22,10 +22,10 @@ PORT = int(sys.argv[1]) if len(sys.argv) > 1 and sys.argv[1].isdigit() else 8766
 MOTOREN = ["L1", "L2", "R1", "R2"]
 ZUSTAND = ["OK", "HEISS", "AUSFALL", "TEMP", "LEER", "KUPPELT", "---"]
 SPALTEN = (["tick", "tempo_kn", "tempo_kmh", "kurs", "hebel_pct", "gang", "uebersetzung", "automatik", "ruder_pct",
-            "bug_pct", "motoren_an", "rueckwaerts_l", "rueckwaerts_r", "getriebe_a", "getriebe_b", "getriebe_c"] +
+            "e_motor_pct", "motoren_an", "rueckwaerts_l", "rueckwaerts_r", "getriebe_a", "getriebe_b", "getriebe_c"] +
            ["%s_%s" % (m, k) for m in MOTOREN for k in
             ("rps", "temp", "zustand", "gas_pct", "mix", "q", "luft_pct", "treib_drossel", "kupplung", "anlasser")] +
-           ["wellen_sperre"])
+           ["wellen_sperre", "e_motor_aus_batterie"])   # v3.5: Zahl 20 = E-Motor-Gas (vorher Bugstrahl), Bool 13
 ROH = 1 + 32 + 1
 FLOSSEN = PORT == 8767
 FLOSSEN_SPALTEN = ["tick", "tempo_ms", "nick", "roll", "nickrate", "rollrate", "steigen", "verstaerkung",
@@ -60,6 +60,7 @@ def entpacke(roh):
               "%.2f" % ((b % 1000) / 100 - 2), "%.1f" % ((q // 1000) / 10), q % 1000,
               "%.4g" % n[3 * e - 1], "%.2f" % n[3 * e], bit(1 + e)]
     w.append(bit(12))
+    w.append(bit(13))
     return [str(x) for x in w]
 
 

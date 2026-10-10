@@ -12,7 +12,7 @@ import sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from build_schiff import MC, minify, fmt, LUA_LIMIT, LUA_DIR, BUILD  # noqa: E402
 
-MC_FILE = "Figet Marena Flossen v1.7.xml"
+MC_FILE = "Figet Marena Flossen v1.8.xml"
 TEST_FILE = "Figet Marena Flossen TEST.xml"
 
 PROPS = [
@@ -66,12 +66,12 @@ NODES = [
 
 def build(src, test=False):
     mc = MC("Figet Marena Flossen", "TEST: alle Flossen +0.7 - danach wieder den Flossen-Chip einsetzen" if test else
-            "Flossen v1.7: 12 Steuerflossen halten Nick/Roll gerade; Heck zuerst (Schrauben im Wasser), Heck-Messer; Physik weiter", 3, 4)
+            "Flossen v1.8: 12 Steuerflossen halten Nick/Roll gerade; Heck zuerst, Heck-Messer; Physik + Batterie weiter", 3, 4)
     phys = mc.node(NODES[0][0], 1, NODES[0][2], NODES[0][3], NODES[0][4], NODES[0][5], (-8, 2))
     wn = NODES[-1]
     wasser = mc.node(wn[0], 1, wn[2], wn[3], wn[4], wn[5], (-8, 0))
-    # Heck-Wasser auf Kanal 20 des Physik-Composite
-    wk = mc.comp(40, (-5, 2), {"count": 1, "offset": 19}, [("inc", (phys, 0)), (wasser, 0)])
+    # Heck-Wasser auf Kanal 20 des Physik-Composite, v1.8 Batterie-Ladung auf Kanal 21 (Eingang kommt unten dazu)
+    wk = mc.comp(40, (-5, 2), {"count": 2, "offset": 19}, [("inc", (phys, 0)), (wasser, 0)])
     lua = mc.comp(56, (-3, 2), {"script": src}, [(wk, 0)])
     for k, (name, val, desc) in enumerate(PROPS):
         mc.comp(34, (-10 - 2 * (k // 8), -4 - (k % 8)), {"n": name},
@@ -81,6 +81,9 @@ def build(src, test=False):
         mc.node(label, 0, typ, desc, x, z, (8, 4 - k), (r, 0))
     # v1.7: Physik-Sensor mit Heck-Wasser auf Kanal 20 weiter an den Schiffs-Chip (dessen Wellen-Skript); letzter Anschluss
     mc.node("Physik weiter", 0, 5, "An den Schiffs-Chip, Eingang 'Physik-Sensor' (Physics Sensor + Heck-Wasser auf Kanal 20)", 1, 3, (0, -2), (wk, 0), late=True)
+    # v1.8 (10.10.): Batterie-Ladung fuer die E-Motoren der Schiffsfuehrung - neuer Anschluss am Ende, Kanal 21
+    batt = mc.node("Batterie", 1, 1, "Electric Battery Large (-4,-13,-46): Charge (0..1)", 2, 3, (-8, -1), late=True)
+    next(c for c in mc.comps if c[1] == wk)[3].append((batt, 0))
     return mc
 
 

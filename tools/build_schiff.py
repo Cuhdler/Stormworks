@@ -14,7 +14,7 @@ from build_mc import MC, minify, fmt, LUA_LIMIT  # noqa: E402
 
 LUA_DIR = os.path.join(ROOT, "lua")
 BUILD = os.path.join(ROOT, "build")
-MC_FILE = "Figet Marena Schiff v3.4.xml"
+MC_FILE = "Figet Marena Schiff v3.5.xml"
 
 # Name, Standardwert, Erklaerung
 PROPS = [
@@ -43,6 +43,10 @@ PROPS = [
     ("Getriebe A", 1.2, "Uebersetzung von Getriebe A, wenn an (6:5 = 1.2), Pfeil zum Motor"),
     ("Getriebe B", 1.5, "Uebersetzung von Getriebe B, wenn an (3:2 = 1.5)"),
     ("Getriebe C", 2, "Uebersetzung von Getriebe C, wenn an (2:1 = 2)"),
+    # v3.5 E-Motoren (Andre 10.10.: zwei grosse E-Motoren an der Welle vor den Getrieben)
+    ("E-Motor Anteil", 1, "E-Motoren bekommen so viel vom Fahrhebel, wie die Temperatur-Grenze den Dieseln wegnimmt (0 = E-Motoren aus)"),
+    ("E-Motor ab Batterie", 0.5, "Unter dieser Batterie-Ladung bleiben die E-Motoren aus (Anlasser, Pumpen, Luefter brauchen Strom); 5 % darueber wieder an"),
+    ("E-Motor Test", 0, "1 = Diesel bleiben ausgekuppelt, E-Motoren fahren mit dem Fahrhebel (Drehrichtung pruefen); danach wieder 0"),
     ("Log Port", 8766, "Fahrtenschreiber: Port von tools/logger.py auf dem PC (0 = aus; Heli-Flugschreiber nutzt 8765)"),
     # v2.7 Wellen-Skript (lua/wellen.lua)
     ("Frei unter m", 0.3, "Wellen: Schrauben gelten als 'frei', wenn der Heck-Messer (mit Vorhalt) flacher meldet"),
@@ -69,7 +73,7 @@ STOCK = {"1": "unterer", "2": "oberer"}
 
 def build(schiff_src, hud_src, wellen_src):
     # Beschreibung kurz halten: das Spiel kuerzt sie im Fahrzeug auf 128 Zeichen.
-    mc = MC("Figet Marena Schiffsfuehrung", "Schiff v3.4: 4 Motoren, Temperatur 70 gemeinsam, 8 Gaenge, Wellen-Schutz, Schreiber. H1 an/aus, H2 Stopp, H3 Automatik, H4 Werte", 6, 6)
+    mc = MC("Figet Marena Schiffsfuehrung", "Schiff v3.5: 4 Diesel + 2 E-Motoren, Temperatur 70, 8 Gaenge, Wellen-Schutz. H1 an/aus, H2 Stopp, H3 Automatik, H4 Werte", 6, 6)
     sitz = mc.node("Sitz", 1, 5, "Steuersitz (Helm): Ausgang 'Seat data'", 0, 0, (-8, 6))
     phys = mc.node("Physik-Sensor", 1, 5, "Flossen-Chip 'Physik weiter' (Physics Sensor + Heck-Wasser auf Kanal 20; ohne Messer: Physics Sensor direkt)", 1, 0, (-8, 5))
     rps, zyl = {}, {}
@@ -95,7 +99,10 @@ def build(schiff_src, hud_src, wellen_src):
                     [("inc", (w, 0))] + [(c, 0) for c in werte[8 * k:8 * k + 8]])
     # v2.7: Heck-Wasser (Physik-Composite Kanal 20 vom Flossen-Chip) auf Kanal 23
     wasser = mc.comp(31, (-5, 1), {"i": 19}, [(phys, 0)])
-    w = mc.comp(40, (-2, 2), {"count": 1, "offset": 22}, [("inc", (w, 0)), (wasser, 0)])
+    # v3.5: Batterie-Ladung (Physik-Composite Kanal 21 vom Flossen-Chip v1.8) auf Kanal 25; Kanal 24 schreibt danach das
+    # Wellen-Skript (Gas-Abzug), hier nur Platzhalter
+    batt = mc.comp(31, (-5, 0.5), {"i": 20}, [(phys, 0)])
+    w = mc.comp(40, (-2, 2), {"count": 3, "offset": 22}, [("inc", (w, 0)), (wasser, 0), (wasser, 0), (batt, 0)])
     wbool = mc.comp(41, (-2, -2), {"count": 8}, [("inc", (w, 0))] + [(c, 0) for c in seat_bool])
     # Wellen-Skript: Gas-Abzug auf Kanal 24, Schaltsperre auf Bool 9
     wellen = mc.comp(56, (-1, -4), {"script": wellen_src}, [(wbool, 0)])
@@ -113,6 +120,13 @@ def build(schiff_src, hud_src, wellen_src):
         r = mc.comp(ctype, (5, y), {"i": ch} if ch else {}, [(schiff, 0)])
         mc.node(label, 0, ntype, desc, xz[0], xz[1], (8, y), (r, 0))
 
+    def e_aus(label, seite, xz, y):
+        r = mc.comp(31, (5, y), {"i": 19}, [(schiff, 0)])
+        rv = mc.comp(34, (5, y + 0.5), {"n": "E-Motor Richtung %s" % seite}, extra='<v text="1" value="1"/>')
+        f = mc.comp(10, (6.5, y), {"e": "x*y"}, [(r, 0), (rv, 0)])
+        mc.node(label, 0, 1, "Grosser E-Motor %s (x %s8, z -96): Throttle" % ({"L": "links", "R": "rechts"}[seite], "-" if seite == "L" else "+"),
+                xz[0], xz[1], (8, y), (f, 0))
+
     y = 7
     for k, n in enumerate(MOTOREN):
         wer = "%s %s Motor (%s)" % (SEITE[n[0]], STOCK[n[1]], n)
@@ -123,10 +137,12 @@ def build(schiff_src, hud_src, wellen_src):
         y -= 4
     aus("Ruder", 31, 12, 1, "Beide Ruder-Gelenke (Robotic Pivot): Rotation Target", (2, 2), y)
     aus("Bugstrahlruder", 31, 13, 1, "Elektromotor am Bugstrahlruder: Throttle", (3, 2), y - 1)
-    aus("Motor L an", 29, 0, 0, "Pumpen und Kuehler-Luefter der linken Motoren (L1, L2)", (0, 3), y - 2)
-    aus("Motor R an", 29, 0, 0, "Pumpen und Kuehler-Luefter der rechten Motoren (R1, R2)", (1, 3), y - 3)
-    aus("Rueckwaerts L", 29, 5, 0, "Linkes Getriebe (aus 1:1 / an 1:-1): Gear Switch", (0, 4), y - 4)
-    aus("Rueckwaerts R", 29, 6, 0, "Rechtes Getriebe (aus 1:1 / an 1:-1): Gear Switch", (2, 4), y - 5)
+    # v3.5: 'Motor L/R an' und 'Rueckwaerts L/R' waren je dasselbe Signal (beide Seiten schalten im selben Tick) - je
+    # einer reicht; auf den frei gewordenen Plaetzen die E-Motoren (E-Gas Zahl 20 mal 'E-Motor Richtung L/R')
+    aus("Motoren an", 29, 0, 0, "Pumpen und Kuehler-Luefter aller 4 Motoren", (0, 3), y - 2)
+    e_aus("E-Motor L", "L", (1, 3), y - 3)
+    aus("Rueckwaerts", 29, 5, 0, "Rueckwaerts-Getriebe beider Seiten (aus 1:1 / an 1:-1): Gear Switch", (0, 4), y - 4)
+    e_aus("E-Motor R", "R", (2, 4), y - 5)
     mc.node("Helm", 0, 6, "Steuersitz: Headset Video (Anzeige im Helm)", 2, 3, (8, y - 6), (hud, 1))
     # Gaenge: Getriebe A/B/C (je an beide Seiten); A auf dem frueheren Platz 'Schiffsdaten' (war nie verbunden)
     for k, (xz, stand) in enumerate([((3, 3), "6:5"), ((5, 4), "3:2"), ((5, 5), "2:1")]):

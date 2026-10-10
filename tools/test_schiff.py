@@ -8,6 +8,7 @@
 - test_schreiber: Fahrtenschreiber (shud.lua -> HTTP -> logger.entpacke) lueckenlos und richtig entpackt
 - test_temperatur (v3.4): Waermemodell nach der Fahrt 07.10. - gemeinsame Gas-Grenze, sanft auf 'Temp Ziel', ohne
   Schaukeln, auch mit traeger Kuehlung
+- test_emotor (v3.5): E-Motoren bekommen den Rest des Hebels, Batterie-Schutz, Test-Schalter (Diesel ausgekuppelt)
 """
 import os
 import sys
@@ -121,6 +122,7 @@ class Schiff:
         self.mo = motoren
         self.mess = [(0.0, 0.0, 0.0, 0.0)] * 4
         self.out = {}
+        self.batt = 0.0          # v3.5: Batterie-Ladung auf Kanal 25 (ueber den Flossen-Chip); 0 = keine -> E-Motoren aus
 
     def wellen(self, n, b):
         """Wellen-Skript wie im Chip: liest dasselbe Composite, Gas-Abzug -> Kanal 24, Schaltsperre -> Bool 9."""
@@ -131,7 +133,7 @@ class Schiff:
         b[9] = bool(self.wio["on"].get(101, False))
 
     def tick(self, ad=0.0, ws=0.0, bug=0.0, h1=False, h2=False, last=1.0, h4=False):
-        n = {1: ad, 2: ws, 3: bug, 5: 8.0, 6: 0.25}
+        n = {1: ad, 2: ws, 3: bug, 5: 8.0, 6: 0.25, 25: self.batt}
         for i, m in enumerate(self.mess):
             for j in range(4):
                 n[7 + 4 * i + j] = m[j]
@@ -543,6 +545,51 @@ def test_temperatur():
     return ok
 
 
+def test_emotor():
+    """v3.5: 4 Motoren mit Waermemodell, Vollgas. E-Gas (Zahl 20) = Hebel minus Temperatur-Grenze; Batterie unter 50 %:
+    aus (erst ab 55 % wieder an), Bool 13; 'E-Motor Test' 1: Diesel ausgekuppelt, E-Gas = Hebel."""
+    ok = True
+    mo = [Motor(waerme=(0.27 * f, 0.00124, 15)) for f in (1.0, 1.04, 1.0, 0.98)]
+    sch = Schiff(mo)
+    sch.batt = 0.9
+    log = {}
+    for k in range(60 * 12 * 60):
+        sek = k / 60
+        if sek >= 600:
+            sch.batt = 0.4 if sek < 630 else (0.52 if sek < 660 else 0.6)
+        o = sch.tick(ws=1.0 if 2 <= sek < 6 else 0.0, h1=1 <= sek < 1.05)
+        if k % 30 == 0:
+            log[round(sek, 1)] = (o[20], entpacke(o, 1)["gas"], bool(o.get(113)), o[3])
+    at = lambda t: log[round(t, 1)]
+    kalt = at(100)
+    heiss = at(540)
+    ok &= pruefe([
+        ("kalt (100 s): Diesel %d %% Gas, E-Motor %.0f %%" % (kalt[1], kalt[0] * 100), kalt[1] >= 95 and kalt[0] < 0.05),
+        ("heiss (540 s): Diesel %d %%, E-Motor %.0f %% = der Rest bis 100 %%" % (heiss[1], heiss[0] * 100),
+         heiss[1] < 40 and abs(heiss[0] * 100 + heiss[1] - 100) <= 3),
+        ("Batterie 40 %%: E-Motor aus (%.0f %%), Warnung (Bool 13) an" % (at(620)[0] * 100), at(620)[0] < 0.01 and at(620)[2]),
+        ("Batterie 52 %: bleibt aus (erst ab 55 %)", at(650)[0] < 0.01 and at(650)[2]),
+        ("Batterie 60 %%: wieder an (%.0f %%), Bool 13 aus" % (at(700)[0] * 100), at(700)[0] > 0.4 and not at(700)[2]),
+    ])
+    PR["E-Motor Test"] = 1
+    try:
+        sch = Schiff([Motor() for _ in range(4)])
+        sch.batt = 0.9
+        for k in range(60 * 20):
+            sek = k / 60
+            o = sch.tick(ws=1.0 if 2 <= sek < 4 else 0.0, h1=1 <= sek < 1.05)
+    finally:
+        PR["E-Motor Test"] = 0
+    ok &= pruefe([("'E-Motor Test': Diesel ausgekuppelt, E-Gas = Hebel (%.0f %% / %.0f %%)" % (o[20] * 100, o[16] * 100),
+                   all(o[3 * i + 3] == 0 for i in range(4)) and abs(o[20] - o[16]) < 0.01 and o[16] > 0.4)])
+    sch = Schiff([Motor() for _ in range(4)])
+    for k in range(60 * 30):
+        o = sch.tick(ws=1.0 if 2 <= k / 60 < 6 else 0.0, h1=60 <= k < 63)
+    ok &= pruefe([("ohne Batterie (Kanal 25 = 0), kalt: E-Motoren aus, keine Warnung (nicht gebraucht)",
+                   o[20] == 0 and not o.get(113))])
+    return ok
+
+
 if __name__ == "__main__":
     ok = test_motor()
     ok &= test_system()
@@ -550,5 +597,6 @@ if __name__ == "__main__":
     ok &= test_gaenge()
     ok &= test_schreiber()
     ok &= test_temperatur()
+    ok &= test_emotor()
     print("ALLES OK" if ok else "FEHLER")
     sys.exit(0 if ok else 1)

@@ -14,7 +14,7 @@ Claude-Sitzung (auf dem PC oder in der Cloud) den aktuellen Stand kennt.
 | `lua/` | alle Chip-Skripte | da |
 | `sim/` | **Nachbau von Stormworks** (10.10.): lädt die echte Fahrzeugdatei und führt alle Chips Tick für Tick aus (Logik-Bausteine, Lua, Kabel zwischen Chips, Host + Mitspieler). Keine Physik. Anleitung `sim/README.md`, Prüfstand `python sim/test_sim.py` | da |
 | `tools/` | Bau-, Einbau-, Prüfstand- und Logger-Programme | da |
-| `fahrzeug/Figet Marena.xml` | Kopie der Fahrzeugdatei (Stand 10.10. 15:30, Schiff v3.4, Lage v3.4, Bildschirm v3.7, Schotten v2.0), nur zum Lesen; ohne Steam-Autorangaben | da |
+| `fahrzeug/Figet Marena.xml` | Kopie der Fahrzeugdatei (Stand 10.10. 17:30, Schiff v3.5 mit E-Motoren, Flossen v1.8, Lage v3.4, Bildschirm v3.7, Schotten v2.0), nur zum Lesen; ohne Steam-Autorangaben | da |
 | `tools/bauteile_holen.py` → `wissen/bauteile/` | Alle 759 Bauteile des Spiels (Datei-Name, Gewicht, Größe, Blöcke, Anschlüsse mit Position und Beschreibung) als `INDEX.md`, Seiten je Kategorie und `bauteile.json`, aus `Stormworks\rom\data\definitions` auf Andres PC geholt; suchen mit `tools/bauteil_suchen.py` | da (Stand 09.10.2026) |
 | `landkreuzer/` | **KI-Landkreuzer** (08./09.10.): autonomer Panzer aus Schiffsteilen, Fahr-KI (`KI_FAHREN.md`), Anleitung mit Schnellstart `landkreuzer/LANDKREUZER.md` | fertig gebaut, im Simulator geprüft, im Spiel noch ungetestet |
 

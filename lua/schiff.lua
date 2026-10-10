@@ -1,11 +1,12 @@
--- SCHIFF v3.4 - Figet Marena: 4 Diesel ohne ZE-Regler (L1 unten links, L2 oben links, R1 unten rechts, R2 oben rechts),
+-- SCHIFF v3.5 - Figet Marena: 4 Diesel ohne ZE-Regler (L1 unten links, L2 oben links, R1 unten rechts, R2 oben rechts),
 -- je Motor Gemisch, Anlasser, Leerlauf, Kupplung, Temperatur-Regler; 8 Gaenge aus 3 Getrieben, Rueckwaertsgang je
 -- Seite, Lenk-Schub, Ruder, Bugstrahlruder
 -- Eingang (Composite, im Chip zusammengefuehrt):
 --  Zahl 1-4 Sitz Achse 1-4 (A/D, W/S, Pfeil links/rechts, Pfeil hoch/runter), 5 Tempo m/s, 6 Kompass,
 --  je Motor i (1 L1, 2 L2, 3 R1, 4 R2) ab 3+4i: RPS, Temperatur, Luft, Treibstoff im Zylinder
 --  Bool 1-6 Sitz Hotkey 1-6, 8 Sitz besetzt
---  v2.7 vom Wellen-Skript (lua/wellen.lua): Zahl 24 Gas-Abzug (0..1, Drehzahl halten bei Schrauben in der Luft),
+--  v2.7 vom Wellen-Skript (lua/wellen.lua): Zahl 24 Gas-Abzug (0..1, Drehzahl halten bei Schrauben in der Luft), v3.5 Zahl 25
+--  Batterie-Ladung (0..1),
 --  Bool 9 Schaltsperre (Schrauben draussen und kurz danach)
 -- Ausgang: je Motor ab 3i-2: Air Manifold, Fuel Manifold, Kupplung; 13 Ruder, 14 Bugstrahlruder, 15-28 Anzeige
 --  Bool 1 Motoren an (Pumpen, Luefter), 1+i Anlasser Motor i, 6/7 Rueckwaertsgang links/rechts, 8 Anzeige Seite 2,
@@ -26,6 +27,11 @@
 --  aus der ueber 2 s geglaetteten Temperatur, nochmals 3 s gemittelt). v3.3 regelte jeden Motor allein auf 95 Grad und schaukelte: Seiten abwechselnd 10 % / 55 %
 --  Gas, 18-29 kn, Schiff zog hin und her (Fahrt 07.10.). Ziel 70: bis 75 Grad volle Leistung, bei 80-85 nur noch
 --  ca. die Haelfte (Gang 7 Vollgas 60 -> 48 kn, gleiche Drosseln).
+-- E-Motoren v3.5 (Andre: zwei grosse E-Motoren an der Welle vor den Getrieben, statt der kleinen Generatoren): sie bekommen
+--  den Teil des Fahrhebels, den die Temperatur-Grenze den Dieseln wegnimmt (mal 'E-Motor Anteil'; ohne Gas-Abzug der
+--  Wellen); Zahl 20 = E-Gas 0..1 (der Chip gibt es je Seite mal 'E-Motor Richtung L/R' an die Motoren). Batterie (Zahl 25,
+--  ueber den Flossen-Chip) unter 'E-Motor ab Batterie': aus, erst 5 % darueber wieder an (Anlasser, Pumpen, Luefter
+--  brauchen den Strom); Bool 13 = E-Motor wuerde gebraucht, ist aber deshalb aus. 'E-Motor Test' 1: Diesel bleiben ausgekuppelt, E-Gas = Fahrhebel.
 -- Gemisch: Treibstoff = Luft * Q / Luftverhaeltnis. v3.2: Q fest 7.1 (darauf liefen alle 4 Motoren in ruhiger Fahrt;
 --  Andre: 'es soll immer gleich bleiben') - Ventile im festen Verhaeltnis. Mit 'Gemisch Regler' > 0 (z. B. 2e-4) regelt
 --  der Chip Q je Motor wieder so nach, dass die gemessene Stoechiometrie im Zylinder das Ziel 'Gemisch' trifft (0.5
@@ -66,6 +72,8 @@ lk=0
 -- TP/TR je Motor: geglaettete Temperatur, Anstieg Grad/s; TL gemeinsame Gas-Grenze
 K,Z,A,TP,TR,I,FS,FM,Q,T1,T2,ST,LA,TA={},{},{},{},{},{},{},{},{},{},{},{},{},{}
 TL=1
+EM=0
+EA=false
 for i=1,4 do
 	K[i]=0 Z[i]=0 A[i]=false TP[i]=0 TR[i]=0 I[i]=0 FS[i]=0 FM[i]=1e-7 Q[i]=7.1 T1[i]=60 T2[i]=0 ST[i]=false LA[i]=0 TA[i]=0
 end
@@ -88,6 +96,9 @@ function onTick()
 		tz=P('Temp Ziel')
 		tf=P('Temp Anflug s')
 		tk=P('Temp Regel')/60
+		ea=P('E-Motor ab Batterie')
+		ef=P('E-Motor Anteil')
+		et=P('E-Motor Test')>0
 		idl=P('Leerlauf RPS')
 		rn=P('RPS Notgrenze')
 		st=P('Gemisch')
@@ -157,6 +168,12 @@ function onTick()
 	TL=cl(TL+e*tk,.1,1)
 	-- eingekuppelt nicht ueber dem gewuenschten Gas hochlaufen (sonst wirkt die Grenze nach dem Gasgeben erst spaet)
 	if ek then TL=m.min(TL,m.max(gs[1],gs[2])+.05) end
+	-- E-Motoren: Rest des Hebels, den die Diesel wegen der Temperatur nicht duerfen; Batterie-Schutz; Test = nur E
+	local eb=N(25)
+	if eb<ea then EA=false elseif eb>ea+.05 then EA=true end
+	local es=on and (et and g or ek and m.max(g-TL,0)*ef*(1-N(24))) or 0
+	EW=not EA and es>.02
+	EM=EM+cl((EA and es or 0)-EM,-.02,.02)
 	-- Rueckwaertsgang je Seite erst umlegen, wenn beide Kupplungen der Seite 0.1 s offen sind
 	for s=1,2 do
 		if RV[s]~=rw then
@@ -177,7 +194,7 @@ function onTick()
 		if on and t>900 and rps<2 then Z[i]=Z[i]+1 else Z[i]=0 end
 		A[i]=Z[i]>az
 		-- Kupplung: Motor laeuft, nicht im Notfall heiss, Fahrt gewuenscht, richtiger Gang; langsam ein, sofort aus
-		if on and rps>=kab and tmp<hot and g>.02 and not A[i] and RV[s]==rw then K[i]=m.min(K[i]+1/kz,1) else K[i]=0 end
+		if on and rps>=kab and tmp<hot and g>.02 and not A[i] and RV[s]==rw and not et then K[i]=m.min(K[i]+1/kz,1) else K[i]=0 end
 		local am,fm,th,fx,mx=1e-7,1e-7,0,1,0
 		-- laeuft oder wird angelassen: Treibstoff und Luft geben
 		if on and (rps>=1 or ST[i]) then
@@ -227,6 +244,7 @@ function onTick()
 	k4=B(4)
 	O(8,pg)
 	O(12,B(9))
+	O(13,EW)
 	O(1,on)
 	O(6,RV[1])
 	O(7,RV[2])
@@ -234,5 +252,5 @@ function onTick()
 	S(14,cl(a3+a1*bm,-1,1)*bsig)
 	-- Anzeige: 15 an (0 aus, sonst Uebersetzung*10*10000+Gang*100+Automatik*10+1), 16 Hebel (-: rueckwaerts),
 	-- 17 Tempo m/s, 18 Kurs Grad, 19 Ruder (Anteil), 20 Bugstrahl
-	S(15,on and m.floor(GR[G][1]*10+.5)*10000+G*100+(au and 10 or 0)+1 or 0) S(16,hb) S(17,N(5)) S(18,(N(6)*360)%360) S(19,rmax>0 and ru/rmax or 0) S(20,a3)
+	S(15,on and m.floor(GR[G][1]*10+.5)*10000+G*100+(au and 10 or 0)+1 or 0) S(16,hb) S(17,N(5)) S(18,(N(6)*360)%360) S(19,rmax>0 and ru/rmax or 0) S(20,EM)
 end

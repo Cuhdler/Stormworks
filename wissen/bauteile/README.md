@@ -125,7 +125,8 @@ Spielregeln in `wissen/mechaniken/README.md`.
   Groß ab Medium mit Ausgang „Fuel Remaining“; der kleine Booster ist 1×1×1 [S].
 - Elektromotoren (`motor_small/medium/large`): liefern Kraft ab 0 RPS, brauchen keine Kupplung; verbrauchen viel Strom,
   laut Wiki reichen auch mehrere nicht als Hauptantrieb großer Schiffe [W]. Bei leerer Batterie werden sie langsamer [W].
-  Verbrauch noch nicht gemessen.
+  Verbrauch noch nicht gemessen. Figet Marena (10.10.): je ein Large Electric Motor per T-Stück an der Welle vor den
+  Getrieben – Drehrichtung eines gespiegelt eingebauten Motors noch ungeprüft [V].
 - Getriebe (`modular_engine_gearbox_1x1`): `gear_ratio_2` = Index „Ratio On“: 0 = 1:−1, 1 = 1:1, 2 = 6:5, 3 = 3:2 [G].
   Pfeil zum Motor = Übersetzung ins Langsame; Kupplung 0..1; Motoren laufen ab ~2 RPS (Anlasser) [G].
 
