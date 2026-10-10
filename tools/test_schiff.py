@@ -571,6 +571,18 @@ def test_emotor():
         ("Batterie 52 %: bleibt aus (erst ab 55 %)", at(650)[0] < 0.01 and at(650)[2]),
         ("Batterie 60 %%: wieder an (%.0f %%), Bool 13 aus" % (at(700)[0] * 100), at(700)[0] > 0.4 and not at(700)[2]),
     ])
+    PR["E-Motor Anteil"] = 3
+    try:
+        mo = [Motor(waerme=(0.27 * f, 0.00124, 15)) for f in (1.0, 1.04, 1.0, 0.98)]
+        sch = Schiff(mo)
+        sch.batt = 0.9
+        emax = 0.0
+        for k in range(60 * 9 * 60):
+            o = sch.tick(ws=1.0 if 2 <= k / 60 < 6 else 0.0, h1=60 <= k < 63)
+            emax = max(emax, o[20])
+    finally:
+        PR["E-Motor Anteil"] = 1
+    ok &= pruefe([("'E-Motor Anteil' 3, heiss: E-Gas voll, nie ueber 100 %% (%.2f)" % emax, 0.99 <= emax <= 1.0)])
     PR["E-Motor Test"] = 1
     try:
         sch = Schiff([Motor() for _ in range(4)])

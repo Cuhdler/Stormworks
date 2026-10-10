@@ -44,7 +44,7 @@ PROPS = [
     ("Getriebe B", 1.5, "Uebersetzung von Getriebe B, wenn an (3:2 = 1.5)"),
     ("Getriebe C", 2, "Uebersetzung von Getriebe C, wenn an (2:1 = 2)"),
     # v3.5 E-Motoren (Andre 10.10.: zwei grosse E-Motoren an der Welle vor den Getrieben)
-    ("E-Motor Anteil", 1, "E-Motoren bekommen so viel vom Fahrhebel, wie die Temperatur-Grenze den Dieseln wegnimmt (0 = E-Motoren aus)"),
+    ("E-Motor Anteil", 1, "E-Gas = so viel mal der Teil des Hebels, den die Temperatur den Dieseln wegnimmt (hoechstens 100 %; 0 = aus; ist der E-Motor schwaecher: groesser, z. B. 3)"),
     ("E-Motor ab Batterie", 0.5, "Unter dieser Batterie-Ladung bleiben die E-Motoren aus (Anlasser, Pumpen, Luefter brauchen Strom); 5 % darueber wieder an"),
     ("E-Motor Test", 0, "1 = Diesel bleiben ausgekuppelt, E-Motoren fahren mit dem Fahrhebel (Drehrichtung pruefen); danach wieder 0"),
     ("Log Port", 8766, "Fahrtenschreiber: Port von tools/logger.py auf dem PC (0 = aus; Heli-Flugschreiber nutzt 8765)"),

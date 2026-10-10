@@ -171,7 +171,7 @@ function onTick()
 	-- E-Motoren: Rest des Hebels, den die Diesel wegen der Temperatur nicht duerfen; Batterie-Schutz; Test = nur E
 	local eb=N(25)
 	if eb<ea then EA=false elseif eb>ea+.05 then EA=true end
-	local es=on and (et and g or ek and m.max(g-TL,0)*ef*(1-N(24))) or 0
+	local es=on and m.min(et and g or ek and m.max(g-TL,0)*ef*(1-N(24)) or 0,1) or 0
 	EW=not EA and es>.02
 	EM=EM+cl((EA and es or 0)-EM,-.02,.02)
 	-- Rueckwaertsgang je Seite erst umlegen, wenn beide Kupplungen der Seite 0.1 s offen sind
